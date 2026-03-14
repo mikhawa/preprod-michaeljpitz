@@ -24,6 +24,8 @@ class RegistrationController extends AbstractController
     public function __construct(
         #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
         private readonly string $emailFrom,
+        #[Autowire('%env(ADMIN_EMAIL)%')]
+        private readonly string $adminEmail,
     ) {
     }
 
@@ -74,7 +76,7 @@ class RegistrationController extends AbstractController
 
             $adminNotification = (new TemplatedEmail())
                 ->from(new Address($this->emailFrom, 'CV Mikhawa'))
-                ->to('contact@alpha1.michaeljpitz.com')
+                ->to($this->adminEmail)
                 ->subject('Nouvelle inscription - '.$user->getUserName())
                 ->htmlTemplate('email/new_user_notification.html.twig')
                 ->context([
@@ -130,7 +132,7 @@ class RegistrationController extends AbstractController
 
         $adminNotification = (new TemplatedEmail())
             ->from(new Address($this->emailFrom, 'CV Mikhawa'))
-            ->to('contact@alpha1.michaeljpitz.com')
+            ->to($this->adminEmail)
             ->subject('Compte activé - '.$user->getUserName())
             ->htmlTemplate('email/user_activated_notification.html.twig')
             ->context([

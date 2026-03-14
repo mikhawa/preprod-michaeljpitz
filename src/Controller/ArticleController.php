@@ -33,6 +33,8 @@ class ArticleController extends AbstractController
     public function __construct(
         #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
         private readonly string $emailFrom,
+        #[Autowire('%env(ADMIN_EMAIL)%')]
+        private readonly string $adminEmail,
     ) {
     }
 
@@ -135,7 +137,7 @@ class ArticleController extends AbstractController
 
                 $adminNotification = (new TemplatedEmail())
                     ->from(new Address($this->emailFrom, 'CV Mikhawa'))
-                    ->to('contact@alpha1.michaeljpitz.com')
+                    ->to($this->adminEmail)
                     ->subject('Nouveau commentaire - '.$article->getTitle())
                     ->htmlTemplate('email/new_comment_notification.html.twig')
                     ->context([
