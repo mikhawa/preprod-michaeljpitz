@@ -25,7 +25,7 @@ jobs:
         image: mariadb:10.11
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: preprod_test
+          MYSQL_DATABASE: preprod
           MYSQL_USER: preprod
           MYSQL_PASSWORD: preprod
         ports:
@@ -72,10 +72,20 @@ jobs:
       - name: Analyse statique PHPStan
         run: vendor/bin/phpstan analyse src --level=8 --no-progress
 
-      - name: Création de la base de données de test
+      - name: Initialisation de la base de données de test
         run: |
-          php bin/console doctrine:database:create --env=test --if-not-exists
-          php bin/console doctrine:migrations:migrate --env=test --no-interaction
+          mysql -uroot -proot -h127.0.0.1 -e "
+            CREATE DATABASE IF NOT EXISTS preprod_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+            GRANT ALL PRIVILEGES ON preprod_test.* TO 'preprod'@'%';
+            FLUSH PRIVILEGES;
+          "
+        env:
+          DATABASE_URL: mysql://preprod:preprod@127.0.0.1:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4
+
+      - name: Migration de la base de données de test
+        run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
+        env:
+          DATABASE_URL: mysql://preprod:preprod@127.0.0.1:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4
 
       - name: Lancement des tests PHPUnit
         run: php bin/phpunit --no-coverage
