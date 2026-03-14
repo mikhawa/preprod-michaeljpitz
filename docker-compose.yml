@@ -41,5 +41,15 @@ services:
     depends_on:
       - mariadb
 
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"   # Interface web
+      - "1025:1025"   # Serveur SMTP
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
 volumes:
   db_data:
