@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau commentaire</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+    <div style="background-color: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h1 style="color: #f59e0b; margin-bottom: 20px; font-size: 24px;">Nouveau commentaire</h1>
+
+        <p style="margin-bottom: 20px;">Un utilisateur a laissé un commentaire sur un article de votre portfolio.</p>
+
+        <div style="background-color: #f8f9fa; border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 20px;">
+            <p style="margin: 0 0 10px 0;"><strong>Utilisateur :</strong> {{ userName }}</p>
+            <p style="margin: 0 0 10px 0;"><strong>Email :</strong> <a href="mailto:{{ userEmail }}" style="color: #2563eb;">{{ userEmail }}</a></p>
+            <p style="margin: 0 0 10px 0;"><strong>Article :</strong> <a href="{{ articleUrl }}" style="color: #2563eb;">{{ articleTitle }}</a></p>
+            <p style="margin: 0;"><strong>Date :</strong> {{ commentDate|date('d/m/Y à H:i') }}</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h2 style="color: #333; font-size: 18px; margin-bottom: 10px;">Commentaire :</h2>
+            <div style="background-color: #f8f9fa; border-radius: 4px; padding: 15px; white-space: pre-wrap;">{{ commentContent }}</div>
+        </div>
+
+        <p style="text-align: center; margin: 20px 0;">
+            <a href="{{ articleUrl }}"
+               style="display: inline-block; background-color: #f59e0b; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold;">
+                Voir l'article
+            </a>
+        </p>
+
+        <p style="font-size: 0.85em; color: #666; text-align: center; margin-top: 30px;">
+            Ce message a été envoyé automatiquement depuis votre portfolio CV Mikhawa.
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commentaire approuvé</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+    <div style="background-color: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h1 style="color: #16a34a; margin-bottom: 20px; font-size: 24px;">Votre commentaire a été approuvé</h1>
+
+        <p style="margin-bottom: 20px;">Bonjour {{ userName }},</p>
+
+        <p style="margin-bottom: 20px;">Votre commentaire sur l'article <strong>{{ articleTitle }}</strong> a été validé et est maintenant visible.</p>
+
+        <div style="margin-bottom: 20px;">
+            <h2 style="color: #333; font-size: 18px; margin-bottom: 10px;">Votre commentaire :</h2>
+            <div style="background-color: #f8f9fa; border-left: 4px solid #16a34a; border-radius: 4px; padding: 15px; white-space: pre-wrap;">{{ commentContent }}</div>
+        </div>
+
+        <p style="text-align: center; margin: 20px 0;">
+            <a href="{{ articleUrl }}"
+               style="display: inline-block; background-color: #16a34a; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold;">
+                Voir l'article
+            </a>
+        </p>
+
+        <p style="font-size: 0.85em; color: #666; text-align: center; margin-top: 30px;">
+            Ce message a été envoyé automatiquement depuis le portfolio CV Mikhawa.
+        </p>
+    </div>
+</body>
+</html>

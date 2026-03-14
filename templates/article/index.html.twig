@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% if currentCategory %}
+        Articles - {{ currentCategory.title }} - Portfolio
+    {% else %}
+        Articles - Portfolio Développeur PHP/Symfony
+    {% endif %}
+{% endblock %}
+
+{% block meta_description %}
+    {% if currentCategory %}
+        Articles dans la catégorie {{ currentCategory.title }}.
+    {% else %}
+        Tous les articles du blog - développement PHP, Symfony et technologies web.
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <section class="py-8">
+        <h1 class="text-3xl font-bold mb-8">
+            {% if currentCategory %}
+                Articles : {{ currentCategory.title }}
+            {% else %}
+                Tous les articles
+            {% endif %}
+        </h1>
+
+        {# Filtres catégories #}
+        {% if categories is not empty %}
+        <div class="flex flex-wrap gap-2 mb-8">
+            <a href="{{ path('app_article_index') }}"
+               class="inline-block text-sm px-3 py-1 rounded-full border transition-colors
+                      {% if currentCategory is null %}bg-[var(--accent)] text-white border-[var(--accent)]{% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}">
+                Toutes
+            </a>
+            {% for cat in categories %}
+                <a href="{{ path('app_category_show', {slug: cat.slug}) }}"
+                   class="inline-block text-sm px-3 py-1 rounded-full border transition-colors
+                          {% if currentCategory and currentCategory.id == cat.id %}bg-[var(--accent)] text-white border-[var(--accent)]{% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}">
+                    {{ cat.title }}
+                </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {# Grille d'articles #}
+        {% if pagination|length > 0 %}
+            <div class="grid md:grid-cols-3 gap-6">
+                {% for article in pagination %}
+                    <twig:ArticleCard :article="article" />
+                {% endfor %}
+            </div>
+
+            {# Pagination #}
+            {% if pagination.pageCount > 1 %}
+            <nav class="flex justify-center mt-12" aria-label="Pagination">
+                <div class="flex items-center gap-1">
+                    {% if pagination.hasPreviousPage %}
+                        <a href="{{ currentCategory ? path('app_category_show', {slug: currentCategory.slug, page: pagination.currentPageNumber - 1}) : path('app_article_index', {page: pagination.currentPageNumber - 1}) }}"
+                           class="px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] transition-colors">
+                            &laquo; Précédent
+                        </a>
+                    {% endif %}
+
+                    {% for page in 1..pagination.pageCount %}
+                        {% if page == pagination.currentPageNumber %}
+                            <span class="px-3 py-2 rounded-lg bg-[var(--accent)] text-white font-medium">
+                                {{ page }}
+                            </span>
+                        {% else %}
+                            <a href="{{ currentCategory ? path('app_category_show', {slug: currentCategory.slug, page: page}) : path('app_article_index', {page: page}) }}"
+                               class="px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] transition-colors">
+                                {{ page }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if pagination.hasNextPage %}
+                        <a href="{{ currentCategory ? path('app_category_show', {slug: currentCategory.slug, page: pagination.currentPageNumber + 1}) : path('app_article_index', {page: pagination.currentPageNumber + 1}) }}"
+                           class="px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] transition-colors">
+                            Suivant &raquo;
+                        </a>
+                    {% endif %}
+                </div>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-16 text-[var(--text-secondary)]">
+                <p class="text-lg">Aucun article publié pour le moment.</p>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

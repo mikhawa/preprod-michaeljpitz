@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }} - Portfolio{% endblock %}
+
+{% block meta_description %}{{ article.excerpt ?? article.title }}{% endblock %}
+
+{% block meta_canonical %}
+    <link rel="canonical" href="{{ url('app_article_show', {slug: article.slug}) }}">
+{% endblock %}
+
+{% block og_title %}{{ article.title }}{% endblock %}
+{% block og_description %}{{ article.excerpt ?? article.title }}{% endblock %}
+{% block og_image %}
+    {% if article.featuredImage %}
+        <meta property="og:image" content="{{ absolute_url('/uploads/articles/' ~ article.featuredImage) }}">
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <article class="max-w-3xl mx-auto py-8">
+        {# Navigation retour #}
+        <div class="mb-8">
+            <a href="{{ path('app_article_index') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)]">
+                &larr; Retour aux articles
+            </a>
+        </div>
+
+        {# En-tête #}
+        <header class="mb-8">
+            {% if article.categories is not empty %}
+                <div class="mb-3 flex flex-wrap gap-1">
+                    {% for category in article.categories %}
+                        <twig:CategoryBadge :category="category" />
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <h1 class="text-4xl font-bold mb-4">{{ article.title }}</h1>
+
+            <div class="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
+                {% if article.publishedAt %}
+                    <time datetime="{{ article.publishedAt|date('Y-m-d') }}">
+                        Publié le {{ article.publishedAt|date('d/m/Y') }}
+                    </time>
+                {% endif %}
+                {% if article.updatedAt and article.updatedAt > article.publishedAt %}
+                    <span>
+                        (mis à jour le {{ article.updatedAt|date('d/m/Y') }})
+                    </span>
+                {% endif %}
+            </div>
+        </header>
+
+        {# Image mise en avant #}
+        {% if article.featuredImage %}
+            <figure class="mb-8">
+                <img src="{{ '/uploads/articles/' ~ article.featuredImage }}"
+                     alt="{{ article.title }}"
+                     class="w-full rounded-lg">
+            </figure>
+        {% endif %}
+
+        {# Contenu #}
+        <div class="prose prose-lg max-w-none
+                    text-[var(--text-primary)]
+                    [&_a]:text-[var(--accent)] [&_a]:hover:text-[var(--accent-hover)]
+                    [&_h2]:text-[var(--text-primary)] [&_h3]:text-[var(--text-primary)]
+                    [&_blockquote]:border-[var(--accent)] [&_blockquote]:text-[var(--text-secondary)]
+                    [&_code]:bg-[var(--bg-secondary)] [&_code]:px-1 [&_code]:rounded
+                    [&_pre]:bg-[var(--bg-secondary)] [&_pre]:border [&_pre]:border-[var(--border)]"
+             data-controller="external-link lightbox">
+            {{ article.content|raw }}
+        </div>
+    </article>
+
+    {# Note moyenne #}
+    <div class="max-w-3xl mx-auto mt-8 flex items-center gap-2">
+        <span class="text-[var(--text-secondary)] font-medium">Note moyenne :</span>
+        {% if averageRating %}
+            <div class="flex items-center gap-1">
+                {% for i in 1..5 %}
+                    <svg class="w-5 h-5 {{ i <= averageRating|round ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                {% endfor %}
+                <span class="text-sm text-[var(--text-secondary)] ml-1">
+                    {{ averageRating }}/5 ({{ ratingCount }} {{ ratingCount > 1 ? 'votes' : 'vote' }})
+                </span>
+            </div>
+        {% else %}
+            <span class="text-sm text-[var(--text-secondary)]">Aucune note</span>
+        {% endif %}
+    </div>
+
+    {# Widget de notation (utilisateur connecté) #}
+    {% if app.user %}
+        <div class="max-w-3xl mx-auto mt-4">
+            <form method="post" action="{{ path('app_article_rate', {slug: article.slug}) }}"
+                  class="flex items-center gap-3 flex-wrap"
+                  data-turbo="false">
+                <input type="hidden" name="_token" value="{{ csrf_token('rate-article') }}">
+                <span class="text-sm text-[var(--text-secondary)]">Votre note :</span>
+                <div class="flex items-center gap-1">
+                    {% for i in 1..5 %}
+                        <button type="submit" name="rating" value="{{ i }}"
+                                class="cursor-pointer transition-colors"
+                                title="{{ i }}/5">
+                            <svg class="w-7 h-7 {{ userRating and i <= userRating.rating ? 'text-yellow-400' : 'text-gray-300' }} hover:text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </button>
+                    {% endfor %}
+                </div>
+                {% if userRating %}
+                    <span class="text-sm text-[var(--text-secondary)]">(votre note : {{ userRating.rating }}/5)</span>
+                {% endif %}
+            </form>
+        </div>
+    {% endif %}
+
+    {# Commentaires #}
+    <section class="max-w-3xl mx-auto mt-12 border-t border-[var(--border)] pt-8">
+        <h2 class="text-2xl font-bold mb-6">
+            Commentaires ({{ comments|length }})
+        </h2>
+
+        {% for comment in comments %}
+            <div class="bg-[var(--bg-secondary)] p-4 rounded-lg border border-[var(--border)] mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <a href="{{ path('app_public_profile', {userName: comment.user.userName}) }}"
+                       class="font-medium text-[var(--accent)] hover:text-[var(--accent-hover)]">
+                        {{ comment.user.userName }}
+                    </a>
+                    <time class="text-sm text-[var(--text-secondary)]" datetime="{{ comment.createdAt|date('Y-m-d') }}">
+                        {{ comment.createdAt|date('d/m/Y à H:i') }}
+                    </time>
+                </div>
+                <p class="text-[var(--text-primary)]">{{ comment.content|nl2br }}</p>
+            </div>
+        {% else %}
+            <p class="text-[var(--text-secondary)]">Aucun commentaire pour le moment.</p>
+        {% endfor %}
+
+        {# Formulaire de commentaire #}
+        {% if commentForm %}
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-4">Laisser un commentaire</h3>
+                {{ form_start(commentForm, {attr: {class: 'space-y-4'}}) }}
+                    <div>
+                        {{ form_widget(commentForm.content, {attr: {class: 'w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]', rows: 4, placeholder: 'Écrivez votre commentaire...'}}) }}
+                        {{ form_errors(commentForm.content) }}
+                    </div>
+                    <button type="submit"
+                            class="bg-[var(--accent)] text-white px-4 py-2 rounded-lg hover:bg-[var(--accent-hover)] transition-colors font-medium">
+                        Publier
+                    </button>
+                {{ form_end(commentForm) }}
+            </div>
+        {% else %}
+            <p class="mt-8 text-[var(--text-secondary)]">
+                <a href="{{ path('app_login', {'_target_path': app.request.uri}) }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)]">Connectez-vous</a>
+                pour laisser un commentaire.
+            </p>
+        {% endif %}
+    </section>
+
+    {# Articles similaires #}
+    {% if similarArticles is not empty %}
+    <section class="max-w-3xl mx-auto py-12 border-t border-[var(--border)]">
+        <h2 class="text-2xl font-bold mb-6">Articles similaires</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            {% for similar in similarArticles %}
+                <twig:ArticleCard :article="similar" />
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}

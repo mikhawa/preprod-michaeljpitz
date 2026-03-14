@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(docker compose:*)",
+      "Bash(tree:*)",
+      "Bash(curl:*)",
+      "Bash(composer validate:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(./vendor/bin/php-cs-fixer:*)",
+      "Bash(find:*)",
+      "Bash(php bin/console lint:container:*)",
+      "Bash(php bin/console doctrine:schema:validate:*)",
+      "Bash(php bin/console:*)",
+      "Bash(xxd:*)",
+      "Bash(php -l:*)",
+      "Bash(php:*)",
+      "Bash(git -C /home/mikhawa/cv-mikhawa status)",
+      "Bash(git -C /home/mikhawa/cv-mikhawa diff)",
+      "Bash(git -C /home/mikhawa/cv-mikhawa log --oneline -5)",
+      "Bash(git -C /home/mikhawa/cv-mikhawa status -u)",
+      "Bash(git -C /home/mikhawa/cv-mikhawa show :*)",
+      "Bash(./vendor/bin/phpstan analyse:*)",
+      "Bash(vendor/bin/phpstan analyse:*)",
+      "Bash(wc:*)",
+      "WebSearch",
+      "Bash(xargs:*)",
+      "Bash(claude:*)",
+      "Bash(git -C /home/mikhawa/cv-mikhawa rev-parse:*)",
+      "Bash(grep:*)",
+      "WebFetch(domain:alpha1.michaeljpitz.com)",
+      "Bash(git -C /home/mikhawa/cv-mikhawa log --oneline v2.2.1..HEAD)",
+      "Skill(pre-commit)",
+      "Bash(git -C /home/mikhawa/cv-mikhawa log --oneline -3)",
+      "Bash(git -C /home/mikhawa/cv-mikhawa add src/EventSubscriber/CommentApprovedSubscriber.php templates/email/comment_approved.html.twig templates/email/new_comment_notification.html.twig templates/email/new_user_notification.html.twig templates/email/user_activated_notification.html.twig src/Controller/ArticleController.php src/Controller/RegistrationController.php)",
+      "Bash(git -C:*)",
+      "WebFetch(domain:localhost)"
+    ]
+  }
+}

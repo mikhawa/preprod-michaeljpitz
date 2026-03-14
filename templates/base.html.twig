@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Portfolio - Développeur PHP/Symfony{% endblock %}</title>
+        <meta name="description" content="{% block meta_description %}Portfolio et blog d'un développeur PHP/Symfony{% endblock %}">
+        {% block meta_canonical %}{% endblock %}
+        {% block meta_og %}
+        <meta property="og:title" content="{% block og_title %}Portfolio - Développeur PHP/Symfony{% endblock %}">
+        <meta property="og:description" content="{% block og_description %}Portfolio et blog d'un développeur PHP/Symfony{% endblock %}">
+        <meta property="og:type" content="website">
+        {% block og_image %}{% endblock %}
+        {% endblock %}
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        {% block stylesheets %}
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body class="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen transition-colors duration-300 flex flex-col"
+          data-controller="theme">
+        <twig:Navbar />
+
+        <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full md:pb-24">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="mb-4 px-4 py-3 rounded border
+                        {% if label == 'success' %}bg-green-100 border-green-400 text-green-700
+                        {% elseif label == 'error' %}bg-red-100 border-red-400 text-red-700
+                        {% else %}bg-blue-100 border-blue-400 text-blue-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% block body %}{% endblock %}
+        </main>
+
+        <footer class="border-t border-[var(--border)] mt-16 bg-[var(--bg-secondary)] md:fixed md:bottom-0 md:left-0 md:right-0 z-40">
+            <div class="max-w-6xl mx-auto px-4 py-6 text-center text-[var(--text-secondary)] text-sm">
+                <nav class="mb-3">
+                    <ul class="flex flex-wrap justify-center items-center gap-y-2">
+                        <li><a href="{{ path('app_home') }}" class="hover:text-[var(--accent)] transition-colors">Accueil</a></li>
+                        <li><span class="mx-3 text-[var(--border)]">|</span></li>
+                        <li><a href="{{ path('app_cv') }}" class="hover:text-[var(--accent)] transition-colors">CV</a></li>
+                        <li><span class="mx-3 text-[var(--border)]">|</span></li>
+                        <li><a href="{{ path('app_article_index') }}" class="hover:text-[var(--accent)] transition-colors">Articles</a></li>
+                        <li><span class="mx-3 text-[var(--border)]">|</span></li>
+                        <li><a href="{{ path('app_contact') }}" class="hover:text-[var(--accent)] transition-colors">Contact</a></li>
+                        <li><span class="mx-3 text-[var(--border)]">|</span></li>
+                        <li><a href="{{ path('app_rgpd') }}" class="hover:text-[var(--accent)] transition-colors">RGPD</a></li>
+                    </ul>
+                </nav>
+                <p class="text-xs">&copy; {{ 'now'|date('Y') }} Michaël J. Pitz</p>
+            </div>
+        </footer>
+    </body>
+</html>

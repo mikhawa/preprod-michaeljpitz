@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau message de contact</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+    <div style="background-color: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h1 style="color: #2563eb; margin-bottom: 20px; font-size: 24px;">Nouveau message de contact</h1>
+
+        <p style="margin-bottom: 20px;">Vous avez reçu un nouveau message depuis le formulaire de contact de votre portfolio.</p>
+
+        <div style="background-color: #f8f9fa; border-left: 4px solid #2563eb; padding: 15px; margin-bottom: 20px;">
+            <p style="margin: 0 0 10px 0;"><strong>De :</strong> {{ contactName }}</p>
+            <p style="margin: 0;"><strong>Email :</strong> <a href="mailto:{{ contactEmail }}" style="color: #2563eb;">{{ contactEmail }}</a></p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h2 style="color: #333; font-size: 18px; margin-bottom: 10px;">Message :</h2>
+            <div style="background-color: #f8f9fa; border-radius: 4px; padding: 15px; white-space: pre-wrap;">{{ contactMessage }}</div>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+
+        <p style="text-align: center; margin: 20px 0;">
+            <a href="mailto:{{ contactEmail }}?subject=Re: Votre message sur mon portfolio"
+               style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold;">
+                Répondre à {{ contactName }}
+            </a>
+        </p>
+
+        <p style="font-size: 0.85em; color: #666; text-align: center; margin-top: 30px;">
+            Ce message a été envoyé depuis le formulaire de contact de votre portfolio CV Mikhawa.
+        </p>
+    </div>
+</body>
+</html>

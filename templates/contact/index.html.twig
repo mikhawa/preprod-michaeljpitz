@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact - Portfolio Développeur PHP/Symfony{% endblock %}
+
+{% block body %}
+    <div class="max-w-2xl mx-auto py-12">
+        <h1 class="text-3xl font-bold mb-8 text-center">Contact</h1>
+
+        <div class="bg-[var(--bg-secondary)] rounded-lg p-8 border border-[var(--border)]">
+            <p class="text-[var(--text-secondary)] mb-6 text-center">
+                Vous souhaitez me contacter ? Remplissez le formulaire ci-dessous et je vous répondrai dans les plus brefs délais.
+            </p>
+
+            {{ form_start(contactForm, {attr: {class: 'space-y-6', novalidate: 'novalidate', 'data-turbo': 'false'}}) }}
+                <div>
+                    {{ form_label(contactForm.name, null, {label_attr: {class: 'block text-sm font-medium text-[var(--text-secondary)] mb-2'}}) }}
+                    {{ form_widget(contactForm.name, {attr: {class: 'w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors'}}) }}
+                    {{ form_errors(contactForm.name, {attr: {class: 'text-red-500 text-sm mt-1'}}) }}
+                </div>
+
+                <div>
+                    {{ form_label(contactForm.email, null, {label_attr: {class: 'block text-sm font-medium text-[var(--text-secondary)] mb-2'}}) }}
+                    {{ form_widget(contactForm.email, {attr: {class: 'w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors'}}) }}
+                    {{ form_errors(contactForm.email, {attr: {class: 'text-red-500 text-sm mt-1'}}) }}
+                </div>
+
+                <div>
+                    {{ form_label(contactForm.message, null, {label_attr: {class: 'block text-sm font-medium text-[var(--text-secondary)] mb-2'}}) }}
+                    {{ form_widget(contactForm.message, {attr: {class: 'w-full px-4 py-3 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-colors resize-vertical min-h-[150px]'}}) }}
+                    {{ form_errors(contactForm.message, {attr: {class: 'text-red-500 text-sm mt-1'}}) }}
+                </div>
+
+                {# Cloudflare Turnstile Captcha - désactivé avec les clés de test #}
+                {% if turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' and not (turnstileSiteKey starts with '1x00000000000000000000') %}
+                <div class="flex justify-center">
+                    <div class="cf-turnstile" data-sitekey="{{ turnstileSiteKey }}" data-theme="auto"></div>
+                </div>
+                {% endif %}
+
+                <div>
+                    <button type="submit" class="w-full bg-[var(--accent)] text-white py-3 px-6 rounded-lg hover:bg-[var(--accent-hover)] transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2">
+                        Envoyer le message
+                    </button>
+                </div>
+            {{ form_end(contactForm) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' and not (turnstileSiteKey starts with '1x00000000000000000000') %}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    {% endif %}
+{% endblock %}

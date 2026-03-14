@@ -1,0 +1,208 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/cropper.min.css">
+{% endblock %}
+
+{% block body %}
+    <div class="max-w-2xl mx-auto mt-8">
+        <h1 class="text-2xl font-bold text-center mb-8">Mon profil</h1>
+
+        {% for flash in app.flashes('success') %}
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ flash }}
+            </div>
+        {% endfor %}
+
+        {% for flash in app.flashes('error') %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ flash }}
+            </div>
+        {% endfor %}
+
+        {# Section informations en lecture seule #}
+        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg border border-[var(--border)] mb-8">
+            <h2 class="text-lg font-semibold mb-4 text-[var(--text-primary)]">Informations du compte</h2>
+            <div class="space-y-2 text-[var(--text-secondary)]">
+                <p><span class="font-medium">Nom d'utilisateur :</span> {{ user.userName }}</p>
+                <p><span class="font-medium">Email :</span> {{ user.email }}</p>
+                <p><span class="font-medium">Membre depuis :</span> {{ user.createdAt|date('d/m/Y') }}</p>
+            </div>
+        </div>
+
+        {# Formulaire de modification du profil #}
+        <div data-controller="avatar-crop">
+            {{ form_start(form, {attr: {class: 'bg-[var(--bg-secondary)] p-6 rounded-lg border border-[var(--border)] mb-8'}}) }}
+
+                {# Avatar avec crop #}
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        Image de profil (320x320 px)
+                    </label>
+                    <div class="flex items-center gap-4">
+                        {% if user.avatarName %}
+                            <img src="{{ '/uploads/avatars/' ~ user.avatarName }}"
+                                 alt="Avatar de {{ user.userName }}"
+                                 class="w-20 h-20 rounded-full object-cover"
+                                 data-avatar-crop-target="preview">
+                        {% else %}
+                            <div class="w-20 h-20 rounded-full bg-[var(--border)] flex items-center justify-center"
+                                 data-avatar-crop-target="preview">
+                                <span class="text-2xl text-[var(--text-secondary)]">{{ user.userName|slice(0, 1)|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <div>
+                            {{ form_widget(form.avatarFile, {attr: {
+                                'data-avatar-crop-target': 'input',
+                                'data-action': 'change->avatar-crop#selectImage'
+                            }}) }}
+                            {{ form_widget(form.croppedAvatarData, {attr: {
+                                'data-avatar-crop-target': 'hiddenInput'
+                            }}) }}
+                            <button type="button"
+                                    class="text-sm text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline"
+                                    data-action="click->avatar-crop#openFileDialog">
+                                Changer l'image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {# Présentation #}
+                <div class="mb-4">
+                    {{ form_label(form.biography, null, {label_attr: {class: 'block text-sm font-medium text-[var(--text-secondary)] mb-1'}}) }}
+                    {{ form_widget(form.biography, {attr: {class: 'w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]'}}) }}
+                    <p class="text-xs text-[var(--text-secondary)] mt-1">Maximum 500 caractères</p>
+                    {{ form_errors(form.biography) }}
+                </div>
+
+                {# Liens externes #}
+                <div class="mb-4">
+                    {{ form_label(form.externalLink1, null, {label_attr: {class: 'block text-sm font-medium text-[var(--text-secondary)] mb-1'}}) }}
+                    {{ form_widget(form.externalLink1, {attr: {class: 'w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]'}}) }}
+                    {{ form_errors(form.externalLink1) }}
+                </div>
+
+                <div class="mb-4">
+                    {{ form_label(form.externalLink2, null, {label_attr: {class: 'block text-sm font-medium text-[var(--text-secondary)] mb-1'}}) }}
+                    {{ form_widget(form.externalLink2, {attr: {class: 'w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]'}}) }}
+                    {{ form_errors(form.externalLink2) }}
+                </div>
+
+                <div class="mb-6">
+                    {{ form_label(form.externalLink3, null, {label_attr: {class: 'block text-sm font-medium text-[var(--text-secondary)] mb-1'}}) }}
+                    {{ form_widget(form.externalLink3, {attr: {class: 'w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]'}}) }}
+                    {{ form_errors(form.externalLink3) }}
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-[var(--accent)] text-white py-2 px-4 rounded-lg hover:bg-[var(--accent-hover)] transition-colors font-medium">
+                    Enregistrer les modifications
+                </button>
+            {{ form_end(form) }}
+
+            {# Modal pour le crop d'image #}
+            <div class="hidden"
+                 data-avatar-crop-target="modal"
+                 data-action="click->avatar-crop#closeModalOnClickOutside"
+                 style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; align-items: center; justify-content: center;">
+                <div style="background: white; padding: 24px; border-radius: 8px; max-width: 500px; width: 90%; margin: 20px;"
+                     onclick="event.stopPropagation()">
+                    <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 16px; color: #333;">Recadrer l'image</h3>
+                    <div style="height: 400px; margin-bottom: 16px; background: #f0f0f0;">
+                        <img data-avatar-crop-target="image" style="max-width: 100%; display: block;">
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                        <button type="button"
+                                style="padding: 8px 16px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer;"
+                                data-action="click->avatar-crop#cancel">
+                            Annuler
+                        </button>
+                        <button type="button"
+                                style="padding: 8px 16px; border: none; border-radius: 4px; background: #3b82f6; color: white; cursor: pointer;"
+                                data-action="click->avatar-crop#crop">
+                            Valider
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Affichage des liens externes si renseignés #}
+        {% if user.externalLink1 or user.externalLink2 or user.externalLink3 %}
+            <div class="bg-[var(--bg-secondary)] p-6 rounded-lg border border-[var(--border)] mb-8">
+                <h2 class="text-lg font-semibold mb-4 text-[var(--text-primary)]">Mes liens</h2>
+                <ul class="space-y-2">
+                    {% if user.externalLink1 %}
+                        <li>
+                            <a href="{{ user.externalLink1 }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline break-all">
+                                {{ user.externalLink1 }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if user.externalLink2 %}
+                        <li>
+                            <a href="{{ user.externalLink2 }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline break-all">
+                                {{ user.externalLink2 }}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if user.externalLink3 %}
+                        <li>
+                            <a href="{{ user.externalLink3 }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline break-all">
+                                {{ user.externalLink3 }}
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {# Section commentaires #}
+        <div class="bg-[var(--bg-secondary)] p-6 rounded-lg border border-[var(--border)]">
+            <h2 class="text-lg font-semibold mb-4 text-[var(--text-primary)]">Mes commentaires</h2>
+            {% if comments is empty %}
+                <p class="text-[var(--text-secondary)]">Vous n'avez pas encore posté de commentaire.</p>
+            {% else %}
+                <div class="space-y-4">
+                    {% for comment in comments %}
+                        <div class="border-b border-[var(--border)] pb-4 last:border-0 last:pb-0">
+                            <div class="flex justify-between items-start mb-2">
+                                <a href="{{ path('app_article_show', {slug: comment.article.slug}) }}"
+                                   class="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline font-medium">
+                                    {{ comment.article.title }}
+                                </a>
+                                <span class="text-xs text-[var(--text-secondary)]">
+                                    {{ comment.createdAt|date('d/m/Y à H:i') }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-[var(--text-secondary)]">
+                                {{ comment.content|slice(0, 150) }}{% if comment.content|length > 150 %}...{% endif %}
+                            </p>
+                            {% if not comment.isApproved %}
+                                <span class="inline-block mt-2 text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
+                                    En attente de validation
+                                </span>
+                            {% else %}
+                                <span class="inline-block mt-2 text-xs px-2 py-1 bg-green-100 text-green-800 rounded">
+                                    Validé
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

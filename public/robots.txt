@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /connexion
+
+Sitemap: https://portfolio.local/sitemap.xml

@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil de {{ user.userName }} - Portfolio{% endblock %}
+
+{% block meta_description %}Profil public de {{ user.userName }}{% endblock %}
+
+{% block body %}
+    <div class="max-w-3xl mx-auto py-8">
+        <div class="mb-8">
+            <a href="{{ app.request.headers.get('referer') ?: path('app_home') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)]">
+                &larr; Retour
+            </a>
+        </div>
+
+        <div class="bg-[var(--bg-secondary)] rounded-lg border border-[var(--border)] p-6 mb-8">
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                {# Avatar #}
+                <div class="flex-shrink-0">
+                    {% if user.avatarName %}
+                        <img src="{{ vich_uploader_asset(user, 'avatarFile') }}"
+                             alt="Avatar de {{ user.userName }}"
+                             class="w-24 h-24 rounded-full object-cover border-2 border-[var(--border)]">
+                    {% else %}
+                        <div class="w-24 h-24 rounded-full bg-[var(--accent)] flex items-center justify-center text-white text-3xl font-bold">
+                            {{ user.userName|slice(0, 1)|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {# Informations #}
+                <div class="flex-1 text-center sm:text-left">
+                    <h1 class="text-2xl font-bold text-[var(--text-primary)] mb-2">{{ user.userName }}</h1>
+
+                    <p class="text-sm text-[var(--text-secondary)] mb-4">
+                        Membre depuis le {{ user.createdAt|date('d/m/Y') }}
+                    </p>
+
+                    {% if user.biography %}
+                        <p class="text-[var(--text-primary)] mb-4">{{ user.biography }}</p>
+                    {% endif %}
+
+                    {# Liens externes #}
+                    {% set links = [user.externalLink1, user.externalLink2, user.externalLink3]|filter(link => link is not null and link is not empty) %}
+                    {% if links|length > 0 %}
+                        <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
+                            {% for link in links %}
+                                <a href="{{ link }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1 text-[var(--accent)] hover:text-[var(--accent-hover)] text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                    {{ link|replace({'https://': '', 'http://': '', 'www.': ''})|split('/')[0]|slice(0, 30) }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Commentaires publics #}
+        <section>
+            <h2 class="text-xl font-semibold mb-4 text-[var(--text-primary)]">
+                Commentaires ({{ comments|length }})
+            </h2>
+
+            {% for comment in comments %}
+                <div class="bg-[var(--bg-secondary)] rounded-lg border border-[var(--border)] p-4 mb-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <a href="{{ path('app_article_show', {slug: comment.article.slug}) }}"
+                           class="font-medium text-[var(--accent)] hover:text-[var(--accent-hover)]">
+                            {{ comment.article.title }}
+                        </a>
+                        <time class="text-xs text-[var(--text-secondary)]"
+                              datetime="{{ comment.createdAt|date('Y-m-d') }}">
+                            {{ comment.createdAt|date('d/m/Y') }}
+                        </time>
+                    </div>
+                    <p class="text-[var(--text-primary)] text-sm">
+                        {{ comment.content|slice(0, 200) }}{% if comment.content|length > 200 %}...{% endif %}
+                    </p>
+                </div>
+            {% else %}
+                <p class="text-[var(--text-secondary)]">Aucun commentaire public.</p>
+            {% endfor %}
+        </section>
+    </div>
+{% endblock %}

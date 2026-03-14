@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Portfolio Développeur PHP/Symfony{% endblock %}
+
+{% block body %}
+    {# Hero #}
+    <section class="text-center py-16">
+        <h1 class="text-4xl font-bold mb-4">Développeur PHP/Symfony</h1>
+        <p class="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">
+            Bienvenue sur mon portfolio. Découvrez mes projets, mon parcours et mes articles.
+        </p>
+    </section>
+
+    {# CV #}
+    <section id="cv" class="py-12">
+        <div class="flex items-center justify-between mb-10">
+            <h2 class="text-3xl font-bold">Curriculum Vitae</h2>
+            <a href="{{ path('app_cv') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium">
+                Voir le CV complet &rarr;
+            </a>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            {# Compétences #}
+            <div class="bg-[var(--bg-secondary)] rounded-lg p-6 border border-[var(--border)]">
+                <h3 class="text-xl font-semibold mb-4 text-[var(--accent)]">Compétences</h3>
+                <ul class="space-y-2 text-[var(--text-secondary)]">
+                    <li>PHP 8 / Symfony 7</li>
+                    <li>Doctrine ORM / MySQL / MariaDB</li>
+                    <li>HTML5 / CSS3 / Tailwind CSS</li>
+                    <li>JavaScript / Stimulus</li>
+                    <li>Docker / Git / CI-CD</li>
+                    <li>API REST / Tests unitaires</li>
+                </ul>
+            </div>
+
+            {# Expériences #}
+            <div class="bg-[var(--bg-secondary)] rounded-lg p-6 border border-[var(--border)]">
+                <h3 class="text-xl font-semibold mb-4 text-[var(--accent)]">Expériences</h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="font-medium">Développeur PHP/Symfony</p>
+                        <p class="text-sm text-[var(--text-secondary)]">Entreprise XYZ - 2023-2026</p>
+                        <p class="text-sm text-[var(--text-secondary)] mt-1">Développement d'applications web, API REST, intégration continue.</p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Développeur Web Junior</p>
+                        <p class="text-sm text-[var(--text-secondary)]">Agence ABC - 2021-2023</p>
+                        <p class="text-sm text-[var(--text-secondary)] mt-1">Création de sites WordPress et Symfony, maintenance applicative.</p>
+                    </div>
+                </div>
+            </div>
+
+            {# Formations #}
+            <div class="bg-[var(--bg-secondary)] rounded-lg p-6 border border-[var(--border)]">
+                <h3 class="text-xl font-semibold mb-4 text-[var(--accent)]">Formations</h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="font-medium">Licence Informatique</p>
+                        <p class="text-sm text-[var(--text-secondary)]">Université - 2020</p>
+                    </div>
+                    <div>
+                        <p class="font-medium">BTS SIO option SLAM</p>
+                        <p class="text-sm text-[var(--text-secondary)]">Lycée - 2018</p>
+                    </div>
+                    <div>
+                        <p class="font-medium">Certifications Symfony</p>
+                        <p class="text-sm text-[var(--text-secondary)]">SymfonyCasts - 2022</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Derniers articles #}
+    {% if latestArticles is not empty %}
+    <section class="py-12">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-bold">Derniers articles</h2>
+            <a href="{{ path('app_article_index') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium">
+                Voir tous les articles &rarr;
+            </a>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            {% for article in latestArticles %}
+                <twig:ArticleCard :article="article" />
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {# Contact #}
+    <section id="contact" class="py-12">
+        <h2 class="text-3xl font-bold mb-8 text-center">Contact</h2>
+        <div class="max-w-lg mx-auto bg-[var(--bg-secondary)] rounded-lg p-8 border border-[var(--border)] text-center">
+            <p class="text-[var(--text-secondary)] mb-4">
+                Vous souhaitez me contacter ? Remplissez le formulaire ci-dessous et je vous répondrai dans les plus brefs délais.
+            </p>
+            <a href="{{ path('app_contact') }}"
+               class="inline-block px-6 py-3 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-colors font-medium">
+                Me contacter
+            </a>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,79 @@
+# EasyAdmin - Dashboard
+"Portfolio - Administration": "Portfolio - Administration"
+"Tableau de bord": "Tableau de bord"
+"Retour au site": "Retour au site"
+
+# EasyAdmin - Menu
+"Articles": "Articles"
+"Article": "Article"
+"Catégories": "Catégories"
+"Catégorie": "Catégorie"
+"Utilisateurs": "Utilisateurs"
+"Utilisateur": "Utilisateur"
+
+# EasyAdmin - Menu Pages
+"Pages": "Pages"
+"Page": "Page"
+
+# EasyAdmin - Champs Article
+"Titre": "Titre"
+"Contenu": "Contenu"
+"Extrait": "Extrait"
+"Image": "Image"
+"Publié": "Publié"
+"Date de publication": "Date de publication"
+"Créé le": "Créé le"
+"Modifié le": "Modifié le"
+
+# EasyAdmin - Champs Category
+"Couleur": "Couleur"
+"Description": "Description"
+"Niveau": "Niveau"
+
+# EasyAdmin - Champs User
+"ID": "ID"
+"Email": "Email"
+"Nom d'utilisateur": "Nom d'utilisateur"
+"Mot de passe": "Mot de passe"
+"Rôles": "Rôles"
+"Administrateur": "Administrateur"
+
+# EasyAdmin - Champs User (statuts)
+"Statut": "Statut"
+"Inscrit le": "Inscrit le"
+"Activé": "Activé"
+"Non activé": "Non activé"
+"Banni": "Banni"
+
+# EasyAdmin - Champs communs
+"Identifiant URL": "Identifiant URL"
+
+# EasyAdmin - Champs Commentaire
+"Approuvé": "Approuvé"
+
+# EasyAdmin - Menu Commentaires & Notes
+"Commentaires": "Commentaires"
+"Commentaire": "Commentaire"
+"Notes": "Notes"
+"Note": "Note"
+
+# Formulaire de commentaire
+"Écrivez votre commentaire...": "Écrivez votre commentaire..."
+
+# Formulaire de contact
+"Nom": "Nom"
+"Votre nom": "Votre nom"
+"votre@email.com": "votre@email.com"
+"Message": "Message"
+"Votre message...": "Votre message..."
+
+# Formulaire de profil
+"Présentation": "Présentation"
+"Parlez-nous de vous en quelques mots...": "Parlez-nous de vous en quelques mots..."
+"Lien externe 1": "Lien externe 1"
+"Lien externe 2": "Lien externe 2"
+"Lien externe 3": "Lien externe 3"
+"https://exemple.com": "https://exemple.com"
+
+# Formulaire d'inscription
+"Confirmer le mot de passe": "Confirmer le mot de passe"

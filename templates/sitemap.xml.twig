@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>{{ url('app_home') }}</loc>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>{{ url('app_article_index') }}</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    {% for article in articles %}
+    <url>
+        <loc>{{ url('app_article_show', {slug: article.slug}) }}</loc>
+        {% if article.updatedAt %}
+        <lastmod>{{ article.updatedAt|date('Y-m-d') }}</lastmod>
+        {% elseif article.publishedAt %}
+        <lastmod>{{ article.publishedAt|date('Y-m-d') }}</lastmod>
+        {% endif %}
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    {% endfor %}
+</urlset>

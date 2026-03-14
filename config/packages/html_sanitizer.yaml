@@ -1,0 +1,25 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            article_sanitizer:
+                allow_safe_elements: true
+                allow_elements:
+                    a: ['href', 'title', 'target']
+                    img: ['src', 'alt', 'title', 'width', 'height', 'style']
+                    figure: ['class']
+                    figcaption: ['class']
+                    iframe: ['src', 'width', 'height']
+                    table: ['class', 'style']
+                    thead: []
+                    tbody: []
+                    tr: []
+                    th: ['style', 'colspan', 'rowspan']
+                    td: ['style', 'colspan', 'rowspan']
+                    video: ['src', 'controls', 'width', 'height']
+                    source: ['src', 'type']
+                    span: ['style', 'class']
+                    div: ['style', 'class']
+                    hr: []
+                    sub: []
+                    sup: []
+                force_https_urls: true

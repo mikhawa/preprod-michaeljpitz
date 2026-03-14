@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page ? page.title : 'RGPD - Politique de confidentialité' }}{% endblock %}
+{% block meta_description %}Politique de confidentialité et protection des données personnelles conformément au RGPD.{% endblock %}
+
+{% block body %}
+    {% if page and page.content %}
+        <article class="max-w-3xl mx-auto py-8">
+            <h1 class="text-3xl font-bold mb-8">{{ page.title }}</h1>
+
+            {% if page.featuredImage %}
+                <figure class="mb-8">
+                    <img src="{{ '/uploads/pages/' ~ page.featuredImage }}"
+                         alt="{{ page.title }}"
+                         class="w-full rounded-lg">
+                </figure>
+            {% endif %}
+
+            <div class="prose prose-lg max-w-none
+                        text-[var(--text-primary)]
+                        [&_a]:text-[var(--accent)] [&_a]:hover:text-[var(--accent-hover)]
+                        [&_h2]:text-[var(--text-primary)] [&_h3]:text-[var(--text-primary)]
+                        [&_blockquote]:border-[var(--accent)] [&_blockquote]:text-[var(--text-secondary)]
+                        [&_code]:bg-[var(--bg-secondary)] [&_code]:px-1 [&_code]:rounded
+                        [&_pre]:bg-[var(--bg-secondary)] [&_pre]:border [&_pre]:border-[var(--border)]"
+                 data-controller="external-link lightbox">
+                {{ page.content|raw }}
+            </div>
+        </article>
+    {% else %}
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold mb-8">Politique de confidentialité (RGPD)</h1>
+
+            <section class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-[var(--accent)]">Collecte des données</h2>
+                <p class="text-[var(--text-secondary)] leading-relaxed mb-4">
+                    Ce site collecte des données personnelles uniquement dans le cadre de son fonctionnement normal :
+                </p>
+                <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-2 ml-4">
+                    <li>Formulaire de contact : nom, adresse e-mail, message</li>
+                    <li>Inscription : nom d'utilisateur, adresse e-mail, mot de passe (hashé)</li>
+                    <li>Commentaires : contenu du commentaire associé à votre compte</li>
+                </ul>
+            </section>
+
+            <section class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-[var(--accent)]">Utilisation des données</h2>
+                <p class="text-[var(--text-secondary)] leading-relaxed mb-4">
+                    Les données collectées sont utilisées exclusivement pour :
+                </p>
+                <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-2 ml-4">
+                    <li>Répondre à vos demandes de contact</li>
+                    <li>Gérer votre compte utilisateur</li>
+                    <li>Afficher vos commentaires sur les articles</li>
+                </ul>
+                <p class="text-[var(--text-secondary)] leading-relaxed mt-4">
+                    Aucune donnée n'est transmise à des tiers ni utilisée à des fins commerciales.
+                </p>
+            </section>
+
+            <section class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-[var(--accent)]">Cookies</h2>
+                <p class="text-[var(--text-secondary)] leading-relaxed mb-4">
+                    Ce site utilise uniquement des cookies techniques nécessaires à son fonctionnement :
+                </p>
+                <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-2 ml-4">
+                    <li>Cookie de session (authentification)</li>
+                    <li>Cookie de préférence de thème (clair/sombre)</li>
+                </ul>
+                <p class="text-[var(--text-secondary)] leading-relaxed mt-4">
+                    Aucun cookie de pistage ou publicitaire n'est utilisé.
+                </p>
+            </section>
+
+            <section class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-[var(--accent)]">Vos droits</h2>
+                <p class="text-[var(--text-secondary)] leading-relaxed mb-4">
+                    Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :
+                </p>
+                <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-2 ml-4">
+                    <li>Droit d'accès à vos données personnelles</li>
+                    <li>Droit de rectification de vos données</li>
+                    <li>Droit à l'effacement de vos données</li>
+                    <li>Droit à la portabilité de vos données</li>
+                    <li>Droit d'opposition au traitement de vos données</li>
+                </ul>
+            </section>
+
+            <section class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4 text-[var(--accent)]">Contact</h2>
+                <p class="text-[var(--text-secondary)] leading-relaxed">
+                    Pour exercer vos droits ou pour toute question relative à la protection de vos données,
+                    vous pouvez nous contacter via la page
+                    <a href="{{ path('app_contact') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] underline">Contact</a>.
+                </p>
+            </section>
+        </div>
+    {% endif %}
+{% endblock %}

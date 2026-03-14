@@ -1,0 +1,56 @@
+# Utiliser le front controller de Symfony
+# Documentation : https://symfony.com/doc/current/setup/web_server_configuration.html
+
+DirectoryIndex index.php
+
+# Desactiver le listage de repertoires
+Options -MultiViews -Indexes
+
+# Activer la reecriture d'URL
+RewriteEngine On
+
+# Rediriger vers HTTPS en production
+# Decommenter les 3 lignes suivantes une fois le certificat SSL installe
+# RewriteCond %{HTTPS} off
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Si le projet n'est pas a la racine du domaine, ajuster le RewriteBase
+# Exemple : RewriteBase /sous-dossier
+# RewriteBase /
+
+# Rediriger les requetes qui ne correspondent pas a un fichier/dossier vers index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Bloquer l'acces direct aux fichiers PHP autres qu'index.php
+<FilesMatch "\.php$">
+    Require all denied
+</FilesMatch>
+<Files "index.php">
+    Require all granted
+</Files>
+
+# Bloquer l'acces aux fichiers sensibles
+<FilesMatch "(^\.|composer\.(json|lock)|package\.json|\.env|\.gitignore)$">
+    Require all denied
+</FilesMatch>
+
+# Cache des assets statiques (1 an, AssetMapper gere le versioning)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+</IfModule>
+
+# Compression gzip
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
+</IfModule>

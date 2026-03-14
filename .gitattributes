@@ -1,0 +1,12 @@
+# Fichiers exclus des archives de deploiement (git archive / export)
+/.claude                export-ignore
+/.env.test              export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/docker                 export-ignore
+/docker-compose.yml     export-ignore
+/documentation          export-ignore
+/phpunit.dist.xml       export-ignore
+/tests                  export-ignore
+/CLAUDE.md              export-ignore
+/CLAUDE_MODEL.md        export-ignore
+/RACCOURCIS.md          export-ignore
