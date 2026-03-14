@@ -38,6 +38,8 @@ RUN pecl install apcu xdebug \
 
 # Configurer la locale française pour ICU/intl
 ENV LC_ALL=fr_FR.UTF-8
+# $ENV : fichier chargé par sh/ash au démarrage d'un shell interactif (POSIX)
+ENV ENV=/etc/profile.d/aliases.sh
 RUN echo "intl.default_locale = fr" > /usr/local/etc/php/conf.d/intl.ini
 
 # Limites d'upload à 12 Mo
