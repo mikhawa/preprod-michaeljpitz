@@ -1,23 +1,16 @@
-# cv-mikhawa
+# Perprod de michaeljpitz.com
  
-# CV de Michael Pitz
+# Site de Michael Pitz
 
-La première version de mon CV.
+La première version de mon site personnel, développé avec Symfony 7.4, Tailwind CSS et Docker. Le projet est hébergé sur GitHub :
 
-La `main` est la version `1.7.1`
+https://github.com/mikhawa/preprod-michaeljpitz
 
-La deuxième version en cours commencera à la version `2.0.0`
 
-La troisième version en cours commencera à la version `alpha1`
 
-La quatrième version en cours commencera à la version `2.2.3`
+### URL de la version preprod :
 
-La cinquième version en cours commencera à la version `v2.3.1`
-
-https://github.com/mikhawa/cv-mikhawa/
-
-### URL de la version alpha1 :
-https://alpha1.michaeljpitz.com/
+https://preprod.michaeljpitz.com/
 
 
 #### Admin
