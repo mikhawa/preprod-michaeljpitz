@@ -1,0 +1,96 @@
+name: Tests CI
+
+on:
+  push:
+    branches:
+      - "dev/**"
+  pull_request:
+    branches:
+      - main
+      - dev/main
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} / MariaDB 10.11
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    strategy:
+      matrix:
+        php: ["8.3"]
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: preprod
+          MYSQL_USER: preprod
+          MYSQL_PASSWORD: preprod
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ctype, iconv, intl, pdo_mysql
+          coverage: none
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Installation des dépendances Composer
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Vérification du composer.json
+        run: composer validate --strict
+
+      - name: Lint Twig
+        run: php bin/console lint:twig templates/ --env=test
+
+      - name: Lint YAML
+        run: php bin/console lint:yaml config/ --env=test
+
+      - name: Lint conteneur Symfony
+        run: php bin/console lint:container --env=test
+
+      - name: Analyse statique PHPStan
+        run: vendor/bin/phpstan analyse src --level=8 --no-progress
+
+      - name: Compilation Tailwind CSS
+        run: php bin/console tailwind:build
+
+      - name: Initialisation de la base de données de test
+        run: |
+          mysql -uroot -proot -h127.0.0.1 -e "
+            CREATE DATABASE IF NOT EXISTS preprod_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+            GRANT ALL PRIVILEGES ON preprod_test.* TO 'preprod'@'%';
+            FLUSH PRIVILEGES;
+          "
+        env:
+          DATABASE_URL: mysql://preprod:preprod@127.0.0.1:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4
+
+      - name: Migration de la base de données de test
+        run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
+        env:
+          DATABASE_URL: mysql://preprod:preprod@127.0.0.1:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4
+
+      - name: Lancement des tests PHPUnit
+        run: php bin/phpunit --no-coverage
+        env:
+          DATABASE_URL: mysql://preprod:preprod@127.0.0.1:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4

@@ -11,8 +11,6 @@ alias uphp='docker compose exec php sh'
 alias dphp='docker compose exec -it php bash'
 alias dup='docker compose up -d --build'
 alias ddo='docker compose down'
-alias phpfix='./vendor/bin/php-cs-fixer fix'
-alias asset='php bin/console asset-map:compile'
 ```
 
 
@@ -20,14 +18,31 @@ alias asset='php bin/console asset-map:compile'
 ### Symfony Commands
 ### ----------------------
 ```bash
+# --- Symfony ---
 alias pbc='php bin/console'
-alias ddc='php bin/console doctrine:database:create'
-alias sssd='symfony serve -d'
-alias sss='symfony server:stop'
-alias dfl='php bin/console doctrine:fixture:load'
-alias test='vendor/bin/phpunit --testdox'
-alias csfix='./vendor/bin/php-cs-fixer fix'
+alias cc='php bin/console cache:clear'
+alias lint='php bin/console lint:twig templates/ && php bin/console lint:yaml config/ && php bin/console lint:container'
+alias asset='php bin/console asset-map:compile'
 alias wind='php bin/console tailwind:build'
+# --- Doctrine ---
+alias ddc='php bin/console doctrine:database:create'
+alias ddrop='php bin/console doctrine:database:drop --force'
+alias dds='php bin/console doctrine:schema:validate'
+alias mm='php bin/console make:migration'
+alias migrate='php bin/console doctrine:migrations:migrate --no-interaction'
+alias dfl='php bin/console doctrine:fixtures:load --no-interaction'
+# --- Tests ---
+alias test='php bin/phpunit --no-coverage'
+alias testv='php bin/phpunit --no-coverage --testdox'
+# --- Qualité ---
+alias phpstan='vendor/bin/phpstan analyse src --level=8'
+alias csfix='./vendor/bin/php-cs-fixer fix'
+alias phpfix='./vendor/bin/php-cs-fixer fix'
+# --- Composer ---
+alias ci='composer install'
+alias cu='composer update'
+alias cval='composer validate --strict'
+alias caudit='composer audit'
 ```
 
 ### ----------------------
@@ -48,29 +63,6 @@ URL de WSL bureau CF2m
 \\wsl.localhost\Ubuntu2\home\mikhawa
 
 
-### ----------------------
-### Claude Code Skills (slash commands)
-### ----------------------
-
-| Commande | Arguments | Description |
-|----------|-----------|-------------|
-| `/validate` | aucun | Validation complète du projet : composer validate, lint twig/yaml/container, phpstan, cs-fixer (dry-run), audit. S'arrête à la première erreur. |
-| `/test` | `[fichier\|--filter nom]` | Lance les tests PHPUnit dans Docker. Sans argument = tous les tests. |
-| `/csfix` | aucun | Corrige automatiquement le style de code avec PHP CS Fixer. |
-| `/pre-commit` | aucun | Vérification pré-commit complète (validation + analyse + tests + audit). Verdict OK/KO. |
-| `/new-test` | `<chemin/source.php>` | Crée le test unitaire ou fonctionnel correspondant à un fichier source. |
-
-Exemples :
-```
-/validate
-/test tests/Unit/Entity/UserTest.php
-/test --filter testLogin
-/csfix
-/pre-commit
-/new-test src/Controller/HomeController.php
-```
-
-Les commandes sont définies dans `.claude/commands/*.md`.
 
 ---
 

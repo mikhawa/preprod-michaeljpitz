@@ -22,13 +22,14 @@ services:
     image: mariadb:10.11
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: portfolio
-      MYSQL_USER: portfolio
-      MYSQL_PASSWORD: portfolio
+      MYSQL_DATABASE: preprod
+      MYSQL_USER: preprod
+      MYSQL_PASSWORD: preprod
     ports:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./docker/mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
   phpmyadmin:
     image: phpmyadmin:latest
@@ -36,8 +37,8 @@ services:
       - "8081:80"
     environment:
       PMA_HOST: mariadb
-      PMA_USER: portfolio
-      PMA_PASSWORD: portfolio
+      PMA_USER: preprod
+      PMA_PASSWORD: preprod
     depends_on:
       - mariadb
 

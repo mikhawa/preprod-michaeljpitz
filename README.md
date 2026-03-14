@@ -17,6 +17,12 @@ https://github.com/mikhawa/preprod-michaeljpitz
  | phpMyAdmin            | 8081 | http://localhost:8081/               |
  | SMTP Mailpit          | 1025 | smtp://mailpit:1025 (interne Docker) |
 | Interface web Mailpit | 8025 | http://localhost:8025                |
+Ne pas oublier les : 
+
+    composer update
+    # et
+    php bin/console tailwind:build
+
 
 
 ### URL de la version preprod :
