@@ -85,13 +85,13 @@ Claude Code dispose de sous-agents specialises. Voici comment les utiliser effic
 ### 3.1 Agent `Explore` — Recherche et comprehension du code
 
 **Quand l'utiliser :**
-- Comprendre comment une fonctionnalite existante est implementee
+- Comprendre comment une fonctionnalité existante est implémentée
 - Trouver tous les fichiers lies a un concept (ex: "comment fonctionne l'authentification ?")
-- Analyser les patterns utilises dans le projet
+- Analyser les patterns utilisés dans le projet
 
 **Quand NE PAS l'utiliser :**
 - Pour chercher un fichier precis dont on connait le nom (utiliser `Glob`)
-- Pour chercher une chaine de caracteres precise (utiliser `Grep`)
+- Pour chercher une chaine de caractères precise (utiliser `Grep`)
 
 **Bonnes pratiques :**
 - Specifier le niveau de profondeur : "quick", "medium" ou "very thorough"
