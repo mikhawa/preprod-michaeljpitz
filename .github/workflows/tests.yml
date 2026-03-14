@@ -72,6 +72,9 @@ jobs:
       - name: Analyse statique PHPStan
         run: vendor/bin/phpstan analyse src --level=8 --no-progress
 
+      - name: Compilation Tailwind CSS
+        run: php bin/console tailwind:build
+
       - name: Initialisation de la base de données de test
         run: |
           mysql -uroot -proot -h127.0.0.1 -e "
