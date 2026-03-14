@@ -13,6 +13,8 @@ jobs:
   tests:
     name: PHP ${{ matrix.php }} / MariaDB 10.11
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     strategy:
       matrix:
@@ -78,4 +80,4 @@ jobs:
       - name: Lancement des tests PHPUnit
         run: php bin/phpunit --no-coverage
         env:
-          DATABASE_URL: mysql://preprod:preprod@127.0.0.1:3306/preprod_test?serverVersion=10.11.0-MariaDB&charset=utf8mb4
+          DATABASE_URL: mysql://preprod:preprod@127.0.0.1:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4
