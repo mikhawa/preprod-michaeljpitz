@@ -1,17 +1,23 @@
-# Perprod de michaeljpitz.com
- 
-# Site de Michael Pitz
+# Preprod de michaeljpitz.com
 
-La première version de mon site personnel, développé avec Symfony 7.4, Tailwind CSS et Docker. Le projet est hébergé sur GitHub :
+Surnommé mikhawa, je suis un développeur web passionné avec une solide expérience en Symfony, Devops et bases de données. Ce projet représente la seconde version de mon site personnel, conçu pour mettre en valeur mes compétences et projets.
+ 
+## Site de Michael J. Pitz
+
+### Version 2
+
+Copié de la section "Version 2" du README.md de mon projet GitHub, voici une présentation détaillée de la seconde version de mon site personnel, développée avec Symfony 7.4, Tailwind CSS et Docker. Le projet est hébergé sur GitHub :
 
 https://github.com/mikhawa/preprod-michaeljpitz
-
 
 
 ### URL de la version preprod :
 
 https://preprod.michaeljpitz.com/
 
+### Version 1
+
+Il s'agit de la deuxième version du site, qui se trouve sur github à l'URL suivante : https://github.com/mikhawa/cv-mikhawa et qui se trouve en ligne à l'URL suivante : https://alpha1.michaeljpitz.com/
 
 #### Admin
 
