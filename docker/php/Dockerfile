@@ -77,13 +77,6 @@ RUN printf '%s\n' \
     "alias cu='composer update'" \
     "alias cval='composer validate --strict'" \
     "alias caudit='composer audit'" \
-    '# --- Git ---' \
-    "alias gs='git status'" \
-    "alias ga='git add .'" \
-    "alias gc='git commit'" \
-    "alias gps='git push'" \
-    "alias gpu='git pull'" \
-    "alias gl='git log --oneline --graph --decorate -15'" \
     > /etc/profile.d/aliases.sh \
     && chmod +x /etc/profile.d/aliases.sh \
     && echo 'source /etc/profile.d/aliases.sh' >> /root/.bashrc
