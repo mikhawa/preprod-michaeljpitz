@@ -48,29 +48,6 @@ URL de WSL bureau CF2m
 \\wsl.localhost\Ubuntu2\home\mikhawa
 
 
-### ----------------------
-### Claude Code Skills (slash commands)
-### ----------------------
-
-| Commande | Arguments | Description |
-|----------|-----------|-------------|
-| `/validate` | aucun | Validation complète du projet : composer validate, lint twig/yaml/container, phpstan, cs-fixer (dry-run), audit. S'arrête à la première erreur. |
-| `/test` | `[fichier\|--filter nom]` | Lance les tests PHPUnit dans Docker. Sans argument = tous les tests. |
-| `/csfix` | aucun | Corrige automatiquement le style de code avec PHP CS Fixer. |
-| `/pre-commit` | aucun | Vérification pré-commit complète (validation + analyse + tests + audit). Verdict OK/KO. |
-| `/new-test` | `<chemin/source.php>` | Crée le test unitaire ou fonctionnel correspondant à un fichier source. |
-
-Exemples :
-```
-/validate
-/test tests/Unit/Entity/UserTest.php
-/test --filter testLogin
-/csfix
-/pre-commit
-/new-test src/Controller/HomeController.php
-```
-
-Les commandes sont définies dans `.claude/commands/*.md`.
 
 ---
 
