@@ -10,6 +10,14 @@ Copié de la section "Version 2" du README.md de mon projet GitHub, voici une pr
 
 https://github.com/mikhawa/preprod-michaeljpitz
 
+### URL de la version de développement :
+| Service               | Port | URL                                  |
+|-----------------------|------|--------------------------------------|
+ | Site web              | 8080 | http://localhost:8080                |
+ | phpMyAdmin            | 8081 | http://localhost:8081/               |
+ | SMTP Mailpit          | 1025 | smtp://mailpit:1025 (interne Docker) |
+| Interface web Mailpit | 8025 | http://localhost:8025                |
+
 
 ### URL de la version preprod :
 
