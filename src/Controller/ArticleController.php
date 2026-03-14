@@ -19,6 +19,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -29,6 +30,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ArticleController extends AbstractController
 {
+    public function __construct(
+        #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
+        private readonly string $emailFrom,
+    ) {
+    }
+
     #[Route('/articles', name: 'app_article_index')]
     public function index(
         Request $request,
@@ -127,7 +134,7 @@ class ArticleController extends AbstractController
                 );
 
                 $adminNotification = (new TemplatedEmail())
-                    ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa'))
+                    ->from(new Address($this->emailFrom, 'CV Mikhawa'))
                     ->to('contact@alpha1.michaeljpitz.com')
                     ->subject('Nouveau commentaire - '.$article->getTitle())
                     ->htmlTemplate('email/new_comment_notification.html.twig')

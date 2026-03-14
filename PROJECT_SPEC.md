@@ -66,8 +66,7 @@ Site personnel présentant mon CV de développeur PHP/Symfony et un système de 
 
 | Option | Avantages | Documentation |
 |--------|-----------|---------------|
-| **Trix** (recommandé) | Léger, intégré EasyAdmin, gratuit | https://trix-editor.org/ |
-| **TinyMCE** | Complet, gratuit (core) | https://www.tiny.cloud/docs/ |
+| **suneditor** | Léger, facile à intégrer via importmap | |
 
 ---
 

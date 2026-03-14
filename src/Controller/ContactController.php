@@ -26,6 +26,8 @@ class ContactController extends AbstractController
         private readonly string $turnstileSiteKey,
         #[Autowire('%env(CONTACT_FALLBACK_EMAIL)%')]
         private readonly string $fallbackEmail,
+        #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
+        private readonly string $emailFrom,
     ) {
     }
 
@@ -59,7 +61,7 @@ class ContactController extends AbstractController
             $adminEmail = $this->getAdminEmail() ?? $this->fallbackEmail;
 
             $email = (new TemplatedEmail())
-                ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa - Contact'))
+                ->from(new Address($this->emailFrom, 'CV Mikhawa - Contact'))
                 ->to('contact@alpha1.michaeljpitz.com')
                 ->replyTo(new Address($data['email'], $data['name']))
                 ->subject('Nouveau message de contact - '.$data['name'])

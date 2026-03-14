@@ -19,11 +19,22 @@ Portfolio CV + blog website for a PHP/Symfony developer. French-language site wi
 - **Stimulus.js** + **Symfony UX Turbo** + **Twig Components**
 - **EasyAdmin 4.x** for admin interface
 - **VichUploaderBundle** for image uploads
-- **Trix** (recommended) or **TinyMCE** for WYSIWYG editor
+- **suneditor** for WYSIWYG editing (via importmap)
+- **Cloudflare Turnstile** for CAPTCHA in contact form
+- **HtmlSanitizer** for sanitizing WYSIWYG content
+- **PHPUnit 10.x** for testing
+- **GitHub Actions** for CI/CD (linting, tests, security checks)
 
 ## Development Environment
 
 Docker Compose with 4 services: PHP 8.3-FPM, Nginx (port 8080), MariaDB 10.11 (port 3306), phpMyAdmin (port 8081). Run under Ubuntu WSL2.
+
+## Choix du modèle Claude : 
+
+Voir les règles d'attribution des modèles dans `.claude/models.md`. En résumé :
+- Tâches complexes (architecture, sécurité, refactoring majeur) : Claude Opus
+- Tâches intermédiaires (controllers avec logique métier, services, tests fonctionnels) : Claude Sonnet
+- Tâches simples/répétitives (CRUD basique, migrations, composants Stimulus simples) : Claude Haiku
 
 ## Build & Verification Commands
 
