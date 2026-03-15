@@ -46,6 +46,11 @@ Pour créer un admin :
 php bin/console app:create-admin le_mail le_password le_username
 ```
 
+### Utilisateurs de test
+
+| Email                            | Mot de passe | Username |
+|----------------------------------|-------------|----------|
+|m.ichaeljpitz@gmail.com| 123Mickey   | Mickey   |
 
 ### Fonctionnalités implémentées
 
