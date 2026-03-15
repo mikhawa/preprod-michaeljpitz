@@ -28,8 +28,10 @@ Site personnel en Symfony 7.4 LTS.
 | Mailpit (SMTP/UI) | 1025 / 8025 |
 
 **Branches** :
-- `main` : branche principale
+- `main` : branche de début de projet, jamais modifiée après la création initiale
+- `dev/main` : branche de développement principal, toujours à jour avec les dernières modifications validées
 - `dev/*` : branches de développement local
+- `preprod/main` : branche de préproduction, synchronisée avec `dev/main` après validation des fonctionnalités
 - `preprod/*` : branches de développement distant
 
 **Emails** :
