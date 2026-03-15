@@ -14,6 +14,7 @@ use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\CommentRepository;
 use App\Repository\RatingRepository;
+use App\Service\TurnstileValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -31,6 +32,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ArticleController extends AbstractController
 {
     public function __construct(
+        private readonly TurnstileValidator $turnstileValidator,
+        #[Autowire('%env(TURNSTILE_SITE_KEY)%')]
+        private readonly string $turnstileSiteKey,
         #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
         private readonly string $emailFrom,
         #[Autowire('%env(ADMIN_EMAIL)%')]
@@ -118,6 +122,20 @@ class ArticleController extends AbstractController
             $commentForm->handleRequest($request);
 
             if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+                $turnstileEnabled = !empty($this->turnstileSiteKey)
+                    && 'YOUR_TURNSTILE_SITE_KEY' !== $this->turnstileSiteKey
+                    && !str_starts_with($this->turnstileSiteKey, '1x00000000000000000000');
+
+                if ($turnstileEnabled) {
+                    $turnstileToken = $request->request->getString('cf-turnstile-response');
+
+                    if (!$this->turnstileValidator->validate($turnstileToken, $request->getClientIp())) {
+                        $this->addFlash('error', 'La vérification anti-robot a échoué. Veuillez réessayer.');
+
+                        return $this->redirectToRoute('app_article_show', ['slug' => $article->getSlug()]);
+                    }
+                }
+
                 $comment->setUser($user);
                 $comment->setArticle($article);
 
@@ -171,6 +189,7 @@ class ArticleController extends AbstractController
             'averageRating' => $averageRating,
             'ratingCount' => $ratingCount,
             'userRating' => $userRating,
+            'turnstileSiteKey' => $this->turnstileSiteKey,
         ]);
     }
 

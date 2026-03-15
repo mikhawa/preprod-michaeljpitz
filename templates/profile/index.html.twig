@@ -34,7 +34,7 @@
 
         {# Formulaire de modification du profil #}
         <div data-controller="avatar-crop">
-            {{ form_start(form, {attr: {class: 'bg-[var(--bg-secondary)] p-6 rounded-lg border border-[var(--border)] mb-8'}}) }}
+            {{ form_start(form, {attr: {class: 'bg-[var(--bg-secondary)] p-6 rounded-lg border border-[var(--border)] mb-8', 'data-turbo': 'false'}}) }}
 
                 {# Avatar avec crop #}
                 <div class="mb-6">
@@ -96,6 +96,12 @@
                     {{ form_widget(form.externalLink3, {attr: {class: 'w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]'}}) }}
                     {{ form_errors(form.externalLink3) }}
                 </div>
+
+                {% if turnstileSiteKey is defined and turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' and not (turnstileSiteKey starts with '1x00000000000000000000') %}
+                <div class="flex justify-center mb-6">
+                    <div class="cf-turnstile" data-sitekey="{{ turnstileSiteKey }}" data-theme="auto"></div>
+                </div>
+                {% endif %}
 
                 <button type="submit"
                         class="w-full bg-[var(--accent)] text-white py-2 px-4 rounded-lg hover:bg-[var(--accent-hover)] transition-colors font-medium">
@@ -205,4 +211,11 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if turnstileSiteKey is defined and turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' and not (turnstileSiteKey starts with '1x00000000000000000000') %}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    {% endif %}
 {% endblock %}

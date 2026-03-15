@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegistrationType;
 use App\Repository\UserRepository;
+use App\Service\TurnstileValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +23,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class RegistrationController extends AbstractController
 {
     public function __construct(
+        private readonly TurnstileValidator $turnstileValidator,
+        #[Autowire('%env(TURNSTILE_SITE_KEY)%')]
+        private readonly string $turnstileSiteKey,
         #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
         private readonly string $emailFrom,
         #[Autowire('%env(ADMIN_EMAIL)%')]
@@ -45,6 +49,23 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $turnstileEnabled = !empty($this->turnstileSiteKey)
+                && 'YOUR_TURNSTILE_SITE_KEY' !== $this->turnstileSiteKey
+                && !str_starts_with($this->turnstileSiteKey, '1x00000000000000000000');
+
+            if ($turnstileEnabled) {
+                $turnstileToken = $request->request->getString('cf-turnstile-response');
+
+                if (!$this->turnstileValidator->validate($turnstileToken, $request->getClientIp())) {
+                    $this->addFlash('error', 'La vérification anti-robot a échoué. Veuillez réessayer.');
+
+                    return $this->render('security/register.html.twig', [
+                        'registrationForm' => $form,
+                        'turnstileSiteKey' => $this->turnstileSiteKey,
+                    ], new Response(status: Response::HTTP_UNPROCESSABLE_ENTITY));
+                }
+            }
+
             $user->setPassword(
                 $passwordHasher->hashPassword(
                     $user,
@@ -94,6 +115,7 @@ class RegistrationController extends AbstractController
 
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form,
+            'turnstileSiteKey' => $this->turnstileSiteKey,
         ]);
     }
 
