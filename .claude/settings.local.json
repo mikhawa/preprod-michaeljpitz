@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(php:*)",
+      "Bash(git add:*)",
+      "Bash(chmod:*)"
     ]
   }
 }

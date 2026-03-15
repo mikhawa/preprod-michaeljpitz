@@ -37,7 +37,7 @@ class SecurityControllerTest extends WebTestCase
             '_password' => 'password123',
         ]);
 
-        self::assertResponseRedirects('/');
+        self::assertResponseRedirects('/profil');
     }
 
     public function testLoginWithInvalidCredentials(): void

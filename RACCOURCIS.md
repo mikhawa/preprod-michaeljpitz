@@ -7,6 +7,7 @@
     nano ~/.bashrc
 
 ```bash
+# Dans le bash d'Ubuntu WSL
 alias uphp='docker compose exec php sh'
 alias dphp='docker compose exec -it php bash'
 alias dup='docker compose up -d --build'
@@ -18,6 +19,7 @@ alias ddo='docker compose down'
 ### Symfony Commands
 ### ----------------------
 ```bash
+# Dans l'image PHP 8.3-FPM, dans le bash de WSL après un uphp ou dphp
 # --- Symfony ---
 alias pbc='php bin/console'
 alias cc='php bin/console cache:clear'
@@ -49,6 +51,7 @@ alias caudit='composer audit'
 ### Git Commands
 ### ----------------------
 ```bash
+# Dans la console de Git Bash (Mingw64) sous Windows dans WSL
 alias gs='git status'
 alias ga='git add .'
 alias gc='git commit'

@@ -4,6 +4,9 @@ Surnommé mikhawa, je suis un développeur web passionné avec une solide expér
  
 ## Site de Michael J. Pitz
 
+# TO DO :
+installer Turnstile sur tous les formulaires (contact, login, register, password reset)
+
 ### Version 2
 
 Copié de la section "Version 2" du README.md de mon projet GitHub, voici une présentation détaillée de la seconde version de mon site personnel, développée avec Symfony 7.4, Tailwind CSS et Docker. Le projet est hébergé sur GitHub :
@@ -22,6 +25,8 @@ Ne pas oublier les :
     composer update
     # et
     php bin/console tailwind:build
+    # et création d'un admin pour les tests :
+    php bin/console app:create-admin mikhawa@preprod.michaeljpitz.com 123NousIronsAuxBois321 Michael.J.Pitz 
 
 
 
@@ -35,145 +40,17 @@ Il s'agit de la deuxième version du site, qui se trouve sur github à l'URL sui
 
 #### Admin
 
-Email : michaeljpitz@gmail.com
-
-Password : erapacha1988ZZZ
-
-#### User de test
-
-Email : michael.pitz@cf2m.be
-
-Nom d'utilisateur : Mikhawa
-
-Password : bébéTest1234!
-
-Mail :
-
-https://nicolaspitz.be:8090/snappymail/
-
-Email : contact@alpha1.michaeljpitz.com
-
-Password : 1UgOWwYRSaieQT4kn1zd
-
-### Raccourcis
-
-- [raccourcis](RACCOURCIS.md)
-
-### Pour le développement distant changer ces fichiers en retirant le .back
-/.env.local.back
-/.env.local.php.back
-
-## Installation et démarrage
-
-### Lancer les conteneurs Docker
-```bash
-docker compose up -d --build
-```
-
-### URL d'accès au site
-
-- http://localhost:8080 (Site web)
-- http://localhost:8081/ phpMyAdmin (MariaDB)
-
-### Accéder au conteneur PHP
-```bash 
-docker compose exec php sh
-```
-
-### Installer les dépendances Composer
-```bash
-composer install
-```
-### Créer la base de données et exécuter les migrations
-```bash
-php bin/console doctrine:database:create
-php bin/console doctrine:migrations:migrate
-```
-### tailwind
+Pour créer un admin : 
 
 ```bash
-php bin/console tailwind:build
-```
-### php-cs-fixer (optionnel)
-```bash
-composer require --dev friendsofphp/php-cs-fixer
-```
-Pour formater le code selon les standards PSR-12 :
-```bash
-./vendor/bin/php-cs-fixer fix
+php bin/console app:create-admin le_mail le_password le_username
 ```
 
-### Débogage traductions
+### Utilisateurs de test
 
-```bash
-php bin/console debug:translation fr
-```
-
-### Comptes utilisateurs locaux
-
-Admin initial : 
-
-Email :
-
-    admin@portfolio.local 
-
-UserName :
-
-    admin
-
-Password :
-
-    admin123!  
-
----
-
-User de test :
-
-Email :
-
-
-
-UserName :
-
-    mikhawa
-
-Password :
-
-    Test1234!
-
----
-
-User de test :
-
-Email :
-
-    michael.j.pitz@gmail.com
-
-UserName :
-
-    MikePitz
-
-Password :
-
-    Test12345678910!
-
----
-
-User de test :
-
-Email :
-
-    michael.j.pitz@gmail.com
-
-UserName :
-
-    ElisaPitz
-
-Password :
-
-    mp3mp3mp3
-
-Merci de changer le mot de passe après la première connexion.
+| Email                            | Mot de passe | Username |
+|----------------------------------|-------------|----------|
+|m.ichaeljpitz@gmail.com| 123Mickey   | Mickey   |
 
 ### Fonctionnalités implémentées
 

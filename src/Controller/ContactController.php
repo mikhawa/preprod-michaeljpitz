@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Form\ContactType;
-use App\Repository\UserRepository;
 use App\Service\TurnstileValidator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,12 +19,13 @@ class ContactController extends AbstractController
 {
     public function __construct(
         private readonly MailerInterface $mailer,
-        private readonly UserRepository $userRepository,
         private readonly TurnstileValidator $turnstileValidator,
         #[Autowire('%env(TURNSTILE_SITE_KEY)%')]
         private readonly string $turnstileSiteKey,
-        #[Autowire('%env(CONTACT_FALLBACK_EMAIL)%')]
-        private readonly string $fallbackEmail,
+        #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
+        private readonly string $emailFrom,
+        #[Autowire('%env(ADMIN_EMAIL)%')]
+        private readonly string $adminEmail,
     ) {
     }
 
@@ -56,11 +56,10 @@ class ContactController extends AbstractController
             }
 
             $data = $form->getData();
-            $adminEmail = $this->getAdminEmail() ?? $this->fallbackEmail;
 
             $email = (new TemplatedEmail())
-                ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa - Contact'))
-                ->to('contact@alpha1.michaeljpitz.com')
+                ->from(new Address($this->emailFrom, 'CV Mikhawa - Contact'))
+                ->to($this->adminEmail)
                 ->replyTo(new Address($data['email'], $data['name']))
                 ->subject('Nouveau message de contact - '.$data['name'])
                 ->htmlTemplate('email/contact_notification.html.twig')
@@ -81,21 +80,5 @@ class ContactController extends AbstractController
             'contactForm' => $form,
             'turnstileSiteKey' => $this->turnstileSiteKey,
         ]);
-    }
-
-    private function getAdminEmail(): ?string
-    {
-        $admins = $this->userRepository->createQueryBuilder('u')
-            ->where('u.roles LIKE :role')
-            ->setParameter('role', '%ROLE_ADMIN%')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getResult();
-
-        if (empty($admins)) {
-            return null;
-        }
-
-        return $admins[0]->getEmail();
     }
 }

@@ -93,6 +93,10 @@ class ProfileController extends AbstractController
             }
         }
 
+        if (!is_dir($this->avatarDirectory)) {
+            mkdir($this->avatarDirectory, 0775, true);
+        }
+
         $fileName = uniqid('avatar_', true).'.'.('jpeg' === $extension ? 'jpg' : $extension);
         $filePath = $this->avatarDirectory.'/'.$fileName;
 

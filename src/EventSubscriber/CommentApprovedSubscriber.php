@@ -9,6 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,6 +20,8 @@ class CommentApprovedSubscriber
     public function __construct(
         private readonly MailerInterface $mailer,
         private readonly UrlGeneratorInterface $urlGenerator,
+        #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
+        private readonly string $emailFrom,
     ) {
     }
 
@@ -58,7 +61,7 @@ class CommentApprovedSubscriber
         );
 
         $email = (new TemplatedEmail())
-            ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa'))
+            ->from(new Address($this->emailFrom, 'CV Mikhawa'))
             ->to((string) $user->getEmail())
             ->subject('Votre commentaire a été approuvé')
             ->htmlTemplate('email/comment_approved.html.twig')
