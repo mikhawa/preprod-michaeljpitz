@@ -26,8 +26,14 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
-# Fichiers uploadés
-/public/uploads/
+# Fichiers uploadés (contenu ignoré, structure conservée via .gitkeep)
+/public/uploads/**
+!/public/uploads/avatars/
+!/public/uploads/avatars/.gitkeep
+!/public/uploads/articles/
+!/public/uploads/articles/.gitkeep
+!/public/uploads/pages/
+!/public/uploads/pages/.gitkeep
 
 ###> friendsofphp/php-cs-fixer ###
 /.php-cs-fixer.php

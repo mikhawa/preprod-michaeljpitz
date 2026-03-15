@@ -25,6 +25,8 @@ Ne pas oublier les :
     composer update
     # et
     php bin/console tailwind:build
+    # et création d'un admin pour les tests :
+    php bin/console app:create-admin mikhawa@preprod.michaeljpitz.com 123NousIronsAuxBois321 Michael.J.Pitz 
 
 
 
