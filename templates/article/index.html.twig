@@ -32,7 +32,7 @@
             <a href="{{ path('app_article_index') }}"
                class="inline-block text-sm px-3 py-1 rounded-full border transition-colors
                       {% if currentCategory is null %}bg-[var(--accent)] text-white border-[var(--accent)]{% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}">
-                Toutes
+                Tous
             </a>
             {% for cat in categories %}
                 <a href="{{ path('app_category_show', {slug: cat.slug}) }}"
