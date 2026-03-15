@@ -31,7 +31,7 @@
                 </div>
 
                 {# Cloudflare Turnstile Captcha - désactivé avec les clés de test #}
-                {% if turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' and not (turnstileSiteKey starts with '1x00000000000000000000') %}
+                {% if turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' %}
                 <div class="flex justify-center">
                     <div class="cf-turnstile" data-sitekey="{{ turnstileSiteKey }}" data-theme="auto"></div>
                 </div>
@@ -49,7 +49,7 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {% if turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' and not (turnstileSiteKey starts with '1x00000000000000000000') %}
+    {% if turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' %}
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     {% endif %}
 {% endblock %}

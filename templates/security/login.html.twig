@@ -12,7 +12,7 @@
             </div>
         {% endif %}
 
-        <form method="post" class="bg-[var(--bg-secondary)] p-8 rounded-lg border border-[var(--border)]">
+        <form method="post" class="bg-[var(--bg-secondary)] p-8 rounded-lg border border-[var(--border)]" data-turbo="false">
             <div class="mb-4">
                 <label for="username" class="block text-sm font-medium text-[var(--text-secondary)] mb-1">Email</label>
                 <input type="email" value="{{ last_username }}" name="_username" id="username" autocomplete="email" required autofocus
@@ -26,6 +26,12 @@
             </div>
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            {% if turnstileSiteKey is defined and turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' %}
+            <div class="flex justify-center mb-6">
+                <div class="cf-turnstile" data-sitekey="{{ turnstileSiteKey }}" data-theme="auto"></div>
+            </div>
+            {% endif %}
 
             <div class="flex items-center justify-between mb-6">
                 <label class="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
@@ -46,4 +52,11 @@
             <a href="{{ path('app_register') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)]">Créer un compte</a>
         </p>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if turnstileSiteKey is defined and turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' %}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    {% endif %}
 {% endblock %}
