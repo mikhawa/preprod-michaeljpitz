@@ -6,7 +6,8 @@
       "Bash(git add:*)",
       "Bash(chmod:*)",
       "Bash(find:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(composer show:*)"
     ]
   }
 }

@@ -135,7 +135,7 @@
                         {{ comment.createdAt|date('d/m/Y à H:i') }}
                     </time>
                 </div>
-                <p class="text-[var(--text-primary)]">{{ comment.content|nl2br }}</p>
+                <p class="text-[var(--text-primary)]">{{ comment.content|sanitize_comment|nl2br }}</p>
             </div>
         {% else %}
             <p class="text-[var(--text-secondary)]">Aucun commentaire pour le moment.</p>

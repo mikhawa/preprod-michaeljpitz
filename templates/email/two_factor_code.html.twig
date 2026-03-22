@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h1 style="color: #2563eb;">Vérification en deux étapes</h1>
+
+    <p>Bonjour {{ user.userName }},</p>
+
+    <p>Voici votre code de vérification pour vous connecter à votre compte :</p>
+
+    <p style="text-align: center; margin: 30px 0;">
+        <span style="display: inline-block; background-color: #f3f4f6; border: 2px solid #2563eb; color: #1d4ed8; font-size: 2rem; font-weight: bold; letter-spacing: 0.5rem; padding: 16px 32px; border-radius: 8px; font-family: monospace;">
+            {{ code }}
+        </span>
+    </p>
+
+    <p>Ce code est valable <strong>10 minutes</strong>.</p>
+
+    <p style="margin-top: 30px; font-size: 0.9em; color: #666;">
+        Si vous n'êtes pas à l'origine de cette tentative de connexion, ignorez cet email et changez votre mot de passe immédiatement.
+    </p>
+</body>
+</html>

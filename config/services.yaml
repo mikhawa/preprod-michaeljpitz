@@ -26,6 +26,3 @@ services:
         arguments:
             $secretKey: '%env(TURNSTILE_SECRET_KEY)%'
 
-    App\Controller\ProfileController:
-        arguments:
-            $avatarDirectory: '%kernel.project_dir%/public/uploads/avatars'

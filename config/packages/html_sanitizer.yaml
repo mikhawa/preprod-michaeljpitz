@@ -23,3 +23,5 @@ framework:
                     sub: []
                     sup: []
                 force_https_urls: true
+            comment_sanitizer:
+                allow_safe_elements: false
