@@ -19,6 +19,12 @@ class TwoFactorGateSubscriber implements EventSubscriberInterface
         'app_logout',
     ];
 
+    /** Chemins accessibles en fallback (si le routing n'est pas encore résolu) */
+    private const ALLOWED_PATHS = [
+        '/connexion/code-verification',
+        '/deconnexion',
+    ];
+
     public function __construct(
         private readonly TokenStorageInterface $tokenStorage,
         private readonly RouterInterface $router,
@@ -28,7 +34,8 @@ class TwoFactorGateSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest', 10],
+            // Priorité 5 : après RouterListener (8) et le Firewall (8), avant les contrôleurs
+            KernelEvents::REQUEST => ['onKernelRequest', 5],
         ];
     }
 
@@ -55,14 +62,21 @@ class TwoFactorGateSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $currentRoute = $request->attributes->get('_route');
-        if (in_array($currentRoute, self::ALLOWED_ROUTES, true)) {
+        $pathInfo = $request->getPathInfo();
+
+        // Profiler Symfony et assets : on les laisse passer
+        if (str_starts_with($pathInfo, '/_') || str_starts_with($pathInfo, '/build/')) {
             return;
         }
 
-        // Profiler Symfony et assets : on les laisse passer
-        $pathInfo = $request->getPathInfo();
-        if (str_starts_with($pathInfo, '/_') || str_starts_with($pathInfo, '/build/')) {
+        // Vérification par nom de route (disponible après RouterListener)
+        $currentRoute = $request->attributes->get('_route');
+        if (null !== $currentRoute && in_array($currentRoute, self::ALLOWED_ROUTES, true)) {
+            return;
+        }
+
+        // Fallback par chemin (sécurité si routing non encore résolu)
+        if (in_array($pathInfo, self::ALLOWED_PATHS, true)) {
             return;
         }
 
