@@ -87,20 +87,24 @@ Clés disponibles gratuitement sur https://dash.cloudflare.com/turnstile
 
 ### Version de développement
 
-| Date début        | Date courante |
-|-------------------|---------------|
-| 2026-01-31        | 2026-02-11    |
-| Version 1.0.0     | Version 1.7.1 |
-| 2026-02-11        | 2026-02-11    |
-| Version 2.0.0     | Version 2.0.0 |
-| 2026-02-11        | 2026-02-12    |
- | Version Alpha.1-b | Version Alpha.1-b |
+| Date début            | Date courante     |
+|-----------------------|-------------------|
+| 2026-01-31            | 2026-02-11        |
+| Version 1.0.0         | Version 1.7.1     |
+| 2026-02-11            | 2026-02-11        |
+| Version 2.0.0         | Version 2.0.0     |
+| 2026-02-11            | 2026-02-12        |
+ | Version Alpha.1-b     | Version Alpha.1-b |
+| Version Preprod.1.0.0 | 2026-03-22        |
 
 URL version alpha.1-b :
 
 https://alpha1.michaeljpitz.com/
 
-### Installation de suneditor
+URL version preprod.1.0.0 :
+https://preprod.michaeljpitz.com/
+
+### Installation de Suneditor
 
 php bin/console importmap:require suneditor
 
