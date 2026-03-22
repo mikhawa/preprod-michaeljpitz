@@ -96,14 +96,14 @@ docker/                  # Nginx config + PHP Dockerfile
 
 **All PHP files must start with `declare(strict_types=1)`.**
 
-| Forbidden | Use instead |
-|-----------|-------------|
-| Doctrine annotations | PHP 8 attributes |
-| FOSUserBundle | Native Symfony Security |
-| Webpack Encore alone | AssetMapper + Symfony UX |
-| FOSCKEditor | Trix or TinyMCE via CDN |
-| XML config for services/routes | PHP config or attributes |
-| Raw SQL / mysql_* | Doctrine ORM with parameters |
+| Forbidden                      | Use instead                  |
+|--------------------------------|------------------------------|
+| Doctrine annotations           | PHP 8 attributes             |
+| FOSUserBundle                  | Native Symfony Security      |
+| Webpack Encore alone           | AssetMapper + Symfony UX     |
+| FOSCKEditor                    | Suneditor                    |
+| XML config for services/routes | PHP config or attributes     |
+| Raw SQL / mysql_*              | Doctrine ORM with parameters |
 
 ## Security Requirements
 
