@@ -19,7 +19,7 @@ Portfolio CV + blog website for a PHP/Symfony developer. French-language site wi
 - **Stimulus.js** + **Symfony UX Turbo** + **Twig Components**
 - **EasyAdmin 4.x** for admin interface
 - **VichUploaderBundle** for image uploads
-- **suneditor** for WYSIWYG editing (via importmap)
+- **Suneditor** for WYSIWYG editing (via importmap)
 - **Cloudflare Turnstile** for CAPTCHA in contact form
 - **HtmlSanitizer** for sanitizing WYSIWYG content
 - **PHPUnit 10.x** for testing

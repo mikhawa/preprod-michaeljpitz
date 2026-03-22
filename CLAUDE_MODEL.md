@@ -31,7 +31,7 @@ Organiser la documentation en fichiers `.md` specialises, chacun avec un role pr
 
 ---
 
-## 2. Fichier CLAUDE.md — Structure recommandee
+## 2. Fichier CLAUDE.md — Structure recommandée
 
 Le `CLAUDE.md` est le fichier le plus important : il est lu automatiquement par Claude Code a chaque session. Il doit etre **concis** et **prescriptif**.
 
