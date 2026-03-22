@@ -26,7 +26,7 @@ Ne pas oublier les :
     # et
     php bin/console tailwind:build
     # et création d'un admin pour les tests :
-    php bin/console app:create-admin mikhawa@preprod.michaeljpitz.com 123NousIronsAuxBois321 Michael.J.Pitz 
+    php bin/console app:create-admin michael.j.pitz@gmail.com 123NousIronsAuxBois321 Michael.J.Pitz 
 
 
 
