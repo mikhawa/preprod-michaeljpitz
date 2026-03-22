@@ -49,7 +49,8 @@ class ResetPasswordController extends AbstractController
             // Mais on affiche toujours le même message pour ne pas révéler les comptes
             if (null !== $user && 1 === $user->getStatus()) {
                 $token = bin2hex(random_bytes(32));
-                $user->setResetPasswordToken($token);
+                // On stocke le hash en base, le token clair part uniquement dans l'email
+                $user->setResetPasswordToken(hash('sha256', $token));
                 $user->setResetPasswordRequestedAt(new \DateTimeImmutable());
                 $entityManager->flush();
 
@@ -94,7 +95,8 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
-        $user = $userRepository->findOneBy(['resetPasswordToken' => $token]);
+        // Comparaison par hash : le token reçu en URL est en clair, la BDD stocke le hash
+        $user = $userRepository->findOneBy(['resetPasswordToken' => hash('sha256', $token)]);
 
         if (null === $user) {
             $this->addFlash('error', 'Lien de réinitialisation invalide.');

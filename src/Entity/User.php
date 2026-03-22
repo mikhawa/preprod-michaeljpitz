@@ -57,6 +57,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $activationToken = null;
 
     #[ORM\Column(type: 'smallint', options: ['default' => 0, 'unsigned' => true])]
+    #[Assert\Choice(choices: [0, 1, 2], message: 'Le statut doit être 0 (inactif), 1 (actif) ou 2 (banni).')]
     private int $status = 0;
 
     #[ORM\Column(length: 64, nullable: true)]
