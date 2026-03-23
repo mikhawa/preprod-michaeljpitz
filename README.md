@@ -20,7 +20,8 @@ https://github.com/mikhawa/preprod-michaeljpitz
  | phpMyAdmin            | 8081 | http://localhost:8081/               |
  | SMTP Mailpit          | 1025 | smtp://mailpit:1025 (interne Docker) |
 | Interface web Mailpit | 8025 | http://localhost:8025                |
-Ne pas oublier les : 
+
+### Ne pas en preprod oublier les : 
 
     composer update
     # et
@@ -28,15 +29,16 @@ Ne pas oublier les :
     # et création d'un admin pour les tests :
     php bin/console app:create-admin michael.j.pitz@gmail.com 123NousIronsAuxBois321 Michael.J.Pitz 
 
+#### Permissions
+
+chown -R micha5214:micha5214 /home/michaeljpitz.com/preprod.michaeljpitz.com/preprod-michaeljpitz/public/uploads/
 
 
 ### URL de la version preprod :
 
 https://preprod.michaeljpitz.com/
 
-#### Permissions
 
-chown -R micha5214:micha5214 /home/michaeljpitz.com/preprod.michaeljpitz.com/preprod-michaeljpitz/public/uploads/
 
 ### Version 1
 
