@@ -11,7 +11,7 @@ use App\Service\TurnstileValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,6 +23,8 @@ class ProfileController extends AbstractController
         private readonly TurnstileValidator $turnstileValidator,
         #[Autowire('%env(TURNSTILE_SITE_KEY)%')]
         private readonly string $turnstileSiteKey,
+        #[Autowire('%kernel.project_dir%')]
+        private readonly string $projectDir,
     ) {
     }
 
@@ -64,13 +66,11 @@ class ProfileController extends AbstractController
             $croppedData = $form->get('croppedAvatarData')->getData();
 
             if (null !== $croppedData && '' !== $croppedData) {
-                $this->processAvatarUpload($user, $croppedData);
+                $uploadDir = $this->projectDir.'/public/uploads/avatars';
+                $this->processAvatarUpload($user, $croppedData, $uploadDir);
             }
 
             $entityManager->flush();
-            // VichUploader a déjà traité le fichier : on réinitialise avatarFile
-            // pour éviter l'erreur de sérialisation dans la session (SplFileInfo non sérialisable)
-            $user->setAvatarFile(null);
             $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
 
             return $this->redirectToRoute('app_profile');
@@ -86,14 +86,13 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    private function processAvatarUpload(User $user, string $base64Data): void
+    private function processAvatarUpload(User $user, string $base64Data, string $uploadDir): void
     {
         // Whitelist stricte des MIME types autorisés
         $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
         $mimeToExtension = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
 
-        $matches = [];
-        if (!preg_match('/^data:(image\/(?:jpeg|png|webp));base64,/', $base64Data, $matches)) {
+        if (!preg_match('/^data:(image\/(?:jpeg|png|webp));base64,/', $base64Data)) {
             return;
         }
 
@@ -117,10 +116,22 @@ class ProfileController extends AbstractController
         }
 
         $extension = $mimeToExtension[$realMime];
-        $tmpPath = sys_get_temp_dir().'/avatar_'.bin2hex(random_bytes(8)).'.'.$extension;
-        file_put_contents($tmpPath, $decodedData);
+        $filesystem = new Filesystem();
 
-        // VichUploader gère le déplacement, la suppression de l'ancien fichier et la mise à jour de avatarName
-        $user->setAvatarFile(new File($tmpPath));
+        // Crée le répertoire si nécessaire
+        $filesystem->mkdir($uploadDir);
+
+        // Supprime l'ancien avatar s'il existe
+        $oldAvatarName = $user->getAvatarName();
+        if (null !== $oldAvatarName && $filesystem->exists($uploadDir.'/'.$oldAvatarName)) {
+            $filesystem->remove($uploadDir.'/'.$oldAvatarName);
+        }
+
+        // Écrit directement le fichier dans le dossier d'upload (sans passer par VichUploader)
+        $newFilename = bin2hex(random_bytes(16)).'.'.$extension;
+        $filesystem->dumpFile($uploadDir.'/'.$newFilename, $decodedData);
+
+        $user->setAvatarName($newFilename);
+        $user->setUpdatedAt(new \DateTimeImmutable());
     }
 }
