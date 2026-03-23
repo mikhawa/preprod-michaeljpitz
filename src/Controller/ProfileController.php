@@ -68,6 +68,9 @@ class ProfileController extends AbstractController
             }
 
             $entityManager->flush();
+            // VichUploader a déjà traité le fichier : on réinitialise avatarFile
+            // pour éviter l'erreur de sérialisation dans la session (SplFileInfo non sérialisable)
+            $user->setAvatarFile(null);
             $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
 
             return $this->redirectToRoute('app_profile');
