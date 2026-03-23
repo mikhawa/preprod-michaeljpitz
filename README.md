@@ -34,6 +34,10 @@ Ne pas oublier les :
 
 https://preprod.michaeljpitz.com/
 
+#### Permissions
+
+chown -R micha5214:micha5214 /home/michaeljpitz.com/preprod.michaeljpitz.com/preprod-michaeljpitz/public/uploads/
+
 ### Version 1
 
 Il s'agit de la deuxième version du site, qui se trouve sur github à l'URL suivante : https://github.com/mikhawa/cv-mikhawa et qui se trouve en ligne à l'URL suivante : https://alpha1.michaeljpitz.com/
