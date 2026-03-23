@@ -61,7 +61,7 @@ class CommentApprovedSubscriber
         );
 
         $email = (new TemplatedEmail())
-            ->from(new Address($this->emailFrom, 'CV Mikhawa'))
+            ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
             ->to((string) $user->getEmail())
             ->subject('Votre commentaire a été approuvé')
             ->htmlTemplate('email/comment_approved.html.twig')

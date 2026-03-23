@@ -58,7 +58,7 @@ class ContactController extends AbstractController
             $data = $form->getData();
 
             $email = (new TemplatedEmail())
-                ->from(new Address($this->emailFrom, 'CV Mikhawa - Contact'))
+                ->from(new Address($this->emailFrom, 'MichaelJPitz.com - Contact'))
                 ->to($this->adminEmail)
                 ->replyTo(new Address($data['email'], $data['name']))
                 ->subject('Nouveau message de contact - '.$data['name'])

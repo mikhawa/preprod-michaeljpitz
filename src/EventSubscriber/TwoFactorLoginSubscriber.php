@@ -52,7 +52,7 @@ class TwoFactorLoginSubscriber implements EventSubscriberInterface
 
         $this->mailer->send(
             (new TemplatedEmail())
-                ->from(new Address($this->emailFrom, 'CV Mikhawa'))
+                ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
                 ->to((string) $user->getEmail())
                 ->subject('Votre code de vérification')
                 ->htmlTemplate('email/two_factor_code.html.twig')

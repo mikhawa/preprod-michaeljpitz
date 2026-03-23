@@ -84,7 +84,7 @@ class RegistrationController extends AbstractController
             );
 
             $email = (new TemplatedEmail())
-                ->from(new Address($this->emailFrom, 'CV Mikhawa'))
+                ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
                 ->to((string) $user->getEmail())
                 ->subject('Activez votre compte')
                 ->htmlTemplate('email/activation.html.twig')
@@ -96,7 +96,7 @@ class RegistrationController extends AbstractController
             $mailer->send($email);
 
             $adminNotification = (new TemplatedEmail())
-                ->from(new Address($this->emailFrom, 'CV Mikhawa'))
+                ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
                 ->to($this->adminEmail)
                 ->subject('Nouvelle inscription - '.$user->getUserName())
                 ->htmlTemplate('email/new_user_notification.html.twig')
@@ -153,7 +153,7 @@ class RegistrationController extends AbstractController
         $entityManager->flush();
 
         $adminNotification = (new TemplatedEmail())
-            ->from(new Address($this->emailFrom, 'CV Mikhawa'))
+            ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
             ->to($this->adminEmail)
             ->subject('Compte activé - '.$user->getUserName())
             ->htmlTemplate('email/user_activated_notification.html.twig')
