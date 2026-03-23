@@ -38,6 +38,9 @@ chown -R micha5214:micha5214 /home/michaeljpitz.com/preprod.michaeljpitz.com/pre
 
 https://preprod.michaeljpitz.com/
 
+### Cloudflare
+
+Votre domaine est désormais protégé par Cloudflare.
 
 
 ### Version 1
