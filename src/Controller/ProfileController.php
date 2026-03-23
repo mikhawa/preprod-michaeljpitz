@@ -11,7 +11,6 @@ use App\Service\TurnstileValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -116,20 +115,28 @@ class ProfileController extends AbstractController
         }
 
         $extension = $mimeToExtension[$realMime];
-        $filesystem = new Filesystem();
 
-        // Crée le répertoire si nécessaire
-        $filesystem->mkdir($uploadDir);
+        // Crée le répertoire si nécessaire (avec permissions 0775)
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
 
         // Supprime l'ancien avatar s'il existe
         $oldAvatarName = $user->getAvatarName();
-        if (null !== $oldAvatarName && $filesystem->exists($uploadDir.'/'.$oldAvatarName)) {
-            $filesystem->remove($uploadDir.'/'.$oldAvatarName);
+        if (null !== $oldAvatarName) {
+            $oldPath = $uploadDir.'/'.$oldAvatarName;
+            if (file_exists($oldPath)) {
+                unlink($oldPath);
+            }
         }
 
-        // Écrit directement le fichier dans le dossier d'upload (sans passer par VichUploader)
+        // Écrit directement le fichier dans le dossier d'upload (évite le rename /tmp → destination)
         $newFilename = bin2hex(random_bytes(16)).'.'.$extension;
-        $filesystem->dumpFile($uploadDir.'/'.$newFilename, $decodedData);
+        $written = file_put_contents($uploadDir.'/'.$newFilename, $decodedData);
+
+        if (false === $written) {
+            return;
+        }
 
         $user->setAvatarName($newFilename);
         $user->setUpdatedAt(new \DateTimeImmutable());
