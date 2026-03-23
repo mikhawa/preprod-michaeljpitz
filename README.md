@@ -54,9 +54,10 @@ php bin/console app:create-admin le_mail le_password le_username
 
 ### Utilisateurs de test
 
-| Email                            | Mot de passe | Username |
-|----------------------------------|-------------|----------|
-|m.ichaeljpitz@gmail.com| 123Mickey   | Mickey   |
+| Email                     | Mot de passe | Username |
+|---------------------------|--------------|----------|
+| m.ichaeljpitz@gmail.com   | 123Mickey    | Mickey   |
+| m.ichael.j.pitz@gmail.com | mp3mp3mp3mp3 | Mikhawa3 |
 
 ### Fonctionnalités implémentées
 
