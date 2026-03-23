@@ -154,7 +154,7 @@ class ArticleController extends AbstractController
                 );
 
                 $adminNotification = (new TemplatedEmail())
-                    ->from(new Address($this->emailFrom, 'CV Mikhawa'))
+                    ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
                     ->to($this->adminEmail)
                     ->subject('Nouveau commentaire - '.$article->getTitle())
                     ->htmlTemplate('email/new_comment_notification.html.twig')
