@@ -120,6 +120,7 @@ https://preprod.michaeljpitz.com/
 
 ### Installation de Suneditor
 
+
 php bin/console importmap:require suneditor
 
 ### Documentation Claude
