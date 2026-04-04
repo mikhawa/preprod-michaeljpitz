@@ -1,0 +1,45 @@
+name: Déploiement Préproduction
+
+on:
+  push:
+    branches:
+      - preprod/main
+
+jobs:
+  deploy:
+    name: Déploiement sur VPS préproduction
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Déploiement via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PREPROD_SSH_HOST }}
+          username: root
+          key: ${{ secrets.PREPROD_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PREPROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+
+            cd /home/michaeljpitz.com/preprod.michaeljpitz.com/
+
+            echo "==> Récupération du code"
+            git pull origin preprod/main
+
+            echo "==> Installation des dépendances Composer"
+            composer install --no-dev --optimize-autoloader --no-interaction
+
+            echo "==> Migrations Doctrine"
+            php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+
+            echo "==> Compilation Tailwind CSS"
+            php bin/console tailwind:build --minify --env=prod
+
+            echo "==> Installation des assets"
+            php bin/console assets:install --env=prod
+
+            echo "==> Vidage et préchauffage du cache"
+            php bin/console cache:clear --env=prod
+            php bin/console cache:warmup --env=prod
+
+            echo "==> Déploiement terminé avec succès"
