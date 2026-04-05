@@ -53,3 +53,8 @@
 .prose th, .prose td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
 .prose th { font-weight: 600; background-color: var(--bg-secondary); }
 .prose hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+/* Force la couleur du texte en dark mode (SunEditor injecte des color inline) */
+[data-theme="dark"] .prose *:not(a):not(code) {
+    color: inherit !important;
+}
