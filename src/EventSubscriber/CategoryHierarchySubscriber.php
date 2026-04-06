@@ -5,61 +5,81 @@ declare(strict_types=1);
 namespace App\EventSubscriber;
 
 use App\Entity\Article;
+use App\Entity\Category;
 use App\Entity\Page;
 use App\Repository\CategoryRepository;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\PersistentCollection;
 
 /**
- * Remonte automatiquement la hiérarchie des catégories lors de la sauvegarde
- * d'un article : si une catégorie enfant est sélectionnée, ses catégories
- * parentes sont ajoutées d'office.
+ * Remonte automatiquement la hiérarchie des catégories lors du flush.
+ * Si une catégorie enfant est assignée à un Article ou une Page,
+ * toutes ses catégories parentes sont ajoutées d'office.
+ *
+ * Utilise onFlush (avant SQL) pour que les additions ManyToMany
+ * soient bien prises en compte par Doctrine, même en cas de mise à jour.
  */
-#[AsDoctrineListener(event: Events::prePersist)]
-#[AsDoctrineListener(event: Events::preUpdate)]
+#[AsDoctrineListener(event: Events::onFlush)]
 class CategoryHierarchySubscriber
 {
     public function __construct(private readonly CategoryRepository $categoryRepository)
     {
     }
 
-    public function prePersist(LifecycleEventArgs $args): void
+    public function onFlush(OnFlushEventArgs $args): void
     {
-        $this->resolveParentCategories($args);
-    }
+        $em  = $args->getObjectManager();
+        $uow = $em->getUnitOfWork();
 
-    public function preUpdate(LifecycleEventArgs $args): void
-    {
-        $this->resolveParentCategories($args);
-    }
-
-    private function resolveParentCategories(LifecycleEventArgs $args): void
-    {
-        $entity = $args->getObject();
-
-        if (!$entity instanceof Article && !$entity instanceof Page) {
-            return;
-        }
-
-        // Construit un index id → Category pour éviter des requêtes répétées
-        $allCategories = $this->categoryRepository->findAll();
+        // Index id → Category pour éviter des requêtes répétées
         $indexed = [];
-        foreach ($allCategories as $category) {
-            $id = $category->getId();
+        foreach ($this->categoryRepository->findAll() as $cat) {
+            $id = $cat->getId();
             if (null !== $id) {
-                $indexed[$id] = $category;
+                $indexed[$id] = $cat;
             }
         }
 
-        // Pour chaque catégorie assignée à l'article, remonte vers la racine
-        foreach ($entity->getCategories()->toArray() as $category) {
-            $parentId = $category->getLevel();
+        $entities = array_merge(
+            array_values($uow->getScheduledEntityInsertions()),
+            array_values($uow->getScheduledEntityUpdates()),
+        );
 
-            while (null !== $parentId && $parentId > 0 && isset($indexed[$parentId])) {
-                $parent = $indexed[$parentId];
-                $entity->addCategory($parent);
-                $parentId = $parent->getLevel();
+        foreach ($entities as $entity) {
+            if (!$entity instanceof Article && !$entity instanceof Page) {
+                continue;
+            }
+
+            $added = false;
+
+            foreach ($entity->getCategories()->toArray() as $category) {
+                $parentId = $category->getLevel();
+
+                while (null !== $parentId && $parentId > 0 && isset($indexed[$parentId])) {
+                    /** @var Category $parent */
+                    $parent = $indexed[$parentId];
+
+                    if (!$entity->getCategories()->contains($parent)) {
+                        $entity->addCategory($parent);
+                        $added = true;
+                    }
+
+                    $parentId = $parent->getLevel();
+                }
+            }
+
+            if ($added) {
+                // Recompute le changeset scalaire de l'entité
+                $meta = $em->getClassMetadata($entity::class);
+                $uow->recomputeSingleEntityChangeSet($meta, $entity);
+
+                // Planifie explicitement la mise à jour de la collection ManyToMany
+                $collection = $entity->getCategories();
+                if ($collection instanceof PersistentCollection) {
+                    $uow->scheduleCollectionUpdate($collection);
+                }
             }
         }
     }
