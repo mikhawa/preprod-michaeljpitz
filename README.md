@@ -49,9 +49,12 @@ Il s'agit de la deuxième version du site, qui se trouve sur github à l'URL sui
 
 ### Version 2
 
-Installation de WASM pour que les utilisateurs puissent intéragir sur le php en local :
+Installation de WASM pour que les utilisateurs puissent intéragir sur le php en local, il utilise le package php-wasm de Sean Morris, qui compile PHP en WebAssembly pour une exécution côté client dans le navigateur.
 
-        composer require wasm/wasm
+ En mode visuel pour chaque article, taper :
+```[php]echo "PHP " . PHP_VERSION;[/php]```
+
+Dna le whisywyg, pas besoin de vue code, le marqueur est préservé tel quel (c'est du texte brut, pas du HTML). Le filtre Twig `php_runner` le convertit en widget côté serveur.
 
 #### Admin
 

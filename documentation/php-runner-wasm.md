@@ -22,17 +22,20 @@ Permettre aux visiteurs d'un article de **voir et exécuter du code PHP directem
 
 ## Utilisation dans un article
 
-Dans Suneditor → icône `</>` (vue Code source), insérer :
+Dans Suneditor (mode WYSIWYG normal, pas besoin de vue code), taper :
 
-```html
-<pre class="php-runner">echo "PHP " . PHP_VERSION;</pre>
+```
+[php]echo "PHP " . PHP_VERSION;[/php]
 ```
 
-**Ne pas écrire `<?php`** — le contrôleur l'ajoute automatiquement.
+**Règles :**
+- Pas de `<?php` ni `?>` — le contrôleur les ajoute automatiquement pour le visiteur
+- Le marqueur peut être sur une ou plusieurs lignes
+- Suneditor le préserve tel quel (c'est du texte brut, pas du HTML)
+- Le filtre Twig `php_runner` le convertit en widget côté serveur
 
-**Pourquoi ?** La spec HTML5 traite `<?php ... ?>` comme un "bogus comment" lors du parsing `innerHTML`. Suneditor parse via `innerHTML`, donc les balises PHP sont converties en `<!-- ... -->` avant même d'être sauvegardées. Écrire uniquement le corps PHP évite ce problème.
-
-Le widget affiche `<?php` dans le textarea (ajouté par JS) pour que le visiteur voie du PHP complet et éditable.
+**Pourquoi ce format et pas du HTML dans Suneditor ?**
+Suneditor parse son contenu via `innerHTML`. La spec HTML5 traite `<?php ?>` comme un "bogus comment" (`<!-- ?php ... ? -->`). Les attributs `data-*` et éléments de formulaire (`<textarea>`, `<button>`) sont supprimés par le parser WYSIWYG. Le marqueur texte `[php]...[/php]` est la seule approche fiable.
 
 ## Comportement au rendu
 
