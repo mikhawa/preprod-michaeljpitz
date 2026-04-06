@@ -4,11 +4,29 @@
     <meta charset="UTF-8">
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+
     <h1 style="color: #2563eb;">Bienvenue {{ user.userName }} !</h1>
 
-    <p>Merci de vous être inscrit(e) sur notre site.</p>
+    <p>Merci de vous être inscrit(e). Voici vos identifiants de connexion :</p>
 
-    <p>Pour activer votre compte, veuillez cliquer sur le lien ci-dessous dans les <strong>48 heures</strong> :</p>
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background-color: #f8fafc; border-radius: 8px; overflow: hidden;">
+        <tr>
+            <td style="padding: 12px 16px; font-weight: bold; color: #555; border-bottom: 1px solid #e2e8f0; width: 40%;">Email</td>
+            <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0;">{{ user.email }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 12px 16px; font-weight: bold; color: #555;">Mot de passe temporaire</td>
+            <td style="padding: 12px 16px; font-family: monospace; font-size: 1.1em; letter-spacing: 0.05em; color: #1e40af;">{{ temporary_password }}</td>
+        </tr>
+    </table>
+
+    <p style="color: #666; font-size: 0.9em;">
+        Conservez ce mot de passe. Vous pourrez le modifier depuis votre profil une fois connecté.
+    </p>
+
+    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+
+    <p>Pour activer votre compte, cliquez sur le bouton ci-dessous dans les <strong>48 heures</strong> :</p>
 
     <p style="text-align: center; margin: 30px 0;">
         <a href="{{ activation_url }}"
@@ -18,10 +36,20 @@
     </p>
 
     <p>Ou copiez ce lien dans votre navigateur :</p>
-    <p style="word-break: break-all; color: #2563eb;">{{ activation_url }}</p>
+    <p style="word-break: break-all; color: #2563eb; font-size: 0.9em;">{{ activation_url }}</p>
 
-    <p style="margin-top: 30px; font-size: 0.9em; color: #666;">
+    <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+
+    <p style="text-align: center;">
+        <a href="{{ site_url }}"
+           style="color: #2563eb; text-decoration: none; font-weight: bold;">
+            Visiter le site →
+        </a>
+    </p>
+
+    <p style="margin-top: 30px; font-size: 0.85em; color: #999;">
         Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.
     </p>
+
 </body>
 </html>
