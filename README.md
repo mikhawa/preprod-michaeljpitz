@@ -47,6 +47,12 @@ Votre domaine est désormais protégé par Cloudflare.
 
 Il s'agit de la deuxième version du site, qui se trouve sur github à l'URL suivante : https://github.com/mikhawa/cv-mikhawa et qui se trouve en ligne à l'URL suivante : https://alpha1.michaeljpitz.com/
 
+### Version 2
+
+Installation de WASM pour que les utilisateurs puissent intéragir sur le php en local :
+
+        composer require wasm/wasm
+
 #### Admin
 
 Pour créer un admin : 
