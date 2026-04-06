@@ -47,6 +47,15 @@ Votre domaine est désormais protégé par Cloudflare.
 
 Il s'agit de la deuxième version du site, qui se trouve sur github à l'URL suivante : https://github.com/mikhawa/cv-mikhawa et qui se trouve en ligne à l'URL suivante : https://alpha1.michaeljpitz.com/
 
+### Version 2
+
+Installation de WASM pour que les utilisateurs puissent intéragir sur le php en local, il utilise le package php-wasm de Sean Morris, qui compile PHP en WebAssembly pour une exécution côté client dans le navigateur.
+
+ En mode visuel pour chaque article, taper :
+```[php]echo "PHP " . PHP_VERSION;[/php]```
+
+Dna le whisywyg, pas besoin de vue code, le marqueur est préservé tel quel (c'est du texte brut, pas du HTML). Le filtre Twig `php_runner` le convertit en widget côté serveur.
+
 #### Admin
 
 Pour créer un admin : 
@@ -111,10 +120,15 @@ URL version alpha.1-b :
 
 https://alpha1.michaeljpitz.com/
 
+URL version en développement :
+https://dev.michaeljpitz.com/
+
+
 URL version preprod.1.0.0 :
 https://preprod.michaeljpitz.com/
 
 ### Installation de Suneditor
+
 
 php bin/console importmap:require suneditor
 

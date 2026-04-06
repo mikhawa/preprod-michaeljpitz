@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-04-06
+
+### PHP Runner WASM — exécution PHP côté client
+**Décision finale** : marqueur texte `[php]...[/php]` dans Suneditor, converti en widget interactif par un filtre Twig `php_runner` + contrôleur Stimulus `php-runner` + php-wasm (CDN jsDelivr).
+
+**Contexte** : L'objectif était de permettre aux visiteurs d'exécuter du code PHP directement dans les articles. `wasm/wasm` (Composer) est incompatible avec PHP 8.3. Un endpoint serveur présentait des risques de sécurité.
+
+**Évolution de la solution** — trois approches testées et rejetées avant d'arriver à la solution finale :
+1. `<pre class="php-runner"><?php...` → spec HTML5 convertit `<?...?>` en bogus comment `<!-- ?php ? -->`
+2. `<pre class="php-runner">echo...` (sans `<?php`) → Suneditor supprime l'attribut `class`
+3. `<div data-controller>` / `<textarea>` dans le contenu → Suneditor supprime les `data-*` et les éléments de formulaire
+4. **Retenu** : marqueur texte `[php]...[/php]` — Suneditor le préserve tel quel, le filtre Twig le transforme côté serveur
+
+**Conséquences** : nouveau `PhpRunnerExtension.php`, contrôleur Stimulus `php_runner_controller.js`, filtre `php_runner` dans le template article, CSP élargie. Voir `documentation/php-runner-wasm.md`.
+
+---
+
 ## 2026-03-14
 
 ### MEMORY.md versionné dans git

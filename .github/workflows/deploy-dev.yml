@@ -1,0 +1,44 @@
+name: Déploiement Développement
+
+on:
+  push:
+    branches:
+      - dev/main
+
+jobs:
+  deploy:
+    name: Déploiement sur VPS développement
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Déploiement via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PREPROD_SSH_HOST }}
+          username: root
+          key: ${{ secrets.PREPROD_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PREPROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+
+            cd /home/michaeljpitz.com/dev.michaeljpitz.com/
+
+            echo "==> Récupération du code"
+            git pull origin dev/main
+
+            echo "==> Installation des dépendances Composer"
+            COMPOSER_ALLOW_SUPERUSER=1 composer install --optimize-autoloader --no-interaction
+
+            echo "==> Migrations Doctrine"
+            php bin/console doctrine:migrations:migrate --no-interaction --env=dev
+
+            echo "==> Compilation Tailwind CSS"
+            php bin/console tailwind:build --env=dev
+
+            echo "==> Installation des assets"
+            php bin/console assets:install --env=dev
+
+            echo "==> Vidage du cache"
+            php bin/console cache:clear --env=dev
+
+            echo "==> Déploiement développement terminé avec succès"
