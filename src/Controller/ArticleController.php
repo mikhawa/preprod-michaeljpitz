@@ -57,11 +57,11 @@ class ArticleController extends AbstractController
             9,
         );
 
-        $categories = $categoryRepository->findBy([], ['title' => 'ASC']);
+        $categoriesHierarchical = $categoryRepository->findAllHierarchical();
 
         return $this->render('article/index.html.twig', [
             'pagination' => $pagination,
-            'categories' => $categories,
+            'categoriesHierarchical' => $categoriesHierarchical,
             'currentCategory' => null,
         ]);
     }
@@ -82,11 +82,11 @@ class ArticleController extends AbstractController
             9,
         );
 
-        $categories = $categoryRepository->findBy([], ['title' => 'ASC']);
+        $categoriesHierarchical = $categoryRepository->findAllHierarchical();
 
         return $this->render('article/index.html.twig', [
             'pagination' => $pagination,
-            'categories' => $categories,
+            'categoriesHierarchical' => $categoriesHierarchical,
             'currentCategory' => $category,
         ]);
     }
