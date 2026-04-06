@@ -74,10 +74,19 @@ export default class extends Controller {
         clearTimeout(this._submenuTimeout);
         const container = event.currentTarget;
         const submenu = container.querySelector('[data-navbar-target="submenu"]');
-        if (submenu) {
-            this._hideAllSubmenus(container.closest('[data-navbar-target="dropdown"]'));
-            submenu.classList.remove('hidden');
+        if (!submenu) {
+            return;
         }
+
+        // Cacher uniquement les sous-menus frères au même niveau (pas les ancêtres)
+        const parentList = container.parentElement;
+        if (parentList) {
+            parentList
+                .querySelectorAll(':scope > [data-navbar-target="submenuContainer"] > [data-navbar-target="submenu"]')
+                .forEach(s => s.classList.add('hidden'));
+        }
+
+        submenu.classList.remove('hidden');
     }
 
     scheduleHideSubmenu(event) {
@@ -114,11 +123,6 @@ export default class extends Controller {
         if (this.hasUserDropdownTarget) {
             this.userDropdownTarget.classList.add('hidden');
         }
-    }
-
-    _hideAllSubmenus(parentDropdown) {
-        if (!parentDropdown) return;
-        parentDropdown.querySelectorAll('[data-navbar-target="submenu"]').forEach(s => s.classList.add('hidden'));
     }
 
     _clickOutside(event) {

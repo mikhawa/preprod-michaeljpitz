@@ -4,65 +4,104 @@
 
 Permettre aux visiteurs d'un article de **voir et exécuter du code PHP directement dans leur navigateur**, sans serveur, via [php-wasm](https://github.com/seanmorris/php-wasm) (PHP compilé en WebAssembly).
 
-## Architecture
-
-- Le fichier `.wasm` (~16 Mo) est chargé **depuis le CDN jsDelivr** à la demande (premier clic sur "Exécuter").
-- PHP s'exécute **entièrement dans le sandbox du navigateur** : aucun risque de sécurité côté serveur.
-- Le contrôleur Stimulus `php-runner` est attaché au `<div>` du contenu de l'article dans `show.html.twig`. Il scanne les `<pre class="php-runner">` et les remplace par le widget interactif (textarea + bouton + sortie).
-- Le contenu stocké en base est uniquement `<pre class="php-runner">...</pre>` : pas de data-*, pas de textarea, pas de bouton.
-
-## Décisions techniques
-
-| Alternative | Raison du rejet |
-|-------------|-----------------|
-| `wasm/wasm` (Composer) | Incompatible PHP 8.3 sans extension C native |
-| Endpoint serveur + proc_open | Risque sécurité, complexité sandboxing |
-| `<div data-controller>` dans le contenu | Suneditor supprime textarea/button, sanitizer supprime data-* |
-| `<pre class="php-runner">` → JS transforme | Retenu : compatible Suneditor et sanitizer |
-
 ## Utilisation dans un article
 
-Dans Suneditor (mode WYSIWYG normal, pas besoin de vue code), taper :
+Dans Suneditor, **en mode WYSIWYG** (pas besoin de vue code source), taper :
 
 ```
 [php]echo "PHP " . PHP_VERSION;[/php]
 ```
 
 **Règles :**
-- Pas de `<?php` ni `?>` — le contrôleur les ajoute automatiquement pour le visiteur
-- Le marqueur peut être sur une ou plusieurs lignes
-- Suneditor le préserve tel quel (c'est du texte brut, pas du HTML)
-- Le filtre Twig `php_runner` le convertit en widget côté serveur
+- Pas de `<?php` ni `?>` — le contrôleur les ajoute automatiquement à l'affichage
+- Écrire en mode WYSIWYG normal, pas en vue code source
+- Le marqueur peut s'étendre sur plusieurs lignes
+- Le visiteur peut modifier le code dans le widget et le ré-exécuter
 
-**Pourquoi ce format et pas du HTML dans Suneditor ?**
-Suneditor parse son contenu via `innerHTML`. La spec HTML5 traite `<?php ?>` comme un "bogus comment" (`<!-- ?php ... ? -->`). Les attributs `data-*` et éléments de formulaire (`<textarea>`, `<button>`) sont supprimés par le parser WYSIWYG. Le marqueur texte `[php]...[/php]` est la seule approche fiable.
+---
 
-## Comportement au rendu
+## Architecture finale
 
-1. Le contrôleur `php-runner` se connecte sur le `<div class="prose">` du template.
-2. Il trouve chaque `<pre class="php-runner">` et le **remplace** par un widget :
-   - Un `<textarea>` pré-rempli avec le code (éditable par le visiteur)
-   - Un bouton **Exécuter**
-   - Une zone `<pre>` pour la sortie stdout (rouge si erreur PHP)
-3. Au premier clic : chargement de `PhpWeb.mjs` + `php-web.mjs.wasm` (~16 Mo, mis en cache).
-4. Chaque bloc a sa propre instance php-wasm (état isolé entre blocs).
+```
+Auteur (Suneditor WYSIWYG)
+  → stocke : <p>[php]echo PHP_VERSION;[/php]</p>
 
-## Limites de php-wasm
+Twig (article/show.html.twig)
+  → filtre php_runner traite le contenu
+  → génère : <div data-controller="php-runner" data-php-runner-code-value="echo PHP_VERSION;"></div>
 
-- PHP pur uniquement : pas de PDO, pas d'accès réseau depuis PHP, pas de GD
-- Premier chargement : ~16 Mo (mis en cache navigateur ensuite)
-- PHP 8.x (version incluse dans le .wasm du package)
+Stimulus (php_runner_controller.js)
+  → lit data-php-runner-code-value
+  → crée l'UI : textarea + bouton Exécuter + zone de sortie
+  → au clic : charge php-wasm depuis jsDelivr (~16 Mo, mis en cache)
+  → exécute le code PHP dans le navigateur
+```
 
-## Fichiers modifiés
+---
 
-| Fichier | Modification |
-|---------|-------------|
-| `assets/controllers/php_runner_controller.js` | Contrôleur Stimulus : scan + transformation des `<pre.php-runner>` |
-| `config/packages/html_sanitizer.yaml` | `pre: ['class']` ajouté à `article_sanitizer` |
-| `templates/article/show.html.twig` | `php-runner` ajouté au `data-controller` du div de contenu |
-| `src/EventSubscriber/SecurityHeadersSubscriber.php` | CSP : `cdn.jsdelivr.net` (script-src, connect-src) + `worker-src blob:` |
+## Pourquoi ce format et pas du HTML dans Suneditor
 
-## CSP ajoutée
+Toutes les approches basées sur du HTML personnalisé dans le contenu Suneditor échouent :
+
+| Approche testée | Cause de l'échec |
+|-----------------|-----------------|
+| `<pre class="php-runner"><?php...` | Spec HTML5 : `<?...?>` → bogus comment `<!-- ?php ... ? -->` |
+| `<pre class="php-runner">echo...` | Suneditor supprime `class` sur certains éléments |
+| `<div data-controller="php-runner">` | Suneditor supprime les attributs `data-*` non standards |
+| `<textarea>` dans le contenu | Suneditor supprime les éléments de formulaire |
+
+**Le marqueur texte `[php]...[/php]` est la seule approche fiable** : c'est du texte brut que Suneditor préserve sans le modifier.
+
+---
+
+## Fichiers du projet
+
+### `src/Twig/Extension/PhpRunnerExtension.php` (nouveau)
+
+Filtre Twig `php_runner`. Cherche les marqueurs `[php]...[/php]` dans le contenu
+(y compris enveloppés dans `<p>...</p>` par Suneditor) et les remplace par :
+
+```html
+<div data-controller="php-runner" data-php-runner-code-value="CODE_ENCODÉ"></div>
+```
+
+Gère également :
+- Le décodage des entités HTML (`&lt;` → `<`, `&quot;` → `"`)
+- La conversion des `<br>` en sauts de ligne (`\n`)
+- La suppression des balises HTML résiduelles via `strip_tags()`
+
+### `assets/controllers/php_runner_controller.js` (nouveau)
+
+Contrôleur Stimulus avec l'API `values` (`static values = { code: String }`).
+
+À la connexion (`connect()`), construit dynamiquement le widget :
+- `<textarea>` pré-rempli avec `<?php\n{code}` (éditable par le visiteur)
+- Bouton **Exécuter** (désactivé pendant l'exécution)
+- Message de statut (chargement, exécution…)
+- `<pre>` de sortie (rouge si erreur PHP)
+
+Au clic sur Exécuter :
+1. Import dynamique de `PhpWeb.mjs` depuis `cdn.jsdelivr.net/npm/php-wasm/`
+2. Attente de l'événement `ready`
+3. Exécution via `php.run(code)`
+4. Capture des événements `output` et `error`
+5. Affichage du résultat
+
+Chaque widget a sa propre instance php-wasm (état isolé).
+
+### `templates/article/show.html.twig` (modifié)
+
+```twig
+{# Avant #}
+{{ article.content|raw }}
+
+{# Après #}
+{{ article.content|php_runner|raw }}
+```
+
+### `src/EventSubscriber/SecurityHeadersSubscriber.php` (modifié)
+
+CSP élargie pour autoriser le chargement de php-wasm depuis jsDelivr :
 
 ```
 script-src  … https://cdn.jsdelivr.net
@@ -70,4 +109,19 @@ connect-src … https://cdn.jsdelivr.net
 worker-src  blob: 'self'
 ```
 
-Le `worker-src blob:` est requis car php-wasm instancie un Web Worker via `URL.createObjectURL()`.
+`worker-src blob:` requis car php-wasm instancie un Web Worker via `URL.createObjectURL()`.
+
+### `config/packages/html_sanitizer.yaml` (modifié, sans effet réel)
+
+`pre: ['class']` ajouté à `article_sanitizer` — cette modification est sans effet car
+le sanitizer n'est **pas appliqué** au contenu des articles (seulement aux commentaires).
+Elle peut être conservée pour cohérence ou revertée.
+
+---
+
+## Limites de php-wasm
+
+- PHP pur uniquement : pas de PDO, pas d'extensions natives (GD, curl…)
+- Premier chargement : ~16 Mo (fichier `.wasm`, mis en cache navigateur ensuite)
+- Performances inférieures à PHP natif (overhead WebAssembly)
+- Version PHP fixée par le package npm (PHP 8.x)
