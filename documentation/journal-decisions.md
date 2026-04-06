@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-04-06
+
+### PHP Runner WASM — exécution PHP côté client
+**Décision** : Utiliser [php-wasm](https://github.com/seanmorris/php-wasm) (PHP compilé en WebAssembly) via un import dynamique depuis le CDN jsDelivr, piloté par un contrôleur Stimulus `php-runner`.
+
+**Contexte** : L'objectif était de permettre aux visiteurs d'exécuter du code PHP directement dans les articles du blog. `wasm/wasm` (Composer) est incompatible avec PHP 8.3 sans extension C native (`ext-wasm`). Un endpoint serveur présentait des risques de sécurité. La solution retenue exécute PHP entièrement dans le navigateur (sandbox WASM), sans aucun risque côté serveur.
+
+**Conséquences** : CSP élargie (`cdn.jsdelivr.net` dans `script-src` et `connect-src`, `worker-src blob:`). Voir `documentation/php-runner-wasm.md`.
+
+---
+
 ## 2026-03-14
 
 ### MEMORY.md versionné dans git
