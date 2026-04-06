@@ -130,7 +130,6 @@ class RegistrationController extends AbstractController
         string $token,
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
-        MailerInterface $mailer,
     ): Response {
         $user = $userRepository->findOneBy(['activationToken' => $token]);
 
@@ -157,19 +156,6 @@ class RegistrationController extends AbstractController
         $user->setStatus(1);
         $user->setActivationToken(null);
         $entityManager->flush();
-
-        $adminNotification = (new TemplatedEmail())
-            ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
-            ->to($this->adminEmail)
-            ->subject('Compte activé - '.$user->getUserName())
-            ->htmlTemplate('email/user_activated_notification.html.twig')
-            ->context([
-                'userName' => $user->getUserName(),
-                'userEmail' => $user->getEmail(),
-                'activationDate' => new \DateTimeImmutable(),
-            ]);
-
-        $mailer->send($adminNotification);
 
         $this->addFlash('success', 'Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.');
 
