@@ -19,6 +19,7 @@ framework:
                     source: ['src', 'type']
                     span: ['style', 'class']
                     div: ['style', 'class']
+                    pre: ['class']
                     hr: []
                     sub: []
                     sup: []

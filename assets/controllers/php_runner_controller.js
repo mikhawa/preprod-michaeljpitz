@@ -1,163 +1,153 @@
 import { Controller } from '@hotwired/stimulus';
 
 /**
- * Contrôleur Stimulus : exécution de PHP dans le navigateur via php-wasm (WebAssembly).
+ * Contrôleur Stimulus : transforme les blocs <pre class="php-runner"> en
+ * widgets interactifs d'exécution PHP via php-wasm (WebAssembly, CDN jsDelivr).
  *
- * Usage dans un article (Twig / contenu Suneditor) :
+ * L'auteur insère dans Suneditor (vue Code source) :
  *
- *   <div data-controller="php-runner">
- *     <textarea data-php-runner-target="code"><?php echo "Bonjour !"; ?></textarea>
- *     <button data-action="click->php-runner#run" data-php-runner-target="run">
- *       Exécuter
- *     </button>
- *     <pre data-php-runner-target="output"></pre>
- *   </div>
+ *   <pre class="php-runner"><?php echo PHP_VERSION; ?></pre>
  *
- * Le fichier .wasm (~16 Mo) est chargé depuis le CDN jsDelivr uniquement
- * au premier clic sur "Exécuter". Le navigateur le met ensuite en cache.
+ * Le contrôleur détecte ces blocs à la connexion, crée l'UI (textarea +
+ * bouton + zone de sortie) et charge php-wasm à la demande (premier clic).
+ *
+ * Attacher sur le div contenant le contenu de l'article :
+ *   data-controller="external-link lightbox php-runner"
  */
 export default class extends Controller {
-    static targets = ['code', 'output', 'run', 'status'];
-
     connect() {
-        this._php = null;
-        this._running = false;
+        const blocs = this.element.querySelectorAll('pre.php-runner');
+        blocs.forEach((pre) => this._transformer(pre));
     }
 
-    disconnect() {
-        this._php = null;
+    // ── Transformation du <pre> en widget ────────────────────────────────────
+
+    _transformer(pre) {
+        const codeInitial = pre.textContent.trim();
+
+        // Wrapper principal
+        const wrapper = document.createElement('div');
+        wrapper.className =
+            'php-runner-widget my-6 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] overflow-hidden';
+
+        // Textarea (code éditable)
+        const textarea = document.createElement('textarea');
+        textarea.value = codeInitial;
+        textarea.rows = Math.max(3, codeInitial.split('\n').length + 1);
+        textarea.spellcheck = false;
+        textarea.className =
+            'w-full resize-y bg-[var(--bg-primary)] p-4 font-mono text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)] border-b border-[var(--border)]';
+        textarea.setAttribute('aria-label', 'Code PHP à exécuter');
+
+        // Barre de contrôles
+        const barre = document.createElement('div');
+        barre.className = 'flex items-center gap-3 px-4 py-2 border-b border-[var(--border)]';
+
+        const bouton = document.createElement('button');
+        bouton.type = 'button';
+        bouton.textContent = 'Exécuter';
+        bouton.className =
+            'rounded bg-[var(--accent)] px-4 py-1.5 text-sm font-medium text-white hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50';
+
+        const statut = document.createElement('span');
+        statut.className = 'text-sm text-[var(--text-secondary)] italic';
+
+        barre.appendChild(bouton);
+        barre.appendChild(statut);
+
+        // Zone de sortie
+        const sortie = document.createElement('pre');
+        sortie.className =
+            'hidden m-0 whitespace-pre-wrap p-4 font-mono text-sm text-[var(--text-primary)] bg-[var(--bg-primary)]';
+        sortie.setAttribute('aria-live', 'polite');
+
+        wrapper.appendChild(textarea);
+        wrapper.appendChild(barre);
+        wrapper.appendChild(sortie);
+
+        // Remplacer le <pre> d'origine par le widget
+        pre.replaceWith(wrapper);
+
+        // État local à ce bloc (php-wasm chargé une seule fois par bloc)
+        let phpInstance = null;
+        let enCours = false;
+
+        bouton.addEventListener('click', async () => {
+            if (enCours) {
+                return;
+            }
+            enCours = true;
+            bouton.disabled = true;
+            bouton.textContent = 'Exécution…';
+            sortie.classList.remove('hidden', 'text-red-500');
+            sortie.textContent = '';
+
+            try {
+                if (!phpInstance) {
+                    statut.textContent = 'Chargement de PHP (~16 Mo, mis en cache)…';
+                    phpInstance = await this._chargerPhp();
+                }
+                statut.textContent = 'Exécution…';
+                const { stdout, stderr } = await this._executer(phpInstance, textarea.value);
+                sortie.textContent = stdout || stderr || '(aucune sortie)';
+                if (stderr && !stdout) {
+                    sortie.classList.add('text-red-500');
+                }
+            } catch (err) {
+                sortie.textContent = 'Erreur : ' + err.message;
+                sortie.classList.add('text-red-500');
+                phpInstance = null; // réinitialiser si échec du chargement
+            } finally {
+                statut.textContent = '';
+                bouton.disabled = false;
+                bouton.textContent = 'Exécuter';
+                enCours = false;
+            }
+        });
     }
 
-    async run() {
-        if (this._running) {
-            return;
-        }
+    // ── Chargement de php-wasm ────────────────────────────────────────────────
 
-        this._running = true;
-        this._setRunning(true);
-        this._clearOutput();
-
-        try {
-            await this._ensurePhp();
-            await this._execute();
-        } catch (err) {
-            this._showError('Erreur : ' + err.message);
-        } finally {
-            this._running = false;
-            this._setRunning(false);
-        }
-    }
-
-    // ── Privé ────────────────────────────────────────────────────────────────
-
-    /**
-     * Charge PhpWeb depuis le CDN (une seule fois par instance de contrôleur).
-     * Le .wasm est mis en cache par le navigateur après le premier chargement.
-     */
-    async _ensurePhp() {
-        if (this._php) {
-            return;
-        }
-
-        this._setStatus('Chargement de PHP (première utilisation, ~16 Mo)…');
-
+    async _chargerPhp() {
         const { PhpWeb } = await import(
             'https://cdn.jsdelivr.net/npm/php-wasm/PhpWeb.mjs'
         );
 
-        this._php = new PhpWeb();
+        const php = new PhpWeb();
 
         await new Promise((resolve, reject) => {
-            const onReady = () => {
-                this._php.removeEventListener('error', onError);
-                resolve();
-            };
-            const onError = (e) => {
-                this._php.removeEventListener('ready', onReady);
+            php.addEventListener('ready', resolve, { once: true });
+            php.addEventListener('error', (e) => {
                 reject(new Error(e.detail ?? 'Impossible de charger PHP-WASM.'));
-            };
-            this._php.addEventListener('ready', onReady, { once: true });
-            this._php.addEventListener('error', onError, { once: true });
+            }, { once: true });
         });
 
-        this._setStatus('');
+        return php;
     }
 
-    async _execute() {
-        this._setStatus('Exécution…');
+    // ── Exécution du code PHP ─────────────────────────────────────────────────
 
+    async _executer(php, code) {
         let stdout = '';
         let stderr = '';
 
         const onOutput = ({ detail }) => {
-            if (Array.isArray(detail)) {
-                stdout += detail.join('');
-            } else {
-                stdout += String(detail);
-            }
+            stdout += Array.isArray(detail) ? detail.join('') : String(detail);
         };
-
         const onError = ({ detail }) => {
-            if (Array.isArray(detail)) {
-                stderr += detail.join('');
-            } else {
-                stderr += String(detail);
-            }
+            stderr += Array.isArray(detail) ? detail.join('') : String(detail);
         };
 
-        this._php.addEventListener('output', onOutput);
-        this._php.addEventListener('error', onError);
+        php.addEventListener('output', onOutput);
+        php.addEventListener('error', onError);
 
         try {
-            const code = this.hasCodeTarget ? this.codeTarget.value : '';
-            await this._php.run(code);
+            await php.run(code);
         } finally {
-            this._php.removeEventListener('output', onOutput);
-            this._php.removeEventListener('error', onError);
+            php.removeEventListener('output', onOutput);
+            php.removeEventListener('error', onError);
         }
 
-        if (stderr) {
-            this._showError(stderr);
-        } else {
-            this._showOutput(stdout || '(aucune sortie)');
-        }
-
-        this._setStatus('');
-    }
-
-    // ── DOM helpers ───────────────────────────────────────────────────────────
-
-    _clearOutput() {
-        if (this.hasOutputTarget) {
-            this.outputTarget.textContent = '';
-            this.outputTarget.classList.remove('text-red-500');
-        }
-    }
-
-    _showOutput(text) {
-        if (this.hasOutputTarget) {
-            this.outputTarget.textContent = text;
-            this.outputTarget.classList.remove('text-red-500');
-        }
-    }
-
-    _showError(text) {
-        if (this.hasOutputTarget) {
-            this.outputTarget.textContent = text;
-            this.outputTarget.classList.add('text-red-500');
-        }
-    }
-
-    _setStatus(message) {
-        if (this.hasStatusTarget) {
-            this.statusTarget.textContent = message;
-        }
-    }
-
-    _setRunning(running) {
-        if (this.hasRunTarget) {
-            this.runTarget.disabled = running;
-            this.runTarget.textContent = running ? 'Exécution…' : 'Exécuter';
-        }
+        return { stdout, stderr };
     }
 }
