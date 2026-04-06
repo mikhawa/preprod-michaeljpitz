@@ -1,43 +1,48 @@
 import { Controller } from '@hotwired/stimulus';
 
 /**
- * Contrôleur Stimulus : transforme les blocs <pre class="php-runner"> en
- * widgets interactifs d'exécution PHP via php-wasm (WebAssembly, CDN jsDelivr).
+ * Contrôleur Stimulus : widget d'exécution PHP via php-wasm (WebAssembly).
  *
- * L'auteur insère dans Suneditor (vue Code source) :
+ * Activé automatiquement sur les <div> générés par le filtre Twig `php_runner`
+ * (voir src/Twig/Extension/PhpRunnerExtension.php).
  *
- *   <pre class="php-runner"><?php echo PHP_VERSION; ?></pre>
- *
- * Le contrôleur détecte ces blocs à la connexion, crée l'UI (textarea +
- * bouton + zone de sortie) et charge php-wasm à la demande (premier clic).
- *
- * Attacher sur le div contenant le contenu de l'article :
- *   data-controller="external-link lightbox php-runner"
+ * L'auteur écrit dans Suneditor :  [php]echo PHP_VERSION;[/php]
+ * Le filtre génère :  <div data-controller="php-runner" data-php-runner-code-value="echo PHP_VERSION;"></div>
+ * Ce contrôleur crée alors l'UI interactive (textarea, bouton, sortie).
  */
 export default class extends Controller {
+    static values = {
+        code: String,
+    };
+
     connect() {
-        const blocs = this.element.querySelectorAll('pre.php-runner');
-        blocs.forEach((pre) => this._transformer(pre));
+        this._buildWidget(this.codeValue || '');
     }
 
-    // ── Transformation du <pre> en widget ────────────────────────────────────
+    disconnect() {
+        this._php = null;
+    }
 
-    _transformer(pre) {
-        const codeInitial = pre.textContent.trim();
+    // ── Construction du widget ────────────────────────────────────────────────
 
-        // Wrapper principal
-        const wrapper = document.createElement('div');
-        wrapper.className =
-            'php-runner-widget my-6 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] overflow-hidden';
+    _buildWidget(codeInitial) {
+        // Afficher <?php si absent, pour que le visiteur voie du code complet
+        const codeAffiche = /^\s*<\?/.test(codeInitial)
+            ? codeInitial
+            : `<?php\n${codeInitial}`;
+
+        this.element.innerHTML = '';
+        this.element.className =
+            'php-runner-widget my-6 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] overflow-hidden not-prose';
 
         // Textarea (code éditable)
         const textarea = document.createElement('textarea');
-        textarea.value = codeInitial;
-        textarea.rows = Math.max(3, codeInitial.split('\n').length + 1);
+        textarea.value = codeAffiche;
+        textarea.rows = Math.max(3, codeAffiche.split('\n').length + 1);
         textarea.spellcheck = false;
+        textarea.setAttribute('aria-label', 'Code PHP à exécuter');
         textarea.className =
             'w-full resize-y bg-[var(--bg-primary)] p-4 font-mono text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--accent)] border-b border-[var(--border)]';
-        textarea.setAttribute('aria-label', 'Code PHP à exécuter');
 
         // Barre de contrôles
         const barre = document.createElement('div');
@@ -61,14 +66,11 @@ export default class extends Controller {
             'hidden m-0 whitespace-pre-wrap p-4 font-mono text-sm text-[var(--text-primary)] bg-[var(--bg-primary)]';
         sortie.setAttribute('aria-live', 'polite');
 
-        wrapper.appendChild(textarea);
-        wrapper.appendChild(barre);
-        wrapper.appendChild(sortie);
+        this.element.appendChild(textarea);
+        this.element.appendChild(barre);
+        this.element.appendChild(sortie);
 
-        // Remplacer le <pre> d'origine par le widget
-        pre.replaceWith(wrapper);
-
-        // État local à ce bloc (php-wasm chargé une seule fois par bloc)
+        // Instance php-wasm locale à ce widget
         let phpInstance = null;
         let enCours = false;
 
@@ -84,7 +86,7 @@ export default class extends Controller {
 
             try {
                 if (!phpInstance) {
-                    statut.textContent = 'Chargement de PHP (~16 Mo, mis en cache)…';
+                    statut.textContent = 'Chargement de PHP (~16 Mo, mis en cache ensuite)…';
                     phpInstance = await this._chargerPhp();
                 }
                 statut.textContent = 'Exécution…';
@@ -96,7 +98,7 @@ export default class extends Controller {
             } catch (err) {
                 sortie.textContent = 'Erreur : ' + err.message;
                 sortie.classList.add('text-red-500');
-                phpInstance = null; // réinitialiser si échec du chargement
+                phpInstance = null;
             } finally {
                 statut.textContent = '';
                 bouton.disabled = false;
@@ -118,7 +120,7 @@ export default class extends Controller {
         await new Promise((resolve, reject) => {
             php.addEventListener('ready', resolve, { once: true });
             php.addEventListener('error', (e) => {
-                reject(new Error(e.detail ?? 'Impossible de charger PHP-WASM.'));
+                reject(new Error(String(e.detail ?? 'Impossible de charger PHP-WASM.')));
             }, { once: true });
         });
 
@@ -131,6 +133,9 @@ export default class extends Controller {
         let stdout = '';
         let stderr = '';
 
+        // S'assurer que <?php est présent
+        const codeComplet = /^\s*<\?/.test(code) ? code : `<?php\n${code}`;
+
         const onOutput = ({ detail }) => {
             stdout += Array.isArray(detail) ? detail.join('') : String(detail);
         };
@@ -142,7 +147,7 @@ export default class extends Controller {
         php.addEventListener('error', onError);
 
         try {
-            await php.run(code);
+            await php.run(codeComplet);
         } finally {
             php.removeEventListener('output', onOutput);
             php.removeEventListener('error', onError);

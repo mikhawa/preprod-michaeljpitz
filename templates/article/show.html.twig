@@ -68,8 +68,8 @@
                     [&_blockquote]:border-[var(--accent)] [&_blockquote]:text-[var(--text-secondary)]
                     [&_code]:bg-[var(--bg-secondary)] [&_code]:px-1 [&_code]:rounded
                     [&_pre]:bg-[var(--bg-secondary)] [&_pre]:border [&_pre]:border-[var(--border)]"
-             data-controller="external-link lightbox php-runner">
-            {{ article.content|raw }}
+             data-controller="external-link lightbox">
+            {{ article.content|php_runner|raw }}
         </div>
     </article>
 
