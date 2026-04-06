@@ -18,12 +18,39 @@
 
 {% block body %}
     <article class="max-w-3xl mx-auto py-8">
-        {# Navigation retour #}
-        <div class="mb-8">
-            <a href="{{ path('app_article_index') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)]">
-                &larr; Retour aux articles
-            </a>
-        </div>
+        {# Fil d'Ariane #}
+        <nav aria-label="Fil d'Ariane" class="mb-8">
+            <ol class="flex flex-wrap items-center gap-1 text-sm text-[var(--text-secondary)]">
+                <li>
+                    <a href="{{ path('app_home') }}"
+                       class="hover:text-[var(--accent)] transition-colors">
+                        Accueil
+                    </a>
+                </li>
+                <li aria-hidden="true" class="select-none opacity-50">/</li>
+                <li>
+                    <a href="{{ path('app_article_index') }}"
+                       class="hover:text-[var(--accent)] transition-colors">
+                        Articles
+                    </a>
+                </li>
+                {% for category in breadcrumbCategories %}
+                    <li aria-hidden="true" class="select-none opacity-50">/</li>
+                    <li>
+                        <a href="{{ path('app_category_show', {slug: category.slug}) }}"
+                           class="hover:text-[var(--accent)] transition-colors">
+                            {{ category.title }}
+                        </a>
+                    </li>
+                {% endfor %}
+                <li aria-hidden="true" class="select-none opacity-50">/</li>
+                <li class="text-[var(--text-primary)] font-medium truncate max-w-[200px] sm:max-w-xs"
+                    aria-current="page"
+                    title="{{ article.title }}">
+                    {{ article.title }}
+                </li>
+            </ol>
+        </nav>
 
         {# En-tête #}
         <header class="mb-8">

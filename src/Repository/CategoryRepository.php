@@ -19,6 +19,37 @@ class CategoryRepository extends ServiceEntityRepository
     }
 
     /**
+     * Retourne toutes les catégories aplaties dans l'ordre hiérarchique,
+     * avec la profondeur de chaque nœud.
+     *
+     * @return list<array{category: Category, depth: int}>
+     */
+    public function findAllHierarchical(): array
+    {
+        $all = $this->findBy([], ['title' => 'ASC']);
+        $result = [];
+        $this->flattenLevel($all, 0, 0, $result);
+
+        return $result;
+    }
+
+    /**
+     * @param Category[]                               $all
+     * @param list<array{category: Category, depth: int}> $result
+     */
+    private function flattenLevel(array $all, int $parentId, int $depth, array &$result): void
+    {
+        foreach ($all as $cat) {
+            if (($cat->getLevel() ?? 0) === $parentId) {
+                $result[] = ['category' => $cat, 'depth' => $depth];
+                if (null !== $cat->getId()) {
+                    $this->flattenLevel($all, $cat->getId(), $depth + 1, $result);
+                }
+            }
+        }
+    }
+
+    /**
      * @return list<array{category: Category, children: list<mixed>}>
      */
     public function findCategoryTree(): array

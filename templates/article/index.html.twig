@@ -26,22 +26,34 @@
             {% endif %}
         </h1>
 
-        {# Filtres catégories #}
-        {% if categories is not empty %}
-        <div class="flex flex-wrap gap-2 mb-8">
-            <a href="{{ path('app_article_index') }}"
-               class="inline-block text-sm px-3 py-1 rounded-full border transition-colors
-                      {% if currentCategory is null %}bg-[var(--accent)] text-white border-[var(--accent)]{% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}">
-                Tous
-            </a>
-            {% for cat in categories %}
-                <a href="{{ path('app_category_show', {slug: cat.slug}) }}"
+        {# Filtres catégories hiérarchiques #}
+        {% if categoriesHierarchical is not empty %}
+        <nav aria-label="Filtrer par catégorie" class="mb-8">
+            <div class="flex flex-wrap gap-2 items-center">
+                <a href="{{ path('app_article_index') }}"
                    class="inline-block text-sm px-3 py-1 rounded-full border transition-colors
-                          {% if currentCategory and currentCategory.id == cat.id %}bg-[var(--accent)] text-white border-[var(--accent)]{% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}">
-                    {{ cat.title }}
+                          {% if currentCategory is null %}bg-[var(--accent)] text-white border-[var(--accent)]
+                          {% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}">
+                    Tous
                 </a>
-            {% endfor %}
-        </div>
+                {% for item in categoriesHierarchical %}
+                    {%- set cat = item.category -%}
+                    {%- set depth = item.depth -%}
+                    <a href="{{ path('app_category_show', {slug: cat.slug}) }}"
+                       class="inline-flex items-center gap-1 text-sm px-3 py-1 rounded-full border transition-colors
+                              {% if currentCategory and currentCategory.id == cat.id %}bg-[var(--accent)] text-white border-[var(--accent)]
+                              {% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}"
+                       {% if depth > 0 %}title="Sous-catégorie de niveau {{ depth }}"{% endif %}>
+                        {%- if depth > 0 -%}
+                            <span class="opacity-40 text-xs select-none" aria-hidden="true">
+                                {{- '↳' -}}
+                            </span>
+                        {%- endif -%}
+                        {{- cat.title -}}
+                    </a>
+                {% endfor %}
+            </div>
+        </nav>
         {% endif %}
 
         {# Grille d'articles #}
