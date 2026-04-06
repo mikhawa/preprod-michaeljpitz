@@ -48,8 +48,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: 'Le nom d\'utilisateur ne peut pas dépasser {{ limit }} caractères.'
     )]
     #[Assert\Regex(
-        pattern: '/^[a-zA-Z0-9_.]+$/',
-        message: 'Le nom d\'utilisateur ne peut contenir que des lettres, des chiffres, des points et des underscores.'
+        pattern: '/^[\pL\pN_. ]+$/u',
+        message: 'Le nom d\'utilisateur ne peut contenir que des lettres, des chiffres, des points, des underscores et des espaces.'
     )]
     private ?string $userName = null;
 
