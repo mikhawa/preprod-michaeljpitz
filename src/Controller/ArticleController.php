@@ -95,6 +95,7 @@ class ArticleController extends AbstractController
     public function show(
         #[MapEntity(mapping: ['slug' => 'slug'])] Article $article,
         ArticleRepository $articleRepository,
+        CategoryRepository $categoryRepository,
         CommentRepository $commentRepository,
         RatingRepository $ratingRepository,
         Request $request,
@@ -103,6 +104,26 @@ class ArticleController extends AbstractController
     ): Response {
         if (!$article->isPublished()) {
             throw $this->createNotFoundException('Article introuvable.');
+        }
+
+        // Construit la chaîne hiérarchique de catégories pour le fil d'Ariane
+        // On prend la catégorie la plus profonde (level > 0) en priorité
+        $breadcrumbCategories = [];
+        $categories = $article->getCategories()->toArray();
+        usort($categories, static fn (Category $a, Category $b) => ($b->getLevel() ?? 0) <=> ($a->getLevel() ?? 0));
+        $startCategory = $categories[0] ?? null;
+
+        if (null !== $startCategory) {
+            $chain = [];
+            $visited = [];
+            $current = $startCategory;
+            while (null !== $current && !in_array($current->getId(), $visited, true)) {
+                $visited[] = $current->getId();
+                array_unshift($chain, $current);
+                $parentId = $current->getLevel();
+                $current = ($parentId !== null && $parentId > 0) ? $categoryRepository->find($parentId) : null;
+            }
+            $breadcrumbCategories = $chain;
         }
 
         $similarArticles = $articleRepository->findSimilarArticles($article);
@@ -183,6 +204,7 @@ class ArticleController extends AbstractController
 
         return $this->render('article/show.html.twig', [
             'article' => $article,
+            'breadcrumbCategories' => $breadcrumbCategories,
             'similarArticles' => $similarArticles,
             'comments' => $comments,
             'commentForm' => $commentForm,
