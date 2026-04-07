@@ -38,6 +38,11 @@ class TwoFactorLoginSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // La double vérification est réservée aux administrateurs
+        if (!in_array('ROLE_ADMIN', $user->getRoles(), true)) {
+            return;
+        }
+
         $session = $this->requestStack->getSession();
 
         // Génération d'un code OTP à 6 chiffres

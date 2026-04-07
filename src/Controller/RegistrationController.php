@@ -66,11 +66,13 @@ class RegistrationController extends AbstractController
                 }
             }
 
+            // Génération d'un mot de passe temporaire lisible (16 caractères)
+            $temporaryPassword = substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(16))), 0, 12)
+                .random_int(10, 99)
+                .(string) chr(random_int(65, 90));
+
             $user->setPassword(
-                $passwordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData(),
-                ),
+                $passwordHasher->hashPassword($user, $temporaryPassword),
             );
             $user->setActivationToken(bin2hex(random_bytes(32)));
 
@@ -83,14 +85,18 @@ class RegistrationController extends AbstractController
                 UrlGeneratorInterface::ABSOLUTE_URL,
             );
 
+            $siteUrl = $this->generateUrl('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
             $email = (new TemplatedEmail())
                 ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
                 ->to((string) $user->getEmail())
-                ->subject('Activez votre compte')
+                ->subject('Activez votre compte — vos identifiants de connexion')
                 ->htmlTemplate('email/activation.html.twig')
                 ->context([
                     'user' => $user,
                     'activation_url' => $activationUrl,
+                    'temporary_password' => $temporaryPassword,
+                    'site_url' => $siteUrl,
                 ]);
 
             $mailer->send($email);
@@ -124,7 +130,6 @@ class RegistrationController extends AbstractController
         string $token,
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
-        MailerInterface $mailer,
     ): Response {
         $user = $userRepository->findOneBy(['activationToken' => $token]);
 
@@ -151,19 +156,6 @@ class RegistrationController extends AbstractController
         $user->setStatus(1);
         $user->setActivationToken(null);
         $entityManager->flush();
-
-        $adminNotification = (new TemplatedEmail())
-            ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
-            ->to($this->adminEmail)
-            ->subject('Compte activé - '.$user->getUserName())
-            ->htmlTemplate('email/user_activated_notification.html.twig')
-            ->context([
-                'userName' => $user->getUserName(),
-                'userEmail' => $user->getEmail(),
-                'activationDate' => new \DateTimeImmutable(),
-            ]);
-
-        $mailer->send($adminNotification);
 
         $this->addFlash('success', 'Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.');
 
