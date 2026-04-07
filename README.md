@@ -135,3 +135,7 @@ php bin/console importmap:require suneditor
 ### Documentation Claude
 
 https://github.com/mikhawa/claude-code-cheat-sheet
+
+### test d'inscriptions
+
+| Email                     | Mot de passe | Username |
