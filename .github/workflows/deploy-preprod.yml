@@ -14,10 +14,10 @@ jobs:
       - name: Déploiement via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.PREPROD_SSH_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           username: root
-          key: ${{ secrets.PREPROD_SSH_PRIVATE_KEY }}
-          port: ${{ secrets.PREPROD_SSH_PORT || 22 }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || '22' }}
           script: |
             set -e
 
