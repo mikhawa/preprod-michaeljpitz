@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-04-17
+
+### Boucle infinie 2FA + "Se souvenir de moi" (admin)
+**Décision** : Dans `TwoFactorLoginSubscriber::onLoginSuccess()`, ignorer les authentifications effectuées via `RememberMeAuthenticator` (early return avant toute logique 2FA).
+
+**Contexte** : Le `LoginSuccessEvent` de Symfony se déclenche pour **toutes** les authentifications réussies, y compris les reconnexions automatiques par cookie "Se souvenir de moi". Cela provoquait un enchaînement de redirections infinies pour les admins :
+1. Cookie remember-me → `LoginSuccessEvent` → `2fa_required = true` en session
+2. `TwoFactorGateSubscriber` → redirige vers `/connexion/code-verification`
+3. `#[IsGranted('IS_AUTHENTICATED_FULLY')]` échoue (remember-me = `IS_AUTHENTICATED_REMEMBERED`) → redirige vers `/connexion`
+4. `SecurityController::login()` voit `getUser()` non null → redirige vers `app_home`
+5. Retour à l'étape 2 → boucle infinie
+
+**Raison du choix** : Le cookie "Se souvenir de moi" constitue un facteur de confiance volontaire (l'utilisateur a explicitement coché la case). Redéclencher le 2FA à chaque retour automatique est à la fois inutilisable et techniquement impossible dans le flux actuel. Le 2FA se redéclenche normalement à la prochaine connexion manuelle.
+
+**Fichier modifié** : `src/EventSubscriber/TwoFactorLoginSubscriber.php` — ajout de `use Symfony\Component\Security\Http\Authenticator\RememberMeAuthenticator` et du guard `if ($event->getAuthenticator() instanceof RememberMeAuthenticator) { return; }`.
+
+---
+
 ## 2026-04-06
 
 ### PHP Runner WASM — exécution PHP côté client
