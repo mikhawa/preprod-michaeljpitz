@@ -29,7 +29,7 @@ class CategoryHierarchySubscriber
 
     public function preFlush(PreFlushEventArgs $args): void
     {
-        $em  = $args->getObjectManager();
+        $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
         // Collecte les entités à traiter : insertions en attente + entités gérées
