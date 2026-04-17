@@ -11,6 +11,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Security\Http\Authenticator\RememberMeAuthenticator;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
 class TwoFactorLoginSubscriber implements EventSubscriberInterface
@@ -35,6 +36,11 @@ class TwoFactorLoginSubscriber implements EventSubscriberInterface
         $user = $event->getAuthenticatedToken()->getUser();
 
         if (!$user instanceof User) {
+            return;
+        }
+
+        // Pas de 2FA pour les reconnexions automatiques via "Se souvenir de moi"
+        if ($event->getAuthenticator() instanceof RememberMeAuthenticator) {
             return;
         }
 
