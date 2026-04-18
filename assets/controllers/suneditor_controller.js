@@ -26,7 +26,7 @@ export default class extends Controller {
         textarea.removeAttribute('required');
 
         this.editor = suneditor.create(textarea, {
-            plugins: plugins,
+            plugins: [...Object.values(plugins), this._createPhpPlugin()],
             lang: this._frenchLang(),
             height: '400px',
             // font et fontSize retirés : ils génèrent des spans inline qui
@@ -40,6 +40,7 @@ export default class extends Controller {
                 ['outdent', 'indent'],
                 ['align', 'horizontalRule', 'list', 'table'],
                 ['link', 'image', 'video'],
+                ['phpBlock'],
                 ['fullScreen', 'showBlocks', 'codeView'],
             ],
             defaultStyle: 'font-family: Arial, sans-serif; font-size: 16px;',
@@ -136,6 +137,137 @@ export default class extends Controller {
             return;
         }
         this._hiddenInput.value = this.editor.getContents(false);
+    }
+
+    /**
+     * Crée le plugin Suneditor custom pour insérer un bloc PHP exécutable.
+     * Ouvre une <dialog> native avec un <textarea> simple pour éviter que
+     * Suneditor n'injecte du HTML dans le code (CSS indent, spans, etc.).
+     */
+    _createPhpPlugin() {
+        const controller = this;
+
+        return {
+            name: 'phpBlock',
+            display: 'command',
+            title: 'Insérer un bloc PHP exécutable',
+            innerHTML: '<b style="font-family:monospace;font-size:11px;line-height:1">PHP</b>',
+            add: function () {},
+            action: function () {
+                const core = this;
+                controller._openPhpDialog((code) => {
+                    // Encoder chaque ligne en HTML puis joindre avec <br>
+                    const encoded = code
+                        .split('\n')
+                        .map((line) =>
+                            line
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/"/g, '&quot;')
+                        )
+                        .join('<br>');
+                    // notCleaningData=true : Suneditor ne réécrit pas notre HTML
+                    core.insertHTML(`<p>[php]${encoded}[/php]</p>`, true, false);
+                });
+            },
+        };
+    }
+
+    /**
+     * Ouvre une modale native <dialog> avec un textarea pour saisir du code PHP.
+     * Tab insère 4 espaces (pas de HTML, pas de perte d'indentation).
+     */
+    _openPhpDialog(onSave) {
+        // Injecter le style ::backdrop une seule fois
+        if (!document.querySelector('#php-dialog-style')) {
+            const style = document.createElement('style');
+            style.id = 'php-dialog-style';
+            style.textContent =
+                '.php-code-dialog::backdrop{background:rgba(0,0,0,.55)}' +
+                '.php-code-dialog textarea{tab-size:4;-moz-tab-size:4}';
+            document.head.appendChild(style);
+        }
+
+        const dialog = document.createElement('dialog');
+        dialog.className =
+            'php-code-dialog rounded-lg p-0 shadow-2xl border w-full max-w-2xl';
+        dialog.style.cssText =
+            'background:var(--bg-primary);color:var(--text-primary);border-color:var(--border)';
+
+        dialog.innerHTML = `
+            <form method="dialog" class="flex flex-col gap-0">
+                <div class="px-5 py-4 border-b" style="border-color:var(--border)">
+                    <h3 class="text-base font-semibold">Bloc PHP exécutable</h3>
+                    <p class="mt-1 text-sm" style="color:var(--text-secondary)">
+                        Écrivez le code sans <code>&lt;?php</code> — utilisez
+                        <kbd class="rounded px-1 py-0.5 text-xs font-mono border"
+                            style="background:var(--bg-secondary);border-color:var(--border)">Tab</kbd>
+                        pour indenter (4 espaces).
+                    </p>
+                </div>
+                <div class="p-4">
+                    <textarea
+                        name="code"
+                        rows="14"
+                        spellcheck="false"
+                        autocomplete="off"
+                        placeholder="echo PHP_VERSION;"
+                        class="w-full rounded border p-3 font-mono text-sm resize-y focus:outline-none focus:ring-2"
+                        style="background:var(--bg-secondary);color:var(--text-primary);border-color:var(--border);focus-ring-color:var(--accent)"
+                    ></textarea>
+                </div>
+                <div class="flex justify-end gap-3 px-5 py-3 border-t" style="border-color:var(--border)">
+                    <button
+                        type="button"
+                        data-action="cancel"
+                        class="rounded px-4 py-1.5 text-sm border hover:opacity-80 transition-opacity"
+                        style="border-color:var(--border);color:var(--text-secondary)"
+                    >Annuler</button>
+                    <button
+                        type="submit"
+                        class="rounded px-4 py-1.5 text-sm font-medium text-white transition-colors hover:opacity-90"
+                        style="background:var(--accent)"
+                    >Insérer</button>
+                </div>
+            </form>
+        `;
+
+        document.body.appendChild(dialog);
+
+        const codeTextarea = dialog.querySelector('textarea');
+
+        // Tab = 4 espaces (pas de sortie de champ)
+        codeTextarea.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const s = e.target.selectionStart;
+                const end = e.target.selectionEnd;
+                e.target.value =
+                    e.target.value.slice(0, s) + '    ' + e.target.value.slice(end);
+                e.target.selectionStart = e.target.selectionEnd = s + 4;
+            }
+        });
+
+        dialog.querySelector('[data-action="cancel"]').addEventListener('click', () => {
+            dialog.close();
+            dialog.remove();
+        });
+
+        dialog.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const code = codeTextarea.value;
+            if (code.trim()) {
+                onSave(code);
+            }
+            dialog.close();
+            dialog.remove();
+        });
+
+        dialog.addEventListener('close', () => dialog.remove());
+
+        dialog.showModal();
+        codeTextarea.focus();
     }
 
     _frenchLang() {
