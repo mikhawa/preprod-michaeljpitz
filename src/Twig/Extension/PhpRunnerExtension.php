@@ -52,17 +52,33 @@ class PhpRunnerExtension extends AbstractExtension
     /**
      * Construit le HTML du widget à partir du code brut extrait du contenu.
      * Décode les entités HTML et normalise les sauts de ligne.
+     *
+     * Suneditor stocke le texte multiligne dans des balises <p>...</p> séparées
+     * par des \n. Sans traitement, </p>\n<p> génère des sauts doubles parasites.
+     * Le bouton PHP du toolbar insère les lignes avec <br> dans un seul <p>.
      */
     private function buildWidget(string $rawCode): string
     {
         // Décoder les entités HTML introduites par Suneditor (&amp; &lt; &quot; etc.)
         $code = html_entity_decode($rawCode, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-        // Convertir les <br> en sauts de ligne (Suneditor convertit \n en <br>)
-        $code = (string) preg_replace('#<br\s*/?>\\n?#i', "\n", $code);
+        // Fusionner les paires </p><p> (multi-paragraphes Suneditor) en un seul saut de ligne
+        $code = (string) preg_replace('#</p>\s*<p[^>]*>#i', "\n", $code);
+        // Supprimer les balises <p> et </p> résiduelles (début/fin de blocs)
+        $code = (string) preg_replace('#<p[^>]*>#i', '', $code);
+        $code = (string) preg_replace('#</p>#i', '', $code);
 
-        // Supprimer toute balise HTML résiduelle
+        // Convertir les <br> en sauts de ligne (insertion via le bouton PHP ou WYSIWYG)
+        $code = (string) preg_replace('#<br\s*/?>(\n)?#i', "\n", $code);
+
+        // Supprimer toute balise HTML résiduelle (spans d'indentation Suneditor, etc.)
         $code = strip_tags($code);
+
+        // Convertir les espaces insécables (NBSP produits par Suneditor) en espaces normaux
+        $code = str_replace("\u{00A0}", ' ', $code);
+
+        // Limiter à une ligne vide maximum entre les blocs de code (évite les blancs excessifs)
+        $code = (string) preg_replace('/\n{3,}/', "\n\n", $code);
 
         $code = trim($code);
 

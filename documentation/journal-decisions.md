@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-04-18
+
+### Bouton PHP dans Suneditor : injection DOM plutôt qu'API plugin
+**Décision** : Le bouton "PHP" est ajouté à la toolbar Suneditor par injection DOM directe (`querySelector('.se-btn-module').parentNode`) et utilise l'API publique `editor.insertHTML()`, et non le système de plugin interne de Suneditor.
+
+**Contexte** : L'API plugin Suneditor (`display: 'command'` + `action()`) appelle la fonction avec `this` = core interne. `core.insertHTML()` échouait silencieusement sans aucun message d'erreur visible. Le bouton était rendu mais un clic ne produisait rien.
+
+**Raison du choix** : L'injection DOM est indépendante du versioning interne de Suneditor et donne accès à l'API publique (`editor.insertHTML`), documentée et stable.
+
+### Fix `buildWidget` : `</p><p>` → `\n` unique
+**Décision** : Dans `PhpRunnerExtension::buildWidget()`, les paires `</p>\s*<p>` sont converties en `\n` unique **avant** `strip_tags`, et les `&nbsp;` (U+00A0) sont convertis en espaces normaux.
+
+**Contexte** : Suneditor stocke le code multiligne en plusieurs `<p>` séparés par `\n`. L'ancien pipeline (`strip_tags` direct) conservait les `\n` entre les balises → 3–4 sauts parasites pour 1 ligne vide. Le Tab WYSIWYG insérait du CSS (`padding-left`) → indentation perdue après `strip_tags`.
+
+**Raison du choix** : Traiter les balises bloc avant `strip_tags` est la seule façon de récupérer la structure de lignes sans dépendre du comportement de rendu Suneditor. La `<dialog>` native avec Tab→espaces résout définitivement l'indentation pour les nouveaux blocs.
+
+---
+
 ## 2026-04-17
 
 ### Boucle infinie 2FA + "Se souvenir de moi" (admin)
