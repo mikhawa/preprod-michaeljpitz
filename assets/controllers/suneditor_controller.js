@@ -26,7 +26,7 @@ export default class extends Controller {
         textarea.removeAttribute('required');
 
         this.editor = suneditor.create(textarea, {
-            plugins: [...Object.values(plugins), this._createPhpPlugin()],
+            plugins: plugins,
             lang: this._frenchLang(),
             height: '400px',
             // font et fontSize retirés : ils génèrent des spans inline qui
@@ -40,12 +40,14 @@ export default class extends Controller {
                 ['outdent', 'indent'],
                 ['align', 'horizontalRule', 'list', 'table'],
                 ['link', 'image', 'video'],
-                ['phpBlock'],
                 ['fullScreen', 'showBlocks', 'codeView'],
             ],
             defaultStyle: 'font-family: Arial, sans-serif; font-size: 16px;',
             imageAccept: '.jpeg,.jpg,.png,.webp,.gif',
         });
+
+        // Bouton PHP injecté directement dans la toolbar (sans passer par l'API plugin)
+        this._injectPhpButton();
 
         // Accessibilité : attributs sur la zone éditable
         const editable = this.element.querySelector('.se-wrapper-wysiwyg');
@@ -140,38 +142,48 @@ export default class extends Controller {
     }
 
     /**
-     * Crée le plugin Suneditor custom pour insérer un bloc PHP exécutable.
-     * Ouvre une <dialog> native avec un <textarea> simple pour éviter que
-     * Suneditor n'injecte du HTML dans le code (CSS indent, spans, etc.).
+     * Injecte un bouton "PHP" dans la toolbar Suneditor après sa création.
+     * Bypasse l'API plugin interne pour utiliser l'API publique editor.insertHTML.
      */
-    _createPhpPlugin() {
-        const controller = this;
+    _injectPhpButton() {
+        // Trouver le conteneur réel des groupes de boutons (parent du premier groupe)
+        const firstGroup = this.element.querySelector('.se-btn-module');
+        if (!firstGroup) return;
+        const toolbar = firstGroup.parentNode;
 
-        return {
-            name: 'phpBlock',
-            display: 'command',
-            title: 'Insérer un bloc PHP exécutable',
-            innerHTML: '<b style="font-family:monospace;font-size:11px;line-height:1">PHP</b>',
-            add: function () {},
-            action: function () {
-                const core = this;
-                controller._openPhpDialog((code) => {
-                    // Encoder chaque ligne en HTML puis joindre avec <br>
-                    const encoded = code
-                        .split('\n')
-                        .map((line) =>
-                            line
-                                .replace(/&/g, '&amp;')
-                                .replace(/</g, '&lt;')
-                                .replace(/>/g, '&gt;')
-                                .replace(/"/g, '&quot;')
-                        )
-                        .join('<br>');
-                    // notCleaningData=true : Suneditor ne réécrit pas notre HTML
-                    core.insertHTML(`<p>[php]${encoded}[/php]</p>`, true, false);
-                });
-            },
-        };
+        const group = document.createElement('div');
+        group.className = 'se-btn-module se-btn-module-border';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.title = 'Insérer un bloc PHP exécutable';
+        btn.className = 'se-btn';
+        btn.setAttribute('aria-label', 'Insérer un bloc PHP exécutable');
+        btn.innerHTML =
+            '<b style="font-family:monospace;font-size:11px;line-height:1.2">PHP</b>';
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this._openPhpDialog((code) => {
+                const encoded = code
+                    .split('\n')
+                    .map((line) =>
+                        line
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                    )
+                    .join('<br>');
+                // API publique Suneditor — insère au curseur ou en fin de contenu
+                this.editor.insertHTML(`<p>[php]${encoded}[/php]</p>`);
+                this._syncToHiddenInput();
+            });
+        });
+
+        group.appendChild(btn);
+        toolbar.appendChild(group);
     }
 
     /**
