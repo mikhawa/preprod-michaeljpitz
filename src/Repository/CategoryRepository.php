@@ -34,7 +34,7 @@ class CategoryRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Category[]                               $all
+     * @param Category[]                                  $all
      * @param list<array{category: Category, depth: int}> $result
      */
     private function flattenLevel(array $all, int $parentId, int $depth, array &$result): void

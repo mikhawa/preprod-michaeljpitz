@@ -121,7 +121,7 @@ class ArticleController extends AbstractController
                 $visited[] = $current->getId();
                 array_unshift($chain, $current);
                 $parentId = $current->getLevel();
-                $current = ($parentId !== null && $parentId > 0) ? $categoryRepository->find($parentId) : null;
+                $current = (null !== $parentId && $parentId > 0) ? $categoryRepository->find($parentId) : null;
             }
             $breadcrumbCategories = $chain;
         }

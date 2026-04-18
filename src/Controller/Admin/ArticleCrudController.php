@@ -61,7 +61,7 @@ class ArticleCrudController extends AbstractCrudController
         $orderedEntities = array_column($hierarchical, 'category');
         $labelMap = [];
         foreach ($hierarchical as ['category' => $cat, 'depth' => $depth]) {
-            /** @var Category $cat */
+            /* @var Category $cat */
             $labelMap[$cat->getId()] = str_repeat('— ', $depth).$cat->getTitle();
         }
 
