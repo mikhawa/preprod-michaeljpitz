@@ -6,16 +6,21 @@ Permettre aux visiteurs d'un article de **voir et exécuter du code PHP directem
 
 ## Utilisation dans un article
 
-Dans Suneditor, **en mode WYSIWYG** (pas besoin de vue code source), taper :
+### Méthode recommandée : bouton **PHP** dans la toolbar
 
-```
-[php]echo "PHP " . PHP_VERSION;[/php]
-```
+1. Placer le curseur à l'endroit souhaité dans l'éditeur
+2. Cliquer sur le bouton **PHP** (à droite dans la toolbar Suneditor)
+3. Écrire le code PHP **sans `<?php`** dans la fenêtre qui s'ouvre
+4. Utiliser **Tab** pour indenter (4 espaces, jamais de HTML injecté)
+5. Cliquer **Insérer**
 
-**Règles :**
-- Pas de `<?php` ni `?>` — le contrôleur les ajoute automatiquement à l'affichage
-- Écrire en mode WYSIWYG normal, pas en vue code source
-- Le marqueur peut s'étendre sur plusieurs lignes
+Le bloc `[php]...[/php]` est inséré avec le code correctement encodé.
+
+### Règles générales
+- Pas de `<?php` ni `?>` — ajoutés automatiquement à l'exécution
+- **Ne pas modifier un bloc `[php]...[/php]` directement en WYSIWYG** :
+  Tab et le bouton Indent Suneditor injectent du CSS qui casse l'indentation.
+  Pour corriger, passer en vue **Code source** et éditer le texte brut.
 - Le visiteur peut modifier le code dans le widget et le ré-exécuter
 
 ---
