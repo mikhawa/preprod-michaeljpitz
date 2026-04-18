@@ -70,10 +70,13 @@ Filtre Twig `php_runner`. Cherche les marqueurs `[php]...[/php]` dans le contenu
 <div data-controller="php-runner" data-php-runner-code-value="CODE_ENCODÉ"></div>
 ```
 
-Gère également :
+Gère également (pipeline `buildWidget`) :
 - Le décodage des entités HTML (`&lt;` → `<`, `&quot;` → `"`)
+- La fusion des paires `</p><p>` Suneditor en `\n` unique (évite les sauts parasites)
 - La conversion des `<br>` en sauts de ligne (`\n`)
 - La suppression des balises HTML résiduelles via `strip_tags()`
+- La conversion des espaces insécables NBSP (U+00A0) en espaces normaux
+- La normalisation des sauts multiples (max 2 consécutifs = 1 ligne vide)
 
 ### `assets/controllers/php_runner_controller.js` (nouveau)
 
