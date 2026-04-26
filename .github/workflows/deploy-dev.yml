@@ -32,6 +32,9 @@ jobs:
             echo "==> Migrations Doctrine"
             php bin/console doctrine:migrations:migrate --no-interaction --env=dev
 
+            echo "==> Chargement des fixtures"
+            php bin/console doctrine:fixtures:load --no-interaction --env=dev
+
             echo "==> Compilation Tailwind CSS"
             php bin/console tailwind:build --env=dev
 

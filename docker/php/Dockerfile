@@ -65,6 +65,7 @@ RUN printf '%s\n' \
     "alias mm='php bin/console make:migration'" \
     "alias migrate='php bin/console doctrine:migrations:migrate --no-interaction'" \
     "alias dfl='php bin/console doctrine:fixtures:load --no-interaction'" \
+    "alias fl='php bin/console doctrine:fixtures:load --append --no-interaction'" \
     '# --- Tests ---' \
     "alias test='php bin/phpunit --no-coverage'" \
     "alias testv='php bin/phpunit --no-coverage --testdox'" \

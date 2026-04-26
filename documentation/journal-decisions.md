@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-04-26
+
+### Sitemap dynamique : pages et catégories incluses, robots.txt corrigé
+**Décision** : Le `SitemapController` injecte désormais `PageRepository` et `CategoryRepository` en plus de `ArticleRepository`. Les pages CV et RGPD sont récupérées par slug pour exposer leur `lastmod`. Les catégories sont filtrées via `findWithPublishedArticles()` pour exclure les pages vides.
+
+**Contexte** : PageSpeed Insights signalait que `robots.txt` pointait vers `https://portfolio.local/sitemap.xml` (domaine local de dev), bloquant l'indexation. Le sitemap n'incluait ni les pages statiques ni les catégories.
+
+**Raison du choix** : Le sitemap reste généré à la volée (pas de cache, pas de fichier statique) pour refléter immédiatement toute modification admin. Seules les catégories avec au moins un article publié sont indexées pour éviter les pages vides pénalisantes en SEO.
+
+**Fichiers modifiés** : `public/robots.txt`, `src/Controller/SitemapController.php`, `src/Repository/CategoryRepository.php`, `templates/sitemap.xml.twig`. Voir `documentation/022-2026-04-26-sonnet-seo-sitemap-robots.md`.
+
+---
+
 ## 2026-04-18
 
 ### Bouton PHP dans Suneditor : injection DOM plutôt qu'API plugin

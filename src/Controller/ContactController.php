@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Form\ContactType;
+use App\Repository\PageRepository;
 use App\Service\TurnstileValidator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,8 +31,9 @@ class ContactController extends AbstractController
     }
 
     #[Route('/contact', name: 'app_contact', methods: ['GET', 'POST'])]
-    public function index(Request $request): Response
+    public function index(Request $request, PageRepository $pageRepository): Response
     {
+        $page = $pageRepository->findOneBySlug('contact');
         $form = $this->createForm(ContactType::class);
         $form->handleRequest($request);
 
@@ -51,6 +53,7 @@ class ContactController extends AbstractController
                     return $this->render('contact/index.html.twig', [
                         'contactForm' => $form,
                         'turnstileSiteKey' => $this->turnstileSiteKey,
+                        'page' => $page,
                     ], new Response(status: Response::HTTP_UNPROCESSABLE_ENTITY));
                 }
             }
@@ -79,6 +82,7 @@ class ContactController extends AbstractController
         return $this->render('contact/index.html.twig', [
             'contactForm' => $form,
             'turnstileSiteKey' => $this->turnstileSiteKey,
+            'page' => $page,
         ]);
     }
 }
