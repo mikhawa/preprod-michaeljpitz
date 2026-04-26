@@ -7,6 +7,7 @@ namespace App\DataFixtures;
 use App\Entity\Article;
 use App\Entity\Category;
 use App\Entity\Comment;
+use App\Entity\Page;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -25,6 +26,7 @@ class AppFixtures extends Fixture
         $utilisateurs = $this->chargerUtilisateurs($manager);
         $articles = $this->chargerArticles($manager, $categories, $admin);
         $this->chargerCommentaires($manager, $articles, $utilisateurs);
+        $this->chargerPages($manager);
 
         $manager->flush();
     }
@@ -135,25 +137,26 @@ class AppFixtures extends Fixture
     private function chargerUtilisateurs(ObjectManager $manager): array
     {
         $donnees = [
-            ['alice.martin@example.com', 'Alice Martin', 1],
-            ['bob.dupont@example.com', 'Bob Dupont', 1],
-            ['claire.lefebvre@example.com', 'Claire Lefebvre', 1],
-            ['david.moreau@example.com', 'David Moreau', 1],
-            ['emma.petit@example.com', 'Emma Petit', 1],
-            ['francois.bernard@example.com', 'François Bernard', 1],
-            ['gaelle.richard@example.com', 'Gaëlle Richard', 1],
-            ['hugo.thomas@example.com', 'Hugo Thomas', 1],
-            ['isabelle.durand@example.com', 'Isabelle Durand', 0],
-            ['julien.leroy@example.com', 'Julien Leroy', 0],
+            ['michael.pitz@cf2m.be', 'Michael Pitz', 1, 'erapacha25'],
+            ['alice.martin@example.com', 'Alice Martin', 1, 'password123'],
+            ['bob.dupont@example.com', 'Bob Dupont', 1, 'password123'],
+            ['claire.lefebvre@example.com', 'Claire Lefebvre', 1, 'password123'],
+            ['david.moreau@example.com', 'David Moreau', 1, 'password123'],
+            ['emma.petit@example.com', 'Emma Petit', 1, 'password123'],
+            ['francois.bernard@example.com', 'François Bernard', 1, 'password123'],
+            ['gaelle.richard@example.com', 'Gaëlle Richard', 1, 'password123'],
+            ['hugo.thomas@example.com', 'Hugo Thomas', 1, 'password123'],
+            ['isabelle.durand@example.com', 'Isabelle Durand', 0, 'password123'],
+            ['julien.leroy@example.com', 'Julien Leroy', 0, 'password123'],
         ];
 
         $utilisateurs = [];
-        foreach ($donnees as [$email, $nom, $statut]) {
+        foreach ($donnees as [$email, $nom, $statut, $mdp]) {
             $user = new User();
             $user->setEmail($email)
                 ->setUserName($nom)
                 ->setStatus($statut)
-                ->setPassword($this->passwordHasher->hashPassword($user, 'password123'));
+                ->setPassword($this->passwordHasher->hashPassword($user, $mdp));
 
             $manager->persist($user);
             $utilisateurs[] = $user;
@@ -249,6 +252,87 @@ class AppFixtures extends Fixture
 
             $manager->persist($commentaire);
         }
+    }
+
+    private function chargerPages(ObjectManager $manager): void
+    {
+        $rgpd = new Page();
+        $rgpd->setTitle('Politique de confidentialité (RGPD)')
+            ->setSlug('rgpd')
+            ->setContent(
+                '<h2>Collecte des données</h2>'
+                .'<p>Ce site collecte des données personnelles uniquement dans le cadre de son fonctionnement normal :</p>'
+                .'<ul>'
+                .'<li>Formulaire de contact : nom, adresse e-mail, message</li>'
+                .'<li>Inscription : nom d\'utilisateur, adresse e-mail, mot de passe (hashé)</li>'
+                .'<li>Commentaires : contenu du commentaire associé à votre compte</li>'
+                .'</ul>'
+                .'<h2>Utilisation des données</h2>'
+                .'<p>Les données collectées sont utilisées exclusivement pour :</p>'
+                .'<ul>'
+                .'<li>Répondre à vos demandes de contact</li>'
+                .'<li>Gérer votre compte utilisateur</li>'
+                .'<li>Afficher vos commentaires sur les articles</li>'
+                .'</ul>'
+                .'<p>Aucune donnée n\'est transmise à des tiers ni utilisée à des fins commerciales.</p>'
+                .'<h2>Cookies</h2>'
+                .'<p>Ce site utilise uniquement des cookies techniques nécessaires à son fonctionnement :</p>'
+                .'<ul>'
+                .'<li>Cookie de session (authentification)</li>'
+                .'<li>Cookie de préférence de thème (clair/sombre)</li>'
+                .'</ul>'
+                .'<p>Aucun cookie de pistage ou publicitaire n\'est utilisé.</p>'
+                .'<h2>Vos droits</h2>'
+                .'<p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants :</p>'
+                .'<ul>'
+                .'<li>Droit d\'accès à vos données personnelles</li>'
+                .'<li>Droit de rectification de vos données</li>'
+                .'<li>Droit à l\'effacement de vos données</li>'
+                .'<li>Droit à la portabilité de vos données</li>'
+                .'<li>Droit d\'opposition au traitement de vos données</li>'
+                .'</ul>'
+                .'<h2>Contact</h2>'
+                .'<p>Pour exercer vos droits ou pour toute question relative à la protection de vos données, vous pouvez nous contacter via la page <a href="/contact">Contact</a>.</p>'
+            );
+        $manager->persist($rgpd);
+
+        $contact = new Page();
+        $contact->setTitle('Contact')
+            ->setSlug('contact')
+            ->setContent(
+                '<p>Vous souhaitez me contacter ? Remplissez le formulaire ci-dessous et je vous répondrai dans les plus brefs délais.</p>'
+            );
+        $manager->persist($contact);
+
+        $cv = new Page();
+        $cv->setTitle('Curriculum Vitae')
+            ->setSlug('cv')
+            ->setContent(
+                '<h2>Compétences</h2>'
+                .'<ul>'
+                .'<li>PHP 8 / Symfony 7</li>'
+                .'<li>Doctrine ORM / MySQL / MariaDB</li>'
+                .'<li>HTML5 / CSS3 / Tailwind CSS</li>'
+                .'<li>JavaScript / Stimulus</li>'
+                .'<li>Docker / Git / CI-CD</li>'
+                .'<li>API REST / Tests unitaires</li>'
+                .'</ul>'
+                .'<h2>Expériences</h2>'
+                .'<h3>Développeur PHP/Symfony</h3>'
+                .'<p>Entreprise XYZ — 2023-2026<br>Développement d\'applications web, API REST, intégration continue.</p>'
+                .'<h3>Développeur Web Junior</h3>'
+                .'<p>Agence ABC — 2021-2023<br>Création de sites WordPress et Symfony, maintenance applicative.</p>'
+                .'<h2>Formations</h2>'
+                .'<h3>Licence Informatique</h3>'
+                .'<p>Université — 2020</p>'
+                .'<h3>BTS SIO option SLAM</h3>'
+                .'<p>Lycée — 2018</p>'
+                .'<h3>Certifications Symfony</h3>'
+                .'<p>SymfonyCasts — 2022</p>'
+            );
+        $manager->persist($cv);
+
+        $manager->flush();
     }
 
     private function genererContenu(string $titre): string
