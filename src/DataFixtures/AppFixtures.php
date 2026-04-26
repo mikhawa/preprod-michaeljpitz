@@ -217,6 +217,138 @@ class AppFixtures extends Fixture
             ++$offset;
         }
 
+        $arrayPhp = new Article();
+        $arrayPhp->setTitle('Les Array en PHP')
+            ->setSlug('les-array-en-php')
+            ->setExcerpt('Un tableau en PHP est en fait une carte ordonnée qui associe des valeurs à des clés.')
+            ->setFeaturedImage('903ecff8abe47fd4f6e0d8e222a5ee965297926d.jpg')
+            ->setIsPublished(true)
+            ->setPublishedAt(new \DateTimeImmutable('-1 day'))
+            ->setContent('<p>​En <strong>PHP,</strong> un&nbsp;<code><strong>array</strong></code><strong> </strong>(tableau) est une structure de données ordonnée qui associe des <strong>valeurs à des clés</strong>, fonctionnant comme une carte (map), une liste, un dictionnaire ou une collection. Il permet de stocker plusieurs valeurs de types différents (nombres, chaînes, booléens) dans une seule variable. Les tableaux peuvent être numériques (<strong>indexés </strong>par des nombres) ou <strong>associatifs </strong>(indexés par des chaînes).</p>
+
+<p><strong>Ils peuvent être multidimensionnel (imbriqué)</strong></p>
+
+<p><strong>Ils premettent de stocker un grand nombre de valeur dans une seule variable.</strong></p>
+
+<p style="line-height:1.38"><span style="font-size:15px;color:#000000;background-color:transparent">Les<strong> tableaux en PHP</strong> sont omniprésents : des entrées utilisateur aux résultats de base de données, en passant par les paramètres et les configurations. Ils sont incroyablement flexibles, mais la plupart d&apos;entre nous n&apos;en connaissent qu&apos;une infime partie.</span></p>
+
+<h2 style="line-height: 1.38"><span style="font-size:15px;color:#000000;background-color:transparent">Déclaration d&apos;un tableau</span></h2>
+
+<p>[php]# la plus ancienne méthode, mais<br>
+# est toujours fonctionnelle!<br>
+$tableau1 = array();<br>
+<br>
+# ou la plus fréquente<br>
+$tableau2 = [];<br>
+<br>
+# Débogage, donne 2 tableaux vides<br>
+var_dump($tableau1, $tableau2);[/php]</p>
+
+<h2>Tableau indexé</h2>
+
+<p>Des numériques en partant de 0 servent de clé pour pouvoir afficher la valeur en question.</p>
+
+<p>[php]# Ce type de tableau n&apos;est déclaré qu&apos;avec des valeurs<br>
+$tab_index = [<br>
+    &apos;un&apos;, <br>
+    &apos;deux&apos;, <br>
+    &apos;trois&apos;,<br>
+];<br>
+<br>
+<br>
+# On veut afficher la &apos;un&apos;<br>
+echo $tab_index[0];<br>
+<br>
+# retour à la ligne (\n)<br>
+echo PHP_EOL;<br>
+<br>
+<br>
+# débogage<br>
+var_dump($tab_index);[/php]</p>
+
+<p><br>
+</p>
+
+<h2>Tableau associatif&nbsp;</h2>
+
+<p>Des chaînes de caractères servent de clé pour pouvoir afficher la valeur en question.</p>
+
+<p><br>
+</p>
+
+<p>[php]# Ce type de tableau est déclaré qu&apos;avec des clés =&gt; valeurs<br>
+$tab_assoc = [<br>
+    &apos;one&apos;=&gt;&apos;un&apos;,<br>
+     &apos;two&apos;=&gt;&apos;deux&apos;, <br>
+    &apos;three&apos;=&gt;&apos;trois&apos;<br>
+ ];<br>
+<br>
+# On veut afficher la &apos;un&apos;<br>
+echo $tab_assoc[&apos;one&apos;];<br>
+<br>
+# retour à la ligne<br>
+echo PHP_EOL;<br>
+<br>
+# débogage<br>
+var_dump($tab_assoc);[/php]</p>
+
+<h2>Tableau Multidimensionnel</h2>
+
+<p>Un tableau peut avoir des sous tableaux, et donc contenir énormément d&apos;informations !</p>
+
+<p>[php]# Liste d&apos;élèves ayant participer à 3 contrôles<br>
+<br>
+$stagiaires = [<br>
+    &apos;classe&apos; =&gt; &apos;2CB&apos;,<br>
+    &apos;date&apos; =&gt; &apos;2026-04-18&apos;,<br>
+    [<br>
+        &apos;nom&apos; =&gt; &apos;Ben Adj&apos;,<br>
+        &apos;prenom&apos; =&gt; &apos;Meidhy&apos;,<br>
+        &apos;matière&apos; =&gt; [<br>
+            &apos;Français&apos; =&gt; &apos;18.5/20&apos;,<br>
+            &apos;Géographie&apos; =&gt; &apos;16/20&apos;,<br>
+            &apos;Mathématique&apos; =&gt; &apos;14.5/20&apos;,<br>
+        ],<br>
+    ],<br>
+     [<br>
+        &apos;nom&apos; =&gt; &apos;Pitz&apos;,<br>
+        &apos;prenom&apos; =&gt; &apos;Michaël&apos;,<br>
+        &apos;matière&apos; =&gt; [<br>
+            &apos;Français&apos; =&gt; &apos;17/20&apos;,<br>
+            &apos;Géographie&apos; =&gt; &apos;18/20&apos;,<br>
+            &apos;Mathématique&apos; =&gt; &apos;17/20&apos;,<br>
+        ],<br>
+    ],<br>
+];</p>
+
+<p><br>
+</p>
+
+<p># pour récupérer la cote en Français de Pitz Michaël:</p>
+
+<p>echo $stagiaires[1][&apos;matière&apos;][&apos;Français&apos;];</p>
+
+<p><br>
+</p>
+
+<p># retour à la ligne</p>
+
+<p>echo PHP_EOL;</p>
+
+<p><br>
+</p>
+
+<p># Débogage avec print_r (plus lisible)</p>
+
+<p>print_r($stagiaires);[/php]</p>
+
+<p><br>
+</p>
+');
+        $arrayPhp->addCategory($categories['php']);
+        $manager->persist($arrayPhp);
+        $articles[] = $arrayPhp;
+
         $manager->flush();
 
         return $articles;
