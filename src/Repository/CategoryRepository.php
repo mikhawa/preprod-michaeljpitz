@@ -49,6 +49,17 @@ class CategoryRepository extends ServiceEntityRepository
         }
     }
 
+    /** @return Category[] */
+    public function findWithPublishedArticles(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->innerJoin('c.articles', 'a')
+            ->where('a.isPublished = true')
+            ->distinct()
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * @return list<array{category: Category, children: list<mixed>}>
      */
