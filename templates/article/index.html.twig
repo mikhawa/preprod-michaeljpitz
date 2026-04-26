@@ -68,7 +68,7 @@
             {% if pagination.pageCount > 1 %}
             <nav class="flex justify-center mt-12" aria-label="Pagination">
                 <div class="flex items-center gap-1">
-                    {% if pagination.hasPreviousPage %}
+                    {% if pagination.currentPageNumber > 1 %}
                         <a href="{{ currentCategory ? path('app_category_show', {slug: currentCategory.slug, page: pagination.currentPageNumber - 1}) : path('app_article_index', {page: pagination.currentPageNumber - 1}) }}"
                            class="px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] transition-colors">
                             &laquo; Précédent
@@ -88,7 +88,7 @@
                         {% endif %}
                     {% endfor %}
 
-                    {% if pagination.hasNextPage %}
+                    {% if pagination.currentPageNumber < pagination.pageCount %}
                         <a href="{{ currentCategory ? path('app_category_show', {slug: currentCategory.slug, page: pagination.currentPageNumber + 1}) : path('app_article_index', {page: pagination.currentPageNumber + 1}) }}"
                            class="px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] transition-colors">
                             Suivant &raquo;
