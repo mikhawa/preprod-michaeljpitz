@@ -31,7 +31,7 @@ https://github.com/mikhawa/preprod-michaeljpitz
 
 #### Permissions
 
-chown -R micha5214:micha5214 /home/michaeljpitz.com/preprod.michaeljpitz.com/preprod-michaeljpitz/public/uploads/
+chown -R micha5214:micha5214 /home/michaeljpitz.com/preprod.michaeljpitz.com/public/uploads/
 
 
 ### URL de la version preprod :
