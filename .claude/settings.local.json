@@ -10,7 +10,10 @@
       "Bash(composer show:*)",
       "WebFetch(domain:github.com)",
       "Bash(vendor/bin/phpstan analyse:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(curl -s http://localhost:8080)",
+      "Bash(npx playwright *)",
+      "Bash(curl -s http://localhost:8080/)"
     ]
   }
 }

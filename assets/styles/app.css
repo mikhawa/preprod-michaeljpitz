@@ -24,7 +24,32 @@
     --border: #334155;
 }
 
-/* Styles pour le contenu riche (SunEditor / prose) */
+/* ===== Hero ===== */
+.hero-gradient-ring {
+    background: conic-gradient(from 180deg at 50% 50%, #60a5fa 0deg, #a78bfa 180deg, #60a5fa 360deg);
+}
+
+.hero-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -5%;
+    width: 55%;
+    height: 160%;
+    background: radial-gradient(ellipse, rgba(96, 165, 250, 0.04) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+[data-theme="dark"] .hero-section::after {
+    background: radial-gradient(ellipse, rgba(96, 165, 250, 0.13) 0%, transparent 65%);
+}
+
+/* ===== Styles pour le contenu riche (SunEditor / prose) ===== */
 /* Les !important sur les enfants (*) sont nécessaires car SunEditor injecte
    des spans avec font-size inline (ex: <h1><span style="font-size:18px">) */
 .prose h1 { font-size: 2rem; font-weight: 700; margin: 1.5rem 0 1rem; line-height: 1.2; }

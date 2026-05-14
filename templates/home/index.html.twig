@@ -3,19 +3,92 @@
 {% block title %}Accueil - Portfolio Développeur PHP/Symfony{% endblock %}
 
 {% block body %}
-    {# Hero #}
-    <section class="text-center py-16">
-        <h1 class="text-4xl font-bold mb-4">Développeur PHP/Symfony</h1>
-        <p class="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">
-            Bienvenue sur mon portfolio. Découvrez mes projets, mon parcours et mes articles.
-        </p>
+    {# ===== HERO ===== #}
+    <section class="hero-section py-10 md:py-16">
+        <div class="grid md:grid-cols-2 gap-10 items-center">
+
+            {# --- Colonne gauche --- #}
+            <div class="space-y-6">
+
+                {# Badge disponibilité #}
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] text-sm text-[var(--text-secondary)]">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+                    Disponible pour des projets
+                </div>
+
+                {# Nom #}
+                <p class="text-xs font-bold tracking-[0.2em] uppercase text-[var(--accent)]">
+                    Michaël J. Pitz
+                </p>
+
+                {# Titre principal #}
+                <h1 class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
+                    <span class="text-[var(--text-primary)]">Développeur</span><br>
+                    <span class="text-[var(--accent)]">PHP/Symfony</span>
+                </h1>
+
+                {# Description #}
+                <p class="text-[var(--text-secondary)] text-base md:text-lg leading-relaxed max-w-md">
+                    Passionné par le développement web et la création d'applications robustes.
+                    Spécialisé en PHP 8 &amp; Symfony 7 avec une approche orientée qualité et performance.
+                </p>
+
+                {# Badges technos #}
+                <div class="flex flex-wrap gap-2">
+                    {% for tech in ['PHP 8', 'Symfony 7', 'MariaDB', 'Tailwind CSS', 'Docker', 'API REST', 'CI/CD'] %}
+                        <span class="px-3 py-1 text-xs font-medium rounded-full border border-[var(--border)] text-[var(--text-secondary)] bg-[var(--bg-secondary)]">
+                            {{ tech }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                {# CTAs #}
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="{{ path('app_cv') }}"
+                       class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-semibold rounded-lg transition-colors text-sm">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Voir mon CV
+                    </a>
+                    <a href="{{ path('app_contact') }}"
+                       class="inline-flex items-center gap-2 px-6 py-3 border border-[var(--border)] hover:border-[var(--accent)] text-[var(--text-primary)] font-semibold rounded-lg transition-colors bg-[var(--bg-secondary)] text-sm">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        Me contacter
+                    </a>
+                </div>
+            </div>
+
+            {# --- Colonne droite : avatar --- #}
+            <div class="flex justify-center items-center">
+                <div class="relative inline-block">
+                    {# Conteneur du cercle #}
+                    <div class="relative w-64 h-64 md:w-72 md:h-72 flex-shrink-0">
+                        {# Anneau dégradé (pleine taille) #}
+                        <div class="hero-gradient-ring absolute inset-0 rounded-full"></div>
+                        {# Cercle intérieur (décalé de 3px pour laisser l'anneau visible) #}
+                        <div class="absolute inset-[3px] rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
+                            <span class="text-5xl md:text-6xl font-extrabold text-[var(--accent)] tracking-tight select-none">MJP</span>
+                        </div>
+                    </div>
+                    {# Badge années d'expérience #}
+                    <div class="absolute bottom-3 -right-3 bg-[var(--accent)] text-white text-center px-4 py-2 rounded-xl shadow-lg">
+                        <span class="text-2xl font-extrabold leading-none block">5+</span>
+                        <span class="text-[10px] leading-tight block mt-0.5">ans d'exp.</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </section>
 
-    {# CV #}
-    <section id="cv" class="py-12">
+    {# ===== CV ===== #}
+    <section id="cv" class="py-12 border-t border-[var(--border)]">
         <div class="flex items-center justify-between mb-10">
             <h2 class="text-3xl font-bold">Curriculum Vitae</h2>
-            <a href="{{ path('app_cv') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium">
+            <a href="{{ path('app_cv') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium text-sm">
                 Voir le CV complet &rarr;
             </a>
         </div>
@@ -40,12 +113,12 @@
                 <div class="space-y-4">
                     <div>
                         <p class="font-medium">Développeur PHP/Symfony</p>
-                        <p class="text-sm text-[var(--text-secondary)]">Entreprise XYZ - 2023-2026</p>
+                        <p class="text-sm text-[var(--text-secondary)]">Entreprise XYZ — 2023-2026</p>
                         <p class="text-sm text-[var(--text-secondary)] mt-1">Développement d'applications web, API REST, intégration continue.</p>
                     </div>
                     <div>
                         <p class="font-medium">Développeur Web Junior</p>
-                        <p class="text-sm text-[var(--text-secondary)]">Agence ABC - 2021-2023</p>
+                        <p class="text-sm text-[var(--text-secondary)]">Agence ABC — 2021-2023</p>
                         <p class="text-sm text-[var(--text-secondary)] mt-1">Création de sites WordPress et Symfony, maintenance applicative.</p>
                     </div>
                 </div>
@@ -57,31 +130,30 @@
                 <div class="space-y-4">
                     <div>
                         <p class="font-medium">Licence Informatique</p>
-                        <p class="text-sm text-[var(--text-secondary)]">Université - 2020</p>
+                        <p class="text-sm text-[var(--text-secondary)]">Université — 2020</p>
                     </div>
                     <div>
                         <p class="font-medium">BTS SIO option SLAM</p>
-                        <p class="text-sm text-[var(--text-secondary)]">Lycée - 2018</p>
+                        <p class="text-sm text-[var(--text-secondary)]">Lycée — 2018</p>
                     </div>
                     <div>
                         <p class="font-medium">Certifications Symfony</p>
-                        <p class="text-sm text-[var(--text-secondary)]">SymfonyCasts - 2022</p>
+                        <p class="text-sm text-[var(--text-secondary)]">SymfonyCasts — 2022</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    {# Derniers articles #}
+    {# ===== DERNIERS ARTICLES ===== #}
     {% if latestArticles is not empty %}
     <section class="py-12">
         <div class="flex items-center justify-between mb-8">
             <h2 class="text-3xl font-bold">Derniers articles</h2>
-            <a href="{{ path('app_article_index') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium">
+            <a href="{{ path('app_article_index') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)] font-medium text-sm">
                 Voir tous les articles &rarr;
             </a>
         </div>
-
         <div class="grid md:grid-cols-3 gap-6">
             {% for article in latestArticles %}
                 <twig:ArticleCard :article="article" />
@@ -90,15 +162,18 @@
     </section>
     {% endif %}
 
-    {# Contact #}
+    {# ===== CONTACT ===== #}
     <section id="contact" class="py-12">
         <h2 class="text-3xl font-bold mb-8 text-center">Contact</h2>
         <div class="max-w-lg mx-auto bg-[var(--bg-secondary)] rounded-lg p-8 border border-[var(--border)] text-center">
-            <p class="text-[var(--text-secondary)] mb-4">
-                Vous souhaitez me contacter ? Remplissez le formulaire ci-dessous et je vous répondrai dans les plus brefs délais.
+            <p class="text-[var(--text-secondary)] mb-6">
+                Vous souhaitez me contacter ? Remplissez le formulaire et je vous répondrai dans les plus brefs délais.
             </p>
             <a href="{{ path('app_contact') }}"
-               class="inline-block px-6 py-3 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-colors font-medium">
+               class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-colors font-medium text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
                 Me contacter
             </a>
         </div>
