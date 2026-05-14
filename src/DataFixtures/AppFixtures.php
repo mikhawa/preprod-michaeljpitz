@@ -11,9 +11,9 @@ use App\Entity\Page;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-# Chargement de dépendance automatique
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+// Chargement de dépendance automatique
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
@@ -22,7 +22,8 @@ class AppFixtures extends Fixture
         // On injecte directement la variable d'environnement
         #[Autowire(env: 'PASS_ADMIN')]
         private readonly string $mypassword,
-    ) {}
+    ) {
+    }
 
     public function load(ObjectManager $manager): void
     {
