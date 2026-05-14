@@ -6,6 +6,17 @@
 
 ## 2026-05-14
 
+### Audit de sécurité branche `fix/07-security-check` : aucune vulnérabilité actionnable
+**Décision** : Le seul finding identifié (XSS stocké via `|raw` sur `article.content`) a été écarté car le contenu des articles est exclusivement créé par `ROLE_ADMIN`. Si ce compte est compromis, l'attaquant a déjà un accès total au back-office — le XSS ne constitue pas un risque additionnel dans ce modèle de menace.
+
+**Contexte** : L'`article_sanitizer` défini dans `html_sanitizer.yaml` n'est pas branché sur le rendu des articles (code mort). Par contraste, le `comment_sanitizer` est correctement appliqué sur les commentaires.
+
+**Raison du choix** : Site personnel à administrateur unique. Si des rôles d'éditeurs multiples sont introduits à l'avenir, il faudra brancher l'`article_sanitizer` et revoir sa configuration (iframe, style inline).
+
+**Fichiers :** Voir `documentation/028-2026-05-14_14-43-sonnet-audit-securite.md`.
+
+---
+
 ### Mot de passe admin externalisé dans la variable d'environnement `PASS_ADMIN`
 **Décision** : Le mot de passe de l'administrateur injecté par les fixtures n'est plus codé en dur dans `AppFixtures.php`. Il est lu depuis la variable d'environnement `PASS_ADMIN` via l'attribut `#[Autowire(env: 'PASS_ADMIN')]`.
 
