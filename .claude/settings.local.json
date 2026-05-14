@@ -13,7 +13,12 @@
       "Bash(git commit:*)",
       "Bash(curl -s http://localhost:8080)",
       "Bash(npx playwright *)",
-      "Bash(curl -s http://localhost:8080/)"
+      "Bash(curl -s http://localhost:8080/)",
+      "Bash(mkdir -p /home/mikhawa/preprod-michaeljpitz/assets/images)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/1773493021909.png /home/mikhawa/preprod-michaeljpitz/assets/images/profile.png)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/assets/images/profile.png)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/images/profile.png)",
+      "Bash(xargs cat)"
     ]
   }
 }

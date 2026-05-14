@@ -65,17 +65,19 @@
             <div class="flex justify-center items-center">
                 <div class="relative inline-block">
                     {# Conteneur du cercle #}
-                    <div class="relative w-64 h-64 md:w-72 md:h-72 flex-shrink-0">
+                    <div class="relative w-80 h-80 md:w-96 md:h-96 flex-shrink-0">
                         {# Anneau dégradé (pleine taille) #}
                         <div class="hero-gradient-ring absolute inset-0 rounded-full"></div>
-                        {# Cercle intérieur (décalé de 3px pour laisser l'anneau visible) #}
-                        <div class="absolute inset-[3px] rounded-full bg-[var(--bg-secondary)] flex items-center justify-center">
-                            <span class="text-5xl md:text-6xl font-extrabold text-[var(--accent)] tracking-tight select-none">MJP</span>
+                        {# Cercle intérieur avec photo de profil #}
+                        <div class="absolute inset-[3px] rounded-full overflow-hidden">
+                            <img src="/images/profile.png"
+                                 alt="Michaël J. Pitz — Développeur PHP/Symfony"
+                                 class="w-full h-full object-cover">
                         </div>
                     </div>
                     {# Badge années d'expérience #}
                     <div class="absolute bottom-3 -right-3 bg-[var(--accent)] text-white text-center px-4 py-2 rounded-xl shadow-lg">
-                        <span class="text-2xl font-extrabold leading-none block">5+</span>
+                        <span class="text-2xl font-extrabold leading-none block">20+</span>
                         <span class="text-[10px] leading-tight block mt-0.5">ans d'exp.</span>
                     </div>
                 </div>
