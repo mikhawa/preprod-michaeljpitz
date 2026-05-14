@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-05-14
+
+### Mot de passe admin externalisé dans la variable d'environnement `PASS_ADMIN`
+**Décision** : Le mot de passe de l'administrateur injecté par les fixtures n'est plus codé en dur dans `AppFixtures.php`. Il est lu depuis la variable d'environnement `PASS_ADMIN` via l'attribut `#[Autowire(env: 'PASS_ADMIN')]`.
+
+**Contexte** : Le mot de passe était visible en clair dans le dépôt git. Toute personne ayant accès au dépôt pouvait connaître le mot de passe admin des environnements dev et preprod.
+
+**Raison du choix** : L'attribut `#[Autowire(env: '...')]` est la solution native Symfony pour injecter des variables d'environnement dans les services. La valeur par défaut reste dans `.env` (valeur de démonstration) et doit être surchargée dans `.env.local` ou via les secrets du serveur.
+
+**Fichiers modifiés** : `.env`, `src/DataFixtures/AppFixtures.php`. Voir `documentation/027-2026-05-14_14-29-sonnet-pass-admin-env.md`.
+
+---
+
 ## 2026-04-26
 
 ### Sitemap dynamique : pages et catégories incluses, robots.txt corrigé
