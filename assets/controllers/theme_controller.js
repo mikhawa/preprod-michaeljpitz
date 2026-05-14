@@ -16,7 +16,7 @@ export default class extends Controller {
     loadTheme() {
         const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = saved || (prefersDark ? 'dark' : 'light');
+        const theme = saved || (prefersDark ? 'dark' : 'dark');
         this.setTheme(theme);
     }
 
