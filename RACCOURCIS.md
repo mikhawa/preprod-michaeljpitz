@@ -24,7 +24,7 @@ alias ddo='docker compose down'
 alias pbc='php bin/console'
 alias cc='php bin/console cache:clear'
 alias lint='php bin/console lint:twig templates/ && php bin/console lint:yaml config/ && php bin/console lint:container'
-alias asset='php bin/console asset-map:compile'
+alias asset='php bin/console cache:clear --env=dev && php bin/console importmap:install && php bin/console asset-map:compile --env=dev'
 alias wind='php bin/console tailwind:build'
 # --- Doctrine ---
 alias ddc='php bin/console doctrine:database:create'
