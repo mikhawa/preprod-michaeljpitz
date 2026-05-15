@@ -6,11 +6,10 @@
 
 {% block body %}
     <div class="max-w-3xl mx-auto py-8">
-        <div class="mb-8">
-            <a href="{{ app.request.headers.get('referer') ?: path('app_home') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)]">
-                &larr; Retour
-            </a>
-        </div>
+        <twig:Breadcrumb :items="[
+            {label: 'Accueil', url: path('app_home')},
+            {label: 'Profil de ' ~ user.userName}
+        ]" />
 
         <div class="bg-[var(--bg-secondary)] rounded-lg border border-[var(--border)] p-6 mb-8">
             <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">

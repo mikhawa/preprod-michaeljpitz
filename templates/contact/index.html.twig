@@ -5,6 +5,11 @@
 
 {% block body %}
     <div class="max-w-2xl mx-auto py-12">
+        <twig:Breadcrumb :items="[
+            {label: 'Accueil', url: path('app_home')},
+            {label: page ? page.title : 'Contact'}
+        ]" />
+
         <h1 class="text-3xl font-bold mb-8 text-center">{{ page ? page.title : 'Contact' }}</h1>
 
         {% if page and page.content %}

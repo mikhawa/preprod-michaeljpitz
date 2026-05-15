@@ -18,6 +18,20 @@
 
 {% block body %}
     <section class="py-8">
+        {# Fil d'Ariane #}
+        {% if currentCategory %}
+            <twig:Breadcrumb :items="[
+                {label: 'Accueil', url: path('app_home')},
+                {label: 'Articles', url: path('app_article_index')},
+                {label: currentCategory.title}
+            ]" />
+        {% else %}
+            <twig:Breadcrumb :items="[
+                {label: 'Accueil', url: path('app_home')},
+                {label: 'Articles'}
+            ]" />
+        {% endif %}
+
         <h1 class="text-3xl font-bold mb-8">
             {% if currentCategory %}
                 Articles : {{ currentCategory.title }}
