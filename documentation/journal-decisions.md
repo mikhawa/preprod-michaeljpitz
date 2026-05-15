@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-05-15
+
+### Navbar sticky — fond opaque obligatoire
+**Décision** : Ajout de `bg-[var(--bg-primary)]` en plus de `sticky top-0 z-50` sur le `<header>`. Sans fond explicite, le contenu défilant transparaît sous la navbar.  
+Voir `documentation/026-2026-05-15_14-19-sonnet-navbar-sticky-workflow-tailwind.md`.
+
+### Workflow assets Tailwind en dev : copie manuelle nécessaire
+**Décision** : En environnement Docker, Nginx sert `public/assets/` directement sans passer par PHP. Après `tailwind:build`, le CSS compilé (`var/tailwind/app.built.css`) doit être copié manuellement vers `public/assets/styles/app-R3JrkgL.css`. L'alias `design` dans le Dockerfile automatise cette chaîne complète en 4 étapes ordonnées.  
+Voir `documentation/027-2026-05-15_14-19-sonnet-dockerfile-alias-design.md`.
+
+### Filtre catégories : arbre Stimulus avec animation `grid-template-rows`
+**Décision** : La technique `grid-template-rows: 0fr → 1fr` est préférée au hack `max-height` pour animer les panneaux d'enfants — elle s'adapte à la hauteur naturelle du contenu sans valeur arbitraire. La restructuration parent→enfants est faite en Twig pur (pas de modification contrôleur/repository) grâce à `|merge` itératif.  
+Voir `documentation/028-2026-05-15_14-19-sonnet-filtre-categories-arbre-stimulus.md`.
+
+---
+
 ## 2026-04-26
 
 ### Sitemap dynamique : pages et catégories incluses, robots.txt corrigé
