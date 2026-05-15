@@ -6,6 +6,10 @@
 
 ## 2026-05-15
 
+### Fil d'Ariane : TwigComponent réutilisable plutôt que HTML dupliqué
+**Décision** : Création d'un `BreadcrumbComponent` (classe PHP + template unique) appelé depuis 7 templates avec un tableau `items`. Le dernier item sans `url` est rendu comme page courante (`aria-current="page"`), tous les autres comme liens. Le lien "← Retour" (basé sur le `Referer` HTTP, fragile) de `public_profile/show.html.twig` a été remplacé par le composant.  
+Voir `documentation/029-2026-05-15-sonnet-fil-ariane-composant-twig.md`.
+
 ### Navbar sticky — fond opaque obligatoire
 **Décision** : Ajout de `bg-[var(--bg-primary)]` en plus de `sticky top-0 z-50` sur le `<header>`. Sans fond explicite, le contenu défilant transparaît sous la navbar.  
 Voir `documentation/026-2026-05-15_14-19-sonnet-navbar-sticky-workflow-tailwind.md`.
