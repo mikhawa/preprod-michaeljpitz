@@ -24,6 +24,23 @@
     --border: #334155;
 }
 
+/* ===== Filtre catégories — panneau enfants animé ===== */
+.cf-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    pointer-events: none;
+    transition: grid-template-rows 0.2s ease, opacity 0.15s ease;
+}
+.cf-panel > .cf-panel-inner {
+    overflow: hidden;
+}
+.cf-panel.cf-open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    pointer-events: auto;
+}
+
 /* ===== Hero ===== */
 .hero-gradient-ring {
     background: conic-gradient(from 180deg at 50% 50%, #60a5fa 0deg, #a78bfa 180deg, #60a5fa 360deg);
