@@ -18,6 +18,20 @@
 
 {% block body %}
     <section class="py-8">
+        {# Fil d'Ariane #}
+        {% if currentCategory %}
+            <twig:Breadcrumb :items="[
+                {label: 'Accueil', url: path('app_home')},
+                {label: 'Articles', url: path('app_article_index')},
+                {label: currentCategory.title}
+            ]" />
+        {% else %}
+            <twig:Breadcrumb :items="[
+                {label: 'Accueil', url: path('app_home')},
+                {label: 'Articles'}
+            ]" />
+        {% endif %}
+
         <h1 class="text-3xl font-bold mb-8">
             {% if currentCategory %}
                 Articles : {{ currentCategory.title }}
@@ -26,33 +40,102 @@
             {% endif %}
         </h1>
 
-        {# Filtres catégories hiérarchiques #}
+        {# ── Filtres catégories hiérarchiques ── #}
         {% if categoriesHierarchical is not empty %}
-        <nav aria-label="Filtrer par catégorie" class="mb-8">
+
+        {# Construire les groupes parent→enfants en Twig #}
+        {% set groups = [] %}
+        {% set cur = null %}
+        {% for item in categoriesHierarchical %}
+            {% if item.depth == 0 %}
+                {% if cur is not null %}{% set groups = groups|merge([cur]) %}{% endif %}
+                {% set cur = {parent: item.category, children: []} %}
+            {% else %}
+                {% if cur is not null %}
+                    {% set cur = cur|merge({children: cur.children|merge([item.category])}) %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if cur is not null %}{% set groups = groups|merge([cur]) %}{% endif %}
+
+        <nav aria-label="Filtrer par catégorie" class="mb-8" data-controller="category-filter">
+
+            {# Ligne niveau 0 : Tous + catégories racines #}
             <div class="flex flex-wrap gap-2 items-center">
+
                 <a href="{{ path('app_article_index') }}"
-                   class="inline-block text-sm px-3 py-1 rounded-full border transition-colors
+                   class="inline-flex items-center text-sm px-3 py-1 rounded-full border transition-colors
                           {% if currentCategory is null %}bg-[var(--accent)] text-white border-[var(--accent)]
-                          {% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}">
+                          {% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]{% endif %}">
                     Tous
                 </a>
-                {% for item in categoriesHierarchical %}
-                    {%- set cat = item.category -%}
-                    {%- set depth = item.depth -%}
-                    <a href="{{ path('app_category_show', {slug: cat.slug}) }}"
-                       class="inline-flex items-center gap-1 text-sm px-3 py-1 rounded-full border transition-colors
-                              {% if currentCategory and currentCategory.id == cat.id %}bg-[var(--accent)] text-white border-[var(--accent)]
-                              {% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}"
-                       {% if depth > 0 %}title="Sous-catégorie de niveau {{ depth }}"{% endif %}>
-                        {%- if depth > 0 -%}
-                            <span class="opacity-40 text-xs select-none" aria-hidden="true">
-                                {{- '↳' -}}
-                            </span>
-                        {%- endif -%}
-                        {{- cat.title -}}
-                    </a>
+
+                {% for group in groups %}
+                    <div class="inline-flex items-center"
+                         data-category-filter-target="parentGroup"
+                         data-group-id="grp-{{ group.parent.id }}"
+                         {% if group.children is not empty %}
+                         data-action="mouseenter->category-filter#show mouseleave->category-filter#scheduleHide"
+                         {% endif %}>
+
+                        <a href="{{ path('app_category_show', {slug: group.parent.slug}) }}"
+                           class="inline-flex items-center gap-1 text-sm px-3 py-1 rounded-full border transition-colors
+                                  {% if currentCategory and currentCategory.id == group.parent.id %}
+                                      bg-[var(--accent)] text-white border-[var(--accent)]
+                                  {% else %}
+                                      bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]
+                                  {% endif %}">
+                            {{ group.parent.title }}
+                            {% if group.children is not empty %}
+                                <svg class="w-3 h-3 opacity-50 hidden md:inline-block flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            {% endif %}
+                        </a>
+
+                        {# Bouton chevron mobile (clic pour déplier) #}
+                        {% if group.children is not empty %}
+                            <button class="md:hidden ml-0.5 p-1 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+                                    data-action="click->category-filter#toggle"
+                                    data-group-id="grp-{{ group.parent.id }}"
+                                    aria-label="Voir les sous-catégories de {{ group.parent.title }}">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                        {% endif %}
+                    </div>
                 {% endfor %}
+
             </div>
+
+            {# Panneaux enfants — un par parent, animés #}
+            {% for group in groups %}
+                {% if group.children is not empty %}
+                    <div class="cf-panel"
+                         data-category-filter-target="panel"
+                         data-group-id="grp-{{ group.parent.id }}"
+                         data-action="mouseenter->category-filter#cancelHide mouseleave->category-filter#scheduleHide">
+                        <div class="cf-panel-inner">
+                            <div class="flex flex-wrap gap-2 pt-3 pb-1 pl-3 mt-2 border-l-2 border-[var(--accent)] ml-1">
+                                {% for child in group.children %}
+                                    <a href="{{ path('app_category_show', {slug: child.slug}) }}"
+                                       class="inline-flex items-center text-sm px-3 py-1 rounded-full border transition-colors
+                                              {% if currentCategory and currentCategory.id == child.id %}
+                                                  bg-[var(--accent)] text-white border-[var(--accent)]
+                                              {% else %}
+                                                  bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]
+                                              {% endif %}"
+                                       {% if currentCategory and currentCategory.id == child.id %}data-active{% endif %}>
+                                        {{ child.title }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
         </nav>
         {% endif %}
 
