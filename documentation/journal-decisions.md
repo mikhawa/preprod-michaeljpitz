@@ -6,6 +6,10 @@
 
 ## 2026-05-15
 
+### Mode clair : inversion fond/cartes pour simuler la profondeur du dark mode
+**Décision** : `--bg-primary` passe à `#f1f5f9` (fond teinté) et `--bg-secondary` à `#ffffff` (cartes blanches), reproduisant la même logique de contraste qu'en dark mode. Ajout de blobs décoratifs sur le `body`, glow hero amplifié (0.04 → 0.12) avec second pseudo-élément `::before`, et ombres cartes via sélecteur CSS attribute `[class*="bg-[var(--bg-secondary)]"]` sans toucher aux templates.  
+Voir `documentation/030-2026-05-15-sonnet-enrichissement-visuel-mode-clair.md`.
+
 ### Fil d'Ariane : TwigComponent réutilisable plutôt que HTML dupliqué
 **Décision** : Création d'un `BreadcrumbComponent` (classe PHP + template unique) appelé depuis 7 templates avec un tableau `items`. Le dernier item sans `url` est rendu comme page courante (`aria-current="page"`), tous les autres comme liens. Le lien "← Retour" (basé sur le `Referer` HTTP, fragile) de `public_profile/show.html.twig` a été remplacé par le composant.  
 Voir `documentation/029-2026-05-15-sonnet-fil-ariane-composant-twig.md`.
