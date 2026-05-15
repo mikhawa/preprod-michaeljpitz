@@ -18,7 +18,8 @@
       "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/1773493021909.png /home/mikhawa/preprod-michaeljpitz/assets/images/profile.png)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/assets/images/profile.png)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/images/profile.png)",
-      "Bash(xargs cat)"
+      "Bash(xargs cat)",
+      "Bash(sort -k6,7)"
     ]
   }
 }

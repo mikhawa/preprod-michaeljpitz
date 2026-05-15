@@ -4,6 +4,30 @@
 
 ---
 
+## 2026-05-15
+
+### Mode clair : inversion fond/cartes pour simuler la profondeur du dark mode
+**Décision** : `--bg-primary` passe à `#f1f5f9` (fond teinté) et `--bg-secondary` à `#ffffff` (cartes blanches), reproduisant la même logique de contraste qu'en dark mode. Ajout de blobs décoratifs sur le `body`, glow hero amplifié (0.04 → 0.12) avec second pseudo-élément `::before`, et ombres cartes via sélecteur CSS attribute `[class*="bg-[var(--bg-secondary)]"]` sans toucher aux templates.  
+Voir `documentation/030-2026-05-15-sonnet-enrichissement-visuel-mode-clair.md`.
+
+### Fil d'Ariane : TwigComponent réutilisable plutôt que HTML dupliqué
+**Décision** : Création d'un `BreadcrumbComponent` (classe PHP + template unique) appelé depuis 7 templates avec un tableau `items`. Le dernier item sans `url` est rendu comme page courante (`aria-current="page"`), tous les autres comme liens. Le lien "← Retour" (basé sur le `Referer` HTTP, fragile) de `public_profile/show.html.twig` a été remplacé par le composant.  
+Voir `documentation/029-2026-05-15-sonnet-fil-ariane-composant-twig.md`.
+
+### Navbar sticky — fond opaque obligatoire
+**Décision** : Ajout de `bg-[var(--bg-primary)]` en plus de `sticky top-0 z-50` sur le `<header>`. Sans fond explicite, le contenu défilant transparaît sous la navbar.  
+Voir `documentation/026-2026-05-15_14-19-sonnet-navbar-sticky-workflow-tailwind.md`.
+
+### Workflow assets Tailwind en dev : copie manuelle nécessaire
+**Décision** : En environnement Docker, Nginx sert `public/assets/` directement sans passer par PHP. Après `tailwind:build`, le CSS compilé (`var/tailwind/app.built.css`) doit être copié manuellement vers `public/assets/styles/app-R3JrkgL.css`. L'alias `design` dans le Dockerfile automatise cette chaîne complète en 4 étapes ordonnées.  
+Voir `documentation/027-2026-05-15_14-19-sonnet-dockerfile-alias-design.md`.
+
+### Filtre catégories : arbre Stimulus avec animation `grid-template-rows`
+**Décision** : La technique `grid-template-rows: 0fr → 1fr` est préférée au hack `max-height` pour animer les panneaux d'enfants — elle s'adapte à la hauteur naturelle du contenu sans valeur arbitraire. La restructuration parent→enfants est faite en Twig pur (pas de modification contrôleur/repository) grâce à `|merge` itératif.  
+Voir `documentation/028-2026-05-15_14-19-sonnet-filtre-categories-arbre-stimulus.md`.
+
+---
+
 ## 2026-04-26
 
 ### Sitemap dynamique : pages et catégories incluses, robots.txt corrigé

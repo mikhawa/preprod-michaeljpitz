@@ -58,6 +58,7 @@ RUN printf '%s\n' \
     "alias lint='php bin/console lint:twig templates/ && php bin/console lint:yaml config/ && php bin/console lint:container'" \
     "alias asset='php bin/console asset-map:compile'" \
     "alias wind='php bin/console tailwind:build'" \
+    "alias design='php bin/console importmap:install && php bin/console tailwind:build -v && php bin/console cache:clear --env=dev && php bin/console asset-map:compile --env=dev'" \
     '# --- Doctrine ---' \
     "alias ddc='php bin/console doctrine:database:create'" \
     "alias ddrop='php bin/console doctrine:database:drop --force'" \
