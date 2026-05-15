@@ -3,13 +3,13 @@
 
 :root {
     /* Mode clair */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8fafc;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --accent: #3b82f6;
-    --accent-hover: #2563eb;
-    --border: #e2e8f0;
+    --bg-primary: #f1f5f9;    /* slate-100 — fond page teinté */
+    --bg-secondary: #ffffff;   /* blanc pur — cartes élevées */
+    --text-primary: #0f172a;   /* slate-900 — plus profond */
+    --text-secondary: #475569; /* slate-600 */
+    --accent: #2563eb;         /* blue-600 — plus vif */
+    --accent-hover: #1d4ed8;   /* blue-700 */
+    --border: #cbd5e1;         /* slate-300 — bordures visibles */
 }
 
 
@@ -22,6 +22,18 @@
     --accent: #60a5fa;
     --accent-hover: #3b82f6;
     --border: #334155;
+}
+
+/* ===== Blobs décoratifs — mode clair uniquement ===== */
+html:not([data-theme="dark"]) body {
+    background-image:
+        radial-gradient(ellipse at 78% 0%, rgba(59, 130, 246, 0.09) 0%, transparent 45%),
+        radial-gradient(ellipse at 8%  90%, rgba(139, 92, 246, 0.06) 0%, transparent 40%);
+}
+
+/* ===== Ombres cartes — mode clair uniquement ===== */
+html:not([data-theme="dark"]) .rounded-lg[class*="bg-[var(--bg-secondary)]"] {
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.07), 0 2px 12px rgba(15, 23, 42, 0.05);
 }
 
 /* ===== Filtre catégories — panneau enfants animé ===== */
@@ -51,6 +63,7 @@
     overflow: hidden;
 }
 
+/* Glow droit */
 .hero-section::after {
     content: '';
     position: absolute;
@@ -58,12 +71,28 @@
     right: -5%;
     width: 55%;
     height: 160%;
-    background: radial-gradient(ellipse, rgba(96, 165, 250, 0.04) 0%, transparent 65%);
+    background: radial-gradient(ellipse, rgba(37, 99, 235, 0.12) 0%, transparent 65%);
     pointer-events: none;
 }
 
 [data-theme="dark"] .hero-section::after {
     background: radial-gradient(ellipse, rgba(96, 165, 250, 0.13) 0%, transparent 65%);
+}
+
+/* Glow gauche */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0%;
+    left: -8%;
+    width: 38%;
+    height: 100%;
+    background: radial-gradient(ellipse, rgba(139, 92, 246, 0.07) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+[data-theme="dark"] .hero-section::before {
+    background: radial-gradient(ellipse, rgba(167, 139, 250, 0.08) 0%, transparent 60%);
 }
 
 /* ===== Styles pour le contenu riche (SunEditor / prose) ===== */
