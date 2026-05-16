@@ -8,7 +8,7 @@
     {# Ligne de pills pour ce niveau #}
     <div class="{{ isRoot is defined and isRoot
         ? 'flex flex-wrap gap-2 items-center'
-        : 'flex flex-wrap gap-2 pt-3 pb-1 pl-3 mt-2 border-l-2 border-[var(--accent)] ml-1' }}">
+        : 'flex flex-wrap gap-2 pt-3 pb-1 pl-3 mt-2 border-l-2 border-[var(--accent)] ml-1 md:border-l-0 md:ml-0 md:pl-0 md:pt-2' }}">
 
         {# Lien "Tous" uniquement au niveau racine #}
         {% if isRoot is defined and isRoot %}
