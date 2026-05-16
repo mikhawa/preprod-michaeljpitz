@@ -43,6 +43,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Tableau de bord', 'fa fa-home');
         yield MenuItem::linkTo(ArticleCrudController::class, 'Articles', 'fa fa-newspaper');
         yield MenuItem::linkTo(CategoryCrudController::class, 'Catégories', 'fa fa-tags');
+        yield MenuItem::linkToRoute('Menu des catégories', 'fa fa-sitemap', 'admin_category_tree');
         yield MenuItem::linkTo(UserCrudController::class, 'Utilisateurs', 'fa fa-users');
         yield MenuItem::linkTo(CommentCrudController::class, 'Commentaires', 'fa fa-comments');
         yield MenuItem::linkTo(RatingCrudController::class, 'Notes', 'fa fa-star');
