@@ -11,7 +11,8 @@ export default class extends Controller {
 
     connect() {
         this._hideTimeout = null;
-        this._submenuTimeout = null;
+        // WeakMap pour un timer indépendant par conteneur de sous-menu
+        this._submenuTimeouts = new WeakMap();
         this._userDropdownTimeout = null;
         this._boundClickOutside = this._clickOutside.bind(this);
         document.addEventListener('click', this._boundClickOutside);
@@ -34,16 +35,13 @@ export default class extends Controller {
 
     toggleAccordion(event) {
         const button = event.currentTarget;
-        const container = button.closest('[class*="mb-1"]');
-        const panel = container.querySelector('[data-navbar-target="accordionPanel"]');
+        const item = button.closest('[data-accordion-item]');
+        if (!item) return;
+        const panel = item.querySelector(':scope > [data-navbar-target="accordionPanel"]');
         const icon = button.querySelector('[data-navbar-target="accordionIcon"]');
 
-        if (panel) {
-            panel.classList.toggle('hidden');
-        }
-        if (icon) {
-            icon.classList.toggle('rotate-180');
-        }
+        if (panel) panel.classList.toggle('hidden');
+        if (icon) icon.classList.toggle('rotate-180');
     }
 
     // --- Desktop dropdown ---
@@ -63,6 +61,9 @@ export default class extends Controller {
         this._hideTimeout = setTimeout(() => {
             const dropdown = container.querySelector('[data-navbar-target="dropdown"]');
             if (dropdown) {
+                // Ferme récursivement tous les sous-menus imbriqués
+                dropdown.querySelectorAll('[data-navbar-target="submenu"]')
+                    .forEach(s => s.classList.add('hidden'));
                 dropdown.classList.add('hidden');
             }
         }, 150);
@@ -71,19 +72,24 @@ export default class extends Controller {
     // --- Desktop submenu ---
 
     showSubmenu(event) {
-        clearTimeout(this._submenuTimeout);
-        const container = event.currentTarget;
-        const submenu = container.querySelector('[data-navbar-target="submenu"]');
-        if (!submenu) {
-            return;
-        }
+        // Annule aussi le timer du dropdown principal pour éviter qu'il se ferme
+        clearTimeout(this._hideTimeout);
 
-        // Cacher uniquement les sous-menus frères au même niveau (pas les ancêtres)
+        const container = event.currentTarget;
+        clearTimeout(this._submenuTimeouts.get(container));
+
+        const submenu = container.querySelector(':scope > [data-navbar-target="submenu"]');
+        if (!submenu) return;
+
+        // Cache les sous-menus frères (et leurs enfants imbriqués)
         const parentList = container.parentElement;
         if (parentList) {
             parentList
                 .querySelectorAll(':scope > [data-navbar-target="submenuContainer"] > [data-navbar-target="submenu"]')
-                .forEach(s => s.classList.add('hidden'));
+                .forEach(s => {
+                    s.querySelectorAll('[data-navbar-target="submenu"]').forEach(ns => ns.classList.add('hidden'));
+                    s.classList.add('hidden');
+                });
         }
 
         submenu.classList.remove('hidden');
@@ -91,12 +97,15 @@ export default class extends Controller {
 
     scheduleHideSubmenu(event) {
         const container = event.currentTarget;
-        this._submenuTimeout = setTimeout(() => {
-            const submenu = container.querySelector('[data-navbar-target="submenu"]');
+        const timeout = setTimeout(() => {
+            const submenu = container.querySelector(':scope > [data-navbar-target="submenu"]');
             if (submenu) {
+                // Ferme récursivement tous les sous-menus imbriqués
+                submenu.querySelectorAll('[data-navbar-target="submenu"]').forEach(s => s.classList.add('hidden'));
                 submenu.classList.add('hidden');
             }
         }, 150);
+        this._submenuTimeouts.set(container, timeout);
     }
 
     // --- User dropdown ---

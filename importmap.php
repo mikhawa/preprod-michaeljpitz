@@ -42,4 +42,7 @@ return [
     'suneditor/src/plugins' => [
         'version' => '2.47.8',
     ],
+    'sortablejs' => [
+        'version' => '1.15.7',
+    ],
 ];

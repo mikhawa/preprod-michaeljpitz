@@ -19,7 +19,9 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/assets/images/profile.png)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/images/profile.png)",
       "Bash(xargs cat)",
-      "Bash(sort -k6,7)"
+      "Bash(sort -k6,7)",
+      "Bash(./vendor/bin/php-cs-fixer fix *)",
+      "Bash(grep *)"
     ]
   }
 }

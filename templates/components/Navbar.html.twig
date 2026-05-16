@@ -1,3 +1,4 @@
+
 <header class="sticky top-0 z-50 bg-[var(--bg-primary)] border-b border-[var(--border)]" data-controller="navbar">
     <nav class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         {# Logo #}
@@ -26,7 +27,7 @@
                 Tous les articles
             </a>
 
-            {# Catégories — dropdown unique #}
+            {# Catégories — dropdown récursif #}
             {% set tree = this.categoryTree %}
             {% if tree is not empty %}
                 <div class="relative"
@@ -41,59 +42,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
-                    <div class="absolute left-0 top-full pt-1 hidden z-50"
-                         data-navbar-target="dropdown">
+                    <div class="absolute left-0 top-full pt-1 hidden z-50" data-navbar-target="dropdown">
                         <div class="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[200px]">
-                            {% for node in tree %}
-                                <div class="relative"
-                                     data-navbar-target="submenuContainer"
-                                     data-action="mouseenter->navbar#showSubmenu mouseleave->navbar#scheduleHideSubmenu">
-                                    <a href="{{ path('app_category_show', {slug: node.category.slug}) }}"
-                                       class="block px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] inline-flex items-center justify-between w-full">
-                                        {{ node.category.title }}
-                                        {% if node.children is not empty %}
-                                            <svg class="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                            </svg>
-                                        {% endif %}
-                                    </a>
-                                    {% if node.children is not empty %}
-                                        <div class="absolute left-full top-0 pl-1 hidden z-50"
-                                             data-navbar-target="submenu">
-                                            <div class="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[180px]">
-                                                {% for child in node.children %}
-                                                    <div class="relative"
-                                                         data-navbar-target="submenuContainer"
-                                                         data-action="mouseenter->navbar#showSubmenu mouseleave->navbar#scheduleHideSubmenu">
-                                                        <a href="{{ path('app_category_show', {slug: child.category.slug}) }}"
-                                                           class="block px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)] inline-flex items-center justify-between w-full">
-                                                            {{ child.category.title }}
-                                                            {% if child.children is not empty %}
-                                                                <svg class="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                                                </svg>
-                                                            {% endif %}
-                                                        </a>
-                                                        {% if child.children is not empty %}
-                                                            <div class="absolute left-full top-0 pl-1 hidden z-50"
-                                                                 data-navbar-target="submenu">
-                                                                <div class="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[160px]">
-                                                                    {% for subchild in child.children %}
-                                                                        <a href="{{ path('app_category_show', {slug: subchild.category.slug}) }}"
-                                                                           class="block px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-primary)]">
-                                                                            {{ subchild.category.title }}
-                                                                        </a>
-                                                                    {% endfor %}
-                                                                </div>
-                                                            </div>
-                                                        {% endif %}
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
+                            {% include 'components/_category_desktop_menu.html.twig' with {nodes: tree} only %}
                         </div>
                     </div>
                 </div>
@@ -121,8 +72,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
-                    <div class="absolute right-0 top-full pt-1 hidden z-50"
-                         data-navbar-target="userDropdown">
+                    <div class="absolute right-0 top-full pt-1 hidden z-50" data-navbar-target="userDropdown">
                         <div class="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg shadow-lg py-1 min-w-[160px]">
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a href="{{ path('admin') }}"
@@ -201,7 +151,7 @@
                 </svg>
                 Accueil
             </a>
-            <a href="{{ path('app_home') }}#cv" class="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+            <a href="{{ path('app_cv') }}" class="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
@@ -214,9 +164,9 @@
                 Tous les articles
             </a>
 
-            {# Catégories mobile (accordéon unique) #}
+            {# Catégories mobile — accordéon récursif #}
             {% if tree is defined and tree is not empty %}
-                <div class="mb-1">
+                <div data-accordion-item>
                     <button class="flex items-center justify-between w-full"
                             data-action="click->navbar#toggleAccordion"
                             aria-label="Déplier les catégories">
@@ -226,44 +176,19 @@
                             </svg>
                             Catégories
                         </span>
-                        <svg class="w-4 h-4 transition-transform text-[var(--text-secondary)]" data-navbar-target="accordionIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 shrink-0 transition-transform text-[var(--text-secondary)]"
+                             data-navbar-target="accordionIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
                     <div class="hidden pl-4 mt-2 space-y-1" data-navbar-target="accordionPanel">
-                        {% for node in tree %}
-                            <div class="mb-1">
-                                <button class="flex items-center justify-between w-full"
-                                        {% if node.children is not empty %}data-action="click->navbar#toggleAccordion"{% endif %}>
-                                    <a href="{{ path('app_category_show', {slug: node.category.slug}) }}"
-                                       class="py-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                                       onclick="event.stopPropagation()">
-                                        {{ node.category.title }}
-                                    </a>
-                                    {% if node.children is not empty %}
-                                        <svg class="w-3.5 h-3.5 transition-transform text-[var(--text-secondary)]" data-navbar-target="accordionIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                        </svg>
-                                    {% endif %}
-                                </button>
-                                {% if node.children is not empty %}
-                                    <div class="hidden pl-4 mt-1 space-y-1" data-navbar-target="accordionPanel">
-                                        {% for child in node.children %}
-                                            <a href="{{ path('app_category_show', {slug: child.category.slug}) }}"
-                                               class="block py-1 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-                                                {{ child.category.title }}
-                                            </a>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
+                        {% include 'components/_category_mobile_menu.html.twig' with {nodes: tree} only %}
                     </div>
                 </div>
             {% endif %}
 
             <div class="border-t border-[var(--border)] pt-3">
-                <a href="{{ path('app_home') }}#contact" class="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                <a href="{{ path('app_contact') }}" class="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
@@ -273,7 +198,7 @@
 
             <div class="border-t border-[var(--border)] pt-3">
                 {% if app.user %}
-                    <div class="mb-1">
+                    <div data-accordion-item>
                         <button class="flex items-center justify-between w-full cursor-pointer"
                                 data-action="click->navbar#toggleAccordion"
                                 aria-label="Déplier le menu utilisateur">
@@ -289,7 +214,8 @@
                                 {% endif %}
                                 <span class="text-sm font-medium text-[var(--text-primary)]">{{ app.user.userName }}</span>
                             </div>
-                            <svg class="w-4 h-4 transition-transform text-[var(--text-secondary)]" data-navbar-target="accordionIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 shrink-0 transition-transform text-[var(--text-secondary)]"
+                                 data-navbar-target="accordionIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </button>
