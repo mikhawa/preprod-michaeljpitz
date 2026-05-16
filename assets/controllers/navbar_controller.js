@@ -34,16 +34,13 @@ export default class extends Controller {
 
     toggleAccordion(event) {
         const button = event.currentTarget;
-        const container = button.closest('[class*="mb-1"]');
-        const panel = container.querySelector('[data-navbar-target="accordionPanel"]');
+        const item = button.closest('[data-accordion-item]');
+        if (!item) return;
+        const panel = item.querySelector(':scope > [data-navbar-target="accordionPanel"]');
         const icon = button.querySelector('[data-navbar-target="accordionIcon"]');
 
-        if (panel) {
-            panel.classList.toggle('hidden');
-        }
-        if (icon) {
-            icon.classList.toggle('rotate-180');
-        }
+        if (panel) panel.classList.toggle('hidden');
+        if (icon) icon.classList.toggle('rotate-180');
     }
 
     // --- Desktop dropdown ---
