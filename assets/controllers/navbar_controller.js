@@ -4,14 +4,12 @@ export default class extends Controller {
     static targets = [
         'mobileMenu', 'hamburgerIcon', 'closeIcon',
         'dropdownContainer', 'dropdown',
-        'submenuContainer', 'submenu',
         'accordionIcon', 'accordionPanel',
         'userDropdownContainer', 'userDropdown',
     ];
 
     connect() {
         this._hideTimeout = null;
-        this._submenuTimeout = null;
         this._userDropdownTimeout = null;
         this._boundClickOutside = this._clickOutside.bind(this);
         document.addEventListener('click', this._boundClickOutside);
@@ -60,38 +58,12 @@ export default class extends Controller {
         this._hideTimeout = setTimeout(() => {
             const dropdown = container.querySelector('[data-navbar-target="dropdown"]');
             if (dropdown) {
+                // Réinitialise les accordions imbriqués à la fermeture
+                dropdown.querySelectorAll('[data-navbar-target="accordionPanel"]')
+                    .forEach(p => p.classList.add('hidden'));
+                dropdown.querySelectorAll('[data-navbar-target="accordionIcon"]')
+                    .forEach(i => i.classList.remove('rotate-180'));
                 dropdown.classList.add('hidden');
-            }
-        }, 150);
-    }
-
-    // --- Desktop submenu ---
-
-    showSubmenu(event) {
-        clearTimeout(this._submenuTimeout);
-        const container = event.currentTarget;
-        const submenu = container.querySelector('[data-navbar-target="submenu"]');
-        if (!submenu) {
-            return;
-        }
-
-        // Cacher uniquement les sous-menus frères au même niveau (pas les ancêtres)
-        const parentList = container.parentElement;
-        if (parentList) {
-            parentList
-                .querySelectorAll(':scope > [data-navbar-target="submenuContainer"] > [data-navbar-target="submenu"]')
-                .forEach(s => s.classList.add('hidden'));
-        }
-
-        submenu.classList.remove('hidden');
-    }
-
-    scheduleHideSubmenu(event) {
-        const container = event.currentTarget;
-        this._submenuTimeout = setTimeout(() => {
-            const submenu = container.querySelector('[data-navbar-target="submenu"]');
-            if (submenu) {
-                submenu.classList.add('hidden');
             }
         }, 150);
     }
