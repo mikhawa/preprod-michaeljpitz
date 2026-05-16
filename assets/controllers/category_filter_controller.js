@@ -7,11 +7,25 @@ export default class extends Controller {
 
     connect() {
         this._hideTimer = null;
-        // Auto-ouvre les panneaux contenant la catégorie active (tous les niveaux)
+        // Auto-ouvre les panneaux contenant la catégorie active, avec positionnement desktop
         this.panelTargets.forEach(panel => {
-            if (panel.querySelector('[data-active]')) {
-                panel.classList.add('cf-open');
+            if (!panel.querySelector('[data-active]')) return;
+
+            const groupId = panel.dataset.groupId;
+            const scope = panel.closest('.cf-level');
+
+            if (scope && IS_DESKTOP()) {
+                // Retrouve le déclencheur (dans la ligne de pills, pas le panel lui-même)
+                const trigger = scope.querySelector(`:scope > div > [data-group-id="${groupId}"]`);
+                if (trigger) {
+                    const offset = Math.round(
+                        trigger.getBoundingClientRect().left - scope.getBoundingClientRect().left
+                    );
+                    panel.style.marginLeft = offset + 'px';
+                }
             }
+
+            panel.classList.add('cf-open');
         });
     }
 
