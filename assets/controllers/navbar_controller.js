@@ -4,12 +4,15 @@ export default class extends Controller {
     static targets = [
         'mobileMenu', 'hamburgerIcon', 'closeIcon',
         'dropdownContainer', 'dropdown',
+        'submenuContainer', 'submenu',
         'accordionIcon', 'accordionPanel',
         'userDropdownContainer', 'userDropdown',
     ];
 
     connect() {
         this._hideTimeout = null;
+        // WeakMap pour un timer indépendant par conteneur de sous-menu
+        this._submenuTimeouts = new WeakMap();
         this._userDropdownTimeout = null;
         this._boundClickOutside = this._clickOutside.bind(this);
         document.addEventListener('click', this._boundClickOutside);
@@ -58,14 +61,51 @@ export default class extends Controller {
         this._hideTimeout = setTimeout(() => {
             const dropdown = container.querySelector('[data-navbar-target="dropdown"]');
             if (dropdown) {
-                // Réinitialise les accordions imbriqués à la fermeture
-                dropdown.querySelectorAll('[data-navbar-target="accordionPanel"]')
-                    .forEach(p => p.classList.add('hidden'));
-                dropdown.querySelectorAll('[data-navbar-target="accordionIcon"]')
-                    .forEach(i => i.classList.remove('rotate-180'));
+                // Ferme récursivement tous les sous-menus imbriqués
+                dropdown.querySelectorAll('[data-navbar-target="submenu"]')
+                    .forEach(s => s.classList.add('hidden'));
                 dropdown.classList.add('hidden');
             }
         }, 150);
+    }
+
+    // --- Desktop submenu ---
+
+    showSubmenu(event) {
+        // Annule aussi le timer du dropdown principal pour éviter qu'il se ferme
+        clearTimeout(this._hideTimeout);
+
+        const container = event.currentTarget;
+        clearTimeout(this._submenuTimeouts.get(container));
+
+        const submenu = container.querySelector(':scope > [data-navbar-target="submenu"]');
+        if (!submenu) return;
+
+        // Cache les sous-menus frères (et leurs enfants imbriqués)
+        const parentList = container.parentElement;
+        if (parentList) {
+            parentList
+                .querySelectorAll(':scope > [data-navbar-target="submenuContainer"] > [data-navbar-target="submenu"]')
+                .forEach(s => {
+                    s.querySelectorAll('[data-navbar-target="submenu"]').forEach(ns => ns.classList.add('hidden'));
+                    s.classList.add('hidden');
+                });
+        }
+
+        submenu.classList.remove('hidden');
+    }
+
+    scheduleHideSubmenu(event) {
+        const container = event.currentTarget;
+        const timeout = setTimeout(() => {
+            const submenu = container.querySelector(':scope > [data-navbar-target="submenu"]');
+            if (submenu) {
+                // Ferme récursivement tous les sous-menus imbriqués
+                submenu.querySelectorAll('[data-navbar-target="submenu"]').forEach(s => s.classList.add('hidden'));
+                submenu.classList.add('hidden');
+            }
+        }, 150);
+        this._submenuTimeouts.set(container, timeout);
     }
 
     // --- User dropdown ---
