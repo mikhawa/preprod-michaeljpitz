@@ -26,215 +26,108 @@
     {% endfor %}
 {% endmacro %}
 
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
 {% import _self as macros %}
-<!DOCTYPE html>
-<html lang="fr" data-turbo="false">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+{% block head_metas %}
+    {{ parent() }}
     <meta name="csrf-token" content="{{ csrf_token('category_tree_save') }}">
-    <title>Gestion du menu — Administration</title>
-    <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
-    {{ importmap('app') }}
-    <style>
-        /* Layout page */
-        body { background: #f1f5f9; min-height: 100vh; font-family: system-ui, sans-serif; margin: 0; }
+{% endblock %}
 
-        /* Header */
-        .ct-header {
-            background: #1e293b;
-            color: #f1f5f9;
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,.3);
-        }
-        .ct-header a { color: #94a3b8; text-decoration: none; font-size: .875rem; }
-        .ct-header a:hover { color: #f1f5f9; }
-        .ct-header h1 { margin: 0; font-size: 1.125rem; font-weight: 600; color: #f1f5f9; }
-        .ct-header-sep { color: #475569; }
+{% block content_title %}Menu des catégories{% endblock %}
 
-        /* Toolbar */
-        .ct-toolbar {
-            max-width: 860px;
-            margin: 1.5rem auto 0;
-            padding: 0 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        .ct-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            padding: .5rem 1rem;
-            border-radius: .4rem;
-            font-size: .875rem;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            text-decoration: none;
-            transition: background .15s, opacity .15s;
-        }
-        .ct-btn-primary { background: #2563eb; color: #fff; }
-        .ct-btn-primary:hover { background: #1d4ed8; }
-        .ct-btn-primary:disabled { opacity: .55; cursor: not-allowed; }
-        .ct-btn-secondary { background: #fff; color: #374151; border: 1px solid #d1d5db; }
-        .ct-btn-secondary:hover { background: #f9fafb; }
+{% block page_actions %}
+    <span id="save-status" class="ct-status me-2"></span>
+    <a href="{{ newUrl }}" class="btn btn-secondary btn-sm">
+        <i class="fa fa-plus me-1"></i> Nouvelle catégorie
+    </a>
+    <button id="btn-save" class="btn btn-primary btn-sm ms-1" disabled>
+        <i class="fa fa-save me-1"></i> Enregistrer l'ordre
+    </button>
+{% endblock %}
 
-        /* Status */
-        .ct-status {
-            font-size: .8rem;
-            padding: .35rem .75rem;
-            border-radius: .35rem;
-            display: none;
-        }
-        .ct-status.saving { display: inline-block; background: #fef3c7; color: #92400e; }
-        .ct-status.saved  { display: inline-block; background: #d1fae5; color: #065f46; }
-        .ct-status.error  { display: inline-block; background: #fee2e2; color: #991b1b; }
+{% block main %}
+<style>
+.cat-list, .cat-children { list-style: none; margin: 0; padding: 0; }
+.cat-children { padding-left: 2rem; }
+.cat-item { margin: .25rem 0; }
 
-        /* Main */
-        .ct-main { max-width: 860px; margin: 1rem auto 2rem; padding: 0 1rem; }
+.cat-row {
+    display: flex; align-items: center; gap: .6rem;
+    background: #fff; border: 1px solid #e2e8f0; border-radius: .4rem;
+    padding: .6rem .9rem; cursor: default;
+    transition: border-color .15s, box-shadow .15s; user-select: none;
+}
+.cat-row:hover { border-color: #93c5fd; box-shadow: 0 0 0 2px rgba(147,197,253,.25); }
 
-        /* Aide */
-        .ct-help {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: .5rem;
-            padding: .75rem 1rem;
-            font-size: .8125rem;
-            color: #1e40af;
-            margin-bottom: 1rem;
-        }
+.cat-item.sortable-ghost > .cat-row  { opacity: .35; background: #eff6ff; }
+.cat-item.sortable-chosen > .cat-row { box-shadow: 0 4px 16px rgba(37,99,235,.18); border-color: #3b82f6; }
 
-        /* Arbre */
-        .cat-list, .cat-children {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-        .cat-children { padding-left: 2rem; }
+.cat-children.sortable-empty::after {
+    content: 'Déposer ici pour imbriquer';
+    display: block; text-align: center; padding: .4rem; font-size: .75rem;
+    color: #94a3b8; border: 1px dashed #cbd5e1; border-radius: .4rem; margin: .25rem 0;
+}
 
-        .cat-item {
-            margin: .25rem 0;
-        }
+.drag-handle { color: #94a3b8; cursor: grab; flex-shrink: 0; line-height: 1; }
+.drag-handle:active { cursor: grabbing; }
+.cat-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,.1); }
+.cat-title { font-weight: 600; font-size: .9rem; color: #1e293b; }
+.cat-slug  { font-size: .75rem; color: #94a3b8; margin-left: .25rem; }
 
-        .cat-row {
-            display: flex;
-            align-items: center;
-            gap: .6rem;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: .4rem;
-            padding: .6rem .9rem;
-            cursor: default;
-            transition: border-color .15s, box-shadow .15s;
-            user-select: none;
-        }
-        .cat-row:hover { border-color: #93c5fd; box-shadow: 0 0 0 2px rgba(147,197,253,.25); }
+.cat-edit-link {
+    margin-left: auto; font-size: .75rem; color: #2563eb; text-decoration: none;
+    padding: .2rem .5rem; border-radius: .3rem; background: #eff6ff;
+    flex-shrink: 0; transition: background .12s;
+}
+.cat-edit-link:hover { background: #dbeafe; }
 
-        /* Indicateur de drop */
-        .cat-item.sortable-ghost > .cat-row {
-            opacity: .35;
-            background: #eff6ff;
-        }
-        .cat-item.sortable-chosen > .cat-row {
-            box-shadow: 0 4px 16px rgba(37,99,235,.18);
-            border-color: #3b82f6;
-        }
+.ct-empty { text-align: center; padding: 3rem 1rem; color: #94a3b8; font-size: .9rem; }
 
-        /* Zone de drop vide */
-        .cat-children.sortable-empty::after {
-            content: 'Déposer ici pour imbriquer';
-            display: block;
-            text-align: center;
-            padding: .4rem;
-            font-size: .75rem;
-            color: #94a3b8;
-            border: 1px dashed #cbd5e1;
-            border-radius: .4rem;
-            margin: .25rem 0;
-        }
+.ct-help {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: .5rem;
+    padding: .75rem 1rem; font-size: .8125rem; color: #1e40af; margin-bottom: 1rem;
+}
 
-        .drag-handle {
-            color: #94a3b8;
-            cursor: grab;
-            flex-shrink: 0;
-            line-height: 1;
-        }
-        .drag-handle:active { cursor: grabbing; }
+.ct-status { font-size: .8rem; padding: .35rem .75rem; border-radius: .35rem; display: none; }
+.ct-status.saving { display: inline-block; background: #fef3c7; color: #92400e; }
+.ct-status.saved  { display: inline-block; background: #d1fae5; color: #065f46; }
+.ct-status.error  { display: inline-block; background: #fee2e2; color: #991b1b; }
 
-        .cat-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            border: 1px solid rgba(0,0,0,.1);
-        }
+/* Dark mode */
+[data-color-scheme="dark"] .cat-row { background: #1e2d3f; border-color: #334155; }
+[data-color-scheme="dark"] .cat-row:hover { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,.25); }
+[data-color-scheme="dark"] .cat-item.sortable-ghost > .cat-row { background: #172038; }
+[data-color-scheme="dark"] .cat-title  { color: #e2e8f0; }
+[data-color-scheme="dark"] .cat-slug   { color: #64748b; }
+[data-color-scheme="dark"] .drag-handle { color: #475569; }
+[data-color-scheme="dark"] .cat-edit-link { background: #172038; color: #60a5fa; }
+[data-color-scheme="dark"] .cat-edit-link:hover { background: #1e3a5f; }
+[data-color-scheme="dark"] .cat-children.sortable-empty::after { color: #475569; border-color: #334155; }
+[data-color-scheme="dark"] .ct-help { background: #172038; border-color: #1e40af; color: #93c5fd; }
+[data-color-scheme="dark"] .ct-status.saving { background: #44350e; color: #fcd34d; }
+[data-color-scheme="dark"] .ct-status.saved  { background: #064e3b; color: #6ee7b7; }
+[data-color-scheme="dark"] .ct-status.error  { background: #450a0a; color: #fca5a5; }
+</style>
 
-        .cat-title { font-weight: 600; font-size: .9rem; color: #1e293b; }
-        .cat-slug  { font-size: .75rem; color: #94a3b8; margin-left: .25rem; }
+<p class="ct-help">
+    Glissez-déposez les catégories pour modifier leur ordre et leur hiérarchie.
+    Une catégorie déposée sous une autre devient son enfant.
+</p>
 
-        .cat-edit-link {
-            margin-left: auto;
-            font-size: .75rem;
-            color: #2563eb;
-            text-decoration: none;
-            padding: .2rem .5rem;
-            border-radius: .3rem;
-            background: #eff6ff;
-            flex-shrink: 0;
-            transition: background .12s;
-        }
-        .cat-edit-link:hover { background: #dbeafe; }
-
-        /* Message vide */
-        .ct-empty {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #94a3b8;
-            font-size: .9rem;
-        }
-    </style>
-</head>
-<body>
-
-    <header class="ct-header">
-        <a href="{{ adminUrl }}">← Catégories</a>
-        <span class="ct-header-sep">|</span>
-        <h1>Gestion du menu</h1>
-    </header>
-
-    <div class="ct-toolbar">
-        <div style="display:flex;align-items:center;gap:.75rem;">
-            <button id="btn-save" class="ct-btn ct-btn-primary" disabled>
-                Enregistrer l'ordre
-            </button>
-            <span id="save-status" class="ct-status"></span>
-        </div>
-        <a href="{{ newUrl }}" class="ct-btn ct-btn-secondary">+ Nouvelle catégorie</a>
+{% if categoryTree is empty %}
+    <div class="ct-empty">
+        Aucune catégorie. <a href="{{ newUrl }}">Créer la première</a>.
     </div>
-
-    <main class="ct-main">
-        <p class="ct-help">
-            Glissez-déposez les catégories pour modifier leur ordre et leur hiérarchie. Une catégorie déposée sous une autre devient son enfant.
-        </p>
-
-        {% if categoryTree is empty %}
-            <div class="ct-empty">Aucune catégorie. <a href="{{ newUrl }}">Créer la première</a>.</div>
-        {% else %}
-            <div
-                data-controller="category-tree"
-                data-category-tree-save-url-value="{{ path('admin_category_tree_save') }}"
-            >
-                <ul class="cat-list" id="cat-root">
-                    {{ macros.renderNodes(categoryTree, editUrls) }}
-                </ul>
-            </div>
-        {% endif %}
-    </main>
-
-</body>
-</html>
+{% else %}
+    <div
+        data-controller="category-tree"
+        data-category-tree-save-url-value="{{ path('admin_category_tree_save') }}"
+    >
+        <ul class="cat-list" id="cat-root">
+            {{ macros.renderNodes(categoryTree, editUrls) }}
+        </ul>
+    </div>
+{% endif %}
+{% endblock %}

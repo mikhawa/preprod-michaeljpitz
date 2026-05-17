@@ -86,17 +86,3 @@ Commandes courantes :
     php bin/console d:m:m
 
 
-
-
-
-Créer des alias sur Powershell
-
-if (!(Test-Path -Path $PROFILE)) { New-Item -ItemType File -Path $PROFILE -Force }
-
-code $PROFILE # Ou 'notepad $PROFILE' si vous n'avez pas VS Code
-
-# "serve" lance un serveur PHP rapide sur le port 8000
-function serve { Write-Host "Lancement du serveur PHP sur localhost:8000..." -ForegroundColor Cyan php -S localhost:8000 }
-# "composer-update" abrégé
-function cup { composer update }
-function ci { composer install }

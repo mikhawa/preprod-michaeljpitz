@@ -5,7 +5,14 @@ Surnommé mikhawa, je suis un développeur web passionné avec une solide expér
 ## Site de Michael J. Pitz
 
 # TO DO :
-installer Turnstile sur tous les formulaires (contact, login, register, password reset)
+~~1. page accueil de l'administration~~ 
+2. envoi du mail smtp
+3. alignement espace articles
+4. contenu
+5. perfectionner le design front
+6. architecture 
+7. cv efficace 
+8. AppFixtures plus complet 
 
 ### Version 2
 
@@ -113,18 +120,21 @@ Clés disponibles gratuitement sur https://dash.cloudflare.com/turnstile
 | 2026-02-11            | 2026-02-11        |
 | Version 2.0.0         | Version 2.0.0     |
 | 2026-02-11            | 2026-02-12        |
- | Version Alpha.1-b     | Version Alpha.1-b |
+| Version Alpha.1-b     | Version Alpha.1-b |
 | Version Preprod.1.0.0 | 2026-03-22        |
+| Version Preprod 1.1.0 | 2026-05-16.       |
 
-URL version alpha.1-b :
+
+#### URL version alpha.1-b :
 
 https://alpha1.michaeljpitz.com/
 
-URL version en développement :
+#### URL version en développement :
+
 https://dev.michaeljpitz.com/
 
+#### URL version preprod.1.1.0 :
 
-URL version preprod.1.0.0 :
 https://preprod.michaeljpitz.com/
 
 ### Installation de Suneditor
@@ -136,6 +146,3 @@ php bin/console importmap:require suneditor
 
 https://github.com/mikhawa/claude-code-cheat-sheet
 
-### test d'inscriptions
-
-| Email                     | Mot de passe | Username |

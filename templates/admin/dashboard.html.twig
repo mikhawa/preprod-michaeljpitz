@@ -1,0 +1,62 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Tableau de bord{% endblock %}
+
+{% block main %}
+<style>
+.dash-card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 1px solid rgba(128,128,128,.15);
+}
+.dash-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,.12) !important;
+}
+.dash-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.75rem;
+    transition: transform 0.2s ease;
+}
+.dash-card:hover .dash-icon { transform: scale(1.1); }
+
+.bg-dash-articles   { background: rgba(37,99,235,.12); }   .c-dash-articles   { color: #2563EB; }
+.bg-dash-categories { background: rgba(22,163,74,.12); }   .c-dash-categories { color: #16A34A; }
+.bg-dash-tree       { background: rgba(8,145,178,.12); }   .c-dash-tree       { color: #0891B2; }
+.bg-dash-users      { background: rgba(109,40,217,.12); }  .c-dash-users      { color: #6D28D9; }
+.bg-dash-comments   { background: rgba(217,119,6,.12); }   .c-dash-comments   { color: #D97706; }
+.bg-dash-ratings    { background: rgba(202,138,4,.12); }   .c-dash-ratings    { color: #CA8A04; }
+.bg-dash-pages      { background: rgba(220,38,38,.12); }   .c-dash-pages      { color: #DC2626; }
+.bg-dash-back       { background: rgba(107,114,128,.12); } .c-dash-back       { color: #6B7280; }
+
+[data-color-scheme="dark"] .bg-dash-articles   { background: rgba(59,130,246,.22); }   [data-color-scheme="dark"] .c-dash-articles   { color: #60A5FA; }
+[data-color-scheme="dark"] .bg-dash-categories { background: rgba(34,197,94,.22); }    [data-color-scheme="dark"] .c-dash-categories { color: #4ADE80; }
+[data-color-scheme="dark"] .bg-dash-tree       { background: rgba(6,182,212,.22); }    [data-color-scheme="dark"] .c-dash-tree       { color: #22D3EE; }
+[data-color-scheme="dark"] .bg-dash-users      { background: rgba(167,139,250,.22); }  [data-color-scheme="dark"] .c-dash-users      { color: #A78BFA; }
+[data-color-scheme="dark"] .bg-dash-comments   { background: rgba(251,191,36,.22); }   [data-color-scheme="dark"] .c-dash-comments   { color: #FCD34D; }
+[data-color-scheme="dark"] .bg-dash-ratings    { background: rgba(250,204,21,.22); }   [data-color-scheme="dark"] .c-dash-ratings    { color: #FDE047; }
+[data-color-scheme="dark"] .bg-dash-pages      { background: rgba(248,113,113,.22); }  [data-color-scheme="dark"] .c-dash-pages      { color: #FCA5A5; }
+[data-color-scheme="dark"] .bg-dash-back       { background: rgba(156,163,175,.22); }  [data-color-scheme="dark"] .c-dash-back       { color: #9CA3AF; }
+</style>
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-4 p-3">
+    {% for card in cards %}
+    <div class="col">
+        <a href="{{ card.url }}" class="card h-100 text-decoration-none dash-card shadow-sm">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center text-center py-4 px-3">
+                <div class="dash-icon bg-dash-{{ card.color_key }} c-dash-{{ card.color_key }} mb-3">
+                    <i class="{{ card.icon }}"></i>
+                </div>
+                <h5 class="card-title fw-bold mb-1">{{ card.label }}</h5>
+                {% if card.count is not null %}
+                    <span class="display-6 fw-bold lh-1 mb-1 c-dash-{{ card.color_key }}">{{ card.count }}</span>
+                    <small class="text-muted">{{ card.count <= 1 ? 'entrée' : 'entrées' }}</small>
+                {% else %}
+                    <small class="text-muted mt-1">Accéder →</small>
+                {% endif %}
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
