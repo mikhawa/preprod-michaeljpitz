@@ -120,18 +120,21 @@ Clés disponibles gratuitement sur https://dash.cloudflare.com/turnstile
 | 2026-02-11            | 2026-02-11        |
 | Version 2.0.0         | Version 2.0.0     |
 | 2026-02-11            | 2026-02-12        |
- | Version Alpha.1-b     | Version Alpha.1-b |
+| Version Alpha.1-b     | Version Alpha.1-b |
 | Version Preprod.1.0.0 | 2026-03-22        |
+| Version Preprod 1.1.0 | 2026-05-16.       |
 
-URL version alpha.1-b :
+
+#### URL version alpha.1-b :
 
 https://alpha1.michaeljpitz.com/
 
-URL version en développement :
+#### URL version en développement :
+
 https://dev.michaeljpitz.com/
 
+#### URL version preprod.1.1.0 :
 
-URL version preprod.1.0.0 :
 https://preprod.michaeljpitz.com/
 
 ### Installation de Suneditor
@@ -143,6 +146,3 @@ php bin/console importmap:require suneditor
 
 https://github.com/mikhawa/claude-code-cheat-sheet
 
-### test d'inscriptions
-
-| Email                     | Mot de passe | Username |
