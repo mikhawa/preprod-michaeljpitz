@@ -5,14 +5,14 @@ Surnommé mikhawa, je suis un développeur web passionné avec une solide expér
 ## Site de Michael J. Pitz
 
 # TO DO :
-1. page accueil de l'administration 
+~~1. page accueil de l'administration~~ 
 2. envoi du mail smtp
 3. alignement espace articles
 4. contenu
-5. perfectionner le design fromt
+5. perfectionner le design front
 6. architecture 
 7. cv efficace 
-8. appfixture plus complet 
+8. AppFixtures plus complet 
 
 ### Version 2
 
