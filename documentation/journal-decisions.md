@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-05-17
+
+### Dashboard EasyAdmin : cartes graphiques plutôt que redirection directe
+**Décision** : `DashboardController::index()` rend désormais un template avec 8 cartes cliquables (une par entrée du menu) au lieu de rediriger vers la liste des articles. Les compteurs d'entrées sont injectés via les repositories en constructor injection. Le design utilise les classes Bootstrap 5.3 d'EasyAdmin avec des couleurs personnalisées et un dark mode via `[data-color-scheme="dark"]`.  
+Voir `documentation/033-2026-05-17-sonnet-dashboard-admin-favicons-logo.md`.
+
+### Page "Menu des catégories" : layout EasyAdmin natif
+**Décision** : Remplacement du `<!DOCTYPE html>` autonome par `extends '@EasyAdmin/page/content.html.twig'`. Le CSRF token est conservé dans `{% block head_metas %}`, les boutons d'action dans `{% block page_actions %}`. Le dark mode est géré par `[data-color-scheme="dark"]` au lieu d'un CSS inline figé.  
+Voir `documentation/033-2026-05-17-sonnet-dashboard-admin-favicons-logo.md`.
+
+### Logo navbar : deux `<img>` + CSS plutôt que JavaScript
+**Décision** : Le switch light/dark du logo est géré par 4 règles CSS (`display: none/inline`) ciblant `[data-theme="light"]` sur `<html>`, sans aucun JavaScript supplémentaire. Les images `@2x` sont servies via `srcset` pour les écrans Retina. `alt=""` + `aria-hidden="true"` car le texte "Michaël J. Pitz" adjacent porte l'information.  
+Voir `documentation/033-2026-05-17-sonnet-dashboard-admin-favicons-logo.md`.
+
+---
+
 ## 2026-05-15
 
 ### Mode clair : inversion fond/cartes pour simuler la profondeur du dark mode
