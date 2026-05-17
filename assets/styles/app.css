@@ -24,6 +24,12 @@
     --border: #334155;
 }
 
+/* ===== Logo navbar — switch light/dark ===== */
+.mjp-logo-light { display: none; }
+.mjp-logo-dark  { display: inline; }
+[data-theme="light"] .mjp-logo-light { display: inline; }
+[data-theme="light"] .mjp-logo-dark  { display: none; }
+
 /* ===== Blobs décoratifs — mode clair uniquement ===== */
 html:not([data-theme="dark"]) body {
     background-image:
