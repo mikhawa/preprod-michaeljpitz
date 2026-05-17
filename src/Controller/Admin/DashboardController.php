@@ -55,7 +55,7 @@ class DashboardController extends AbstractDashboardController
                 [
                     'label'     => 'Menu des catégories',
                     'icon'      => 'fa fa-sitemap',
-                    'url'       => $this->generateUrl('admin_category_tree'),
+                    'url'       => $gen->setRoute('admin_category_tree')->generateUrl(),
                     'count'     => null,
                     'color_key' => 'tree',
                 ],
