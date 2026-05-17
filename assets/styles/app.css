@@ -10,6 +10,9 @@
     --accent: #2563eb;         /* blue-600 — plus vif */
     --accent-hover: #1d4ed8;   /* blue-700 */
     --border: #cbd5e1;         /* slate-300 — bordures visibles */
+    /* Ombres — actives uniquement en mode clair */
+    --shadow-card: 0 4px 8px rgba(15, 23, 42, 0.14), 0 12px 32px rgba(15, 23, 42, 0.12);
+    --shadow-navbar: 0 2px 6px rgba(15, 23, 42, 0.12), 0 6px 20px rgba(15, 23, 42, 0.09);
 }
 
 
@@ -22,6 +25,8 @@
     --accent: #60a5fa;
     --accent-hover: #3b82f6;
     --border: #334155;
+    --shadow-card: none;
+    --shadow-navbar: none;
 }
 
 /* ===== Logo navbar — switch light/dark ===== */
@@ -37,9 +42,21 @@ html:not([data-theme="dark"]) body {
         radial-gradient(ellipse at 8%  90%, rgba(139, 92, 246, 0.06) 0%, transparent 40%);
 }
 
-/* ===== Ombres cartes — mode clair uniquement ===== */
-html:not([data-theme="dark"]) .rounded-lg[class*="bg-[var(--bg-secondary)]"] {
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.07), 0 2px 12px rgba(15, 23, 42, 0.05);
+/* ===== Ombres + déplacement au survol — mode clair uniquement ===== */
+html:not([data-theme="dark"]) .rounded-lg[class*="bg-[var(--bg-secondary)]"],
+html:not([data-theme="dark"]) .rounded-xl[class*="bg-[var(--bg-secondary)]"] {
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+html:not([data-theme="dark"]) .rounded-lg[class*="bg-[var(--bg-secondary)]"]:hover,
+html:not([data-theme="dark"]) .rounded-xl[class*="bg-[var(--bg-secondary)]"]:hover {
+    box-shadow: none;
+    transform: translateY(-5px);
+}
+
+html:not([data-theme="dark"]) header {
+    box-shadow: var(--shadow-navbar);
 }
 
 /* ===== Filtre catégories — panneau enfants animé ===== */

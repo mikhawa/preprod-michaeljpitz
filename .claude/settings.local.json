@@ -21,7 +21,12 @@
       "Bash(xargs cat)",
       "Bash(sort -k6,7)",
       "Bash(./vendor/bin/php-cs-fixer fix *)",
-      "Bash(grep *)"
+      "Bash(grep *)",
+      "Bash(mkdir -p /home/mikhawa/preprod-michaeljpitz/public/images/gallery)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/20260421_200546.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/2023-10-08.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/20260205_080955.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/20251026_141752.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)"
     ]
   }
 }
