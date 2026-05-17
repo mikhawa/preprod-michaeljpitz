@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
+use App\Repository\CommentRepository;
+use App\Repository\PageRepository;
+use App\Repository\RatingRepository;
+use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -16,12 +22,80 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    public function __construct(
+        private readonly ArticleRepository $articleRepository,
+        private readonly CategoryRepository $categoryRepository,
+        private readonly UserRepository $userRepository,
+        private readonly CommentRepository $commentRepository,
+        private readonly RatingRepository $ratingRepository,
+        private readonly PageRepository $pageRepository,
+    ) {}
+
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+        $gen = $this->container->get(AdminUrlGenerator::class);
 
-        return $this->redirect($adminUrlGenerator->setController(ArticleCrudController::class)->generateUrl());
+        return $this->render('admin/dashboard.html.twig', [
+            'cards' => [
+                [
+                    'label'     => 'Articles',
+                    'icon'      => 'fa fa-newspaper',
+                    'url'       => $gen->setController(ArticleCrudController::class)->generateUrl(),
+                    'count'     => $this->articleRepository->count([]),
+                    'color_key' => 'articles',
+                ],
+                [
+                    'label'     => 'Catégories',
+                    'icon'      => 'fa fa-tags',
+                    'url'       => $gen->setController(CategoryCrudController::class)->generateUrl(),
+                    'count'     => $this->categoryRepository->count([]),
+                    'color_key' => 'categories',
+                ],
+                [
+                    'label'     => 'Menu des catégories',
+                    'icon'      => 'fa fa-sitemap',
+                    'url'       => $this->generateUrl('admin_category_tree'),
+                    'count'     => null,
+                    'color_key' => 'tree',
+                ],
+                [
+                    'label'     => 'Utilisateurs',
+                    'icon'      => 'fa fa-users',
+                    'url'       => $gen->setController(UserCrudController::class)->generateUrl(),
+                    'count'     => $this->userRepository->count([]),
+                    'color_key' => 'users',
+                ],
+                [
+                    'label'     => 'Commentaires',
+                    'icon'      => 'fa fa-comments',
+                    'url'       => $gen->setController(CommentCrudController::class)->generateUrl(),
+                    'count'     => $this->commentRepository->count([]),
+                    'color_key' => 'comments',
+                ],
+                [
+                    'label'     => 'Notes',
+                    'icon'      => 'fa fa-star',
+                    'url'       => $gen->setController(RatingCrudController::class)->generateUrl(),
+                    'count'     => $this->ratingRepository->count([]),
+                    'color_key' => 'ratings',
+                ],
+                [
+                    'label'     => 'Pages',
+                    'icon'      => 'fa fa-file-alt',
+                    'url'       => $gen->setController(PageCrudController::class)->generateUrl(),
+                    'count'     => $this->pageRepository->count([]),
+                    'color_key' => 'pages',
+                ],
+                [
+                    'label'     => 'Retour au site',
+                    'icon'      => 'fa fa-arrow-left',
+                    'url'       => $this->generateUrl('app_home'),
+                    'count'     => null,
+                    'color_key' => 'back',
+                ],
+            ],
+        ]);
     }
 
     public function configureDashboard(): Dashboard
