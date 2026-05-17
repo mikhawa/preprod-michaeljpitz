@@ -6,6 +6,10 @@
 
 ## 2026-05-17
 
+### Page d'accueil : galerie photo avec défilement automatique dans le hero
+**Décision** : L'image statique du cercle hero est remplacée par une galerie de 9 photos personnelles avec transition alpha (fondu) toutes les 3 secondes. Contrôleur Stimulus `photo-gallery` avec `setInterval` + `opacity` CSS. Les images sont servies depuis `public/images/gallery/`.  
+Voir `documentation/035-2026-05-17-sonnet-galerie-photo-hero-accueil.md`.
+
 ### Liens vers pages EasyAdmin : toujours passer par AdminUrlGenerator
 **Décision** : Tout lien pointant vers une page qui étend `@EasyAdmin/page/content.html.twig` doit être généré via `AdminUrlGenerator::setRoute()` ou `setController()`, jamais via `$this->generateUrl()` ou `path()`. Un lien Symfony direct contourne le routeur EasyAdmin, laisse `ea()` à `null` et provoque une erreur sur `@EasyAdmin/layout.html.twig`.  
 Voir `documentation/034-2026-05-17-sonnet-fix-ea-context-category-tree.md`.
