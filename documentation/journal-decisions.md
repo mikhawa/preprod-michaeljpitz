@@ -6,6 +6,10 @@
 
 ## 2026-05-17
 
+### Liens vers pages EasyAdmin : toujours passer par AdminUrlGenerator
+**Décision** : Tout lien pointant vers une page qui étend `@EasyAdmin/page/content.html.twig` doit être généré via `AdminUrlGenerator::setRoute()` ou `setController()`, jamais via `$this->generateUrl()` ou `path()`. Un lien Symfony direct contourne le routeur EasyAdmin, laisse `ea()` à `null` et provoque une erreur sur `@EasyAdmin/layout.html.twig`.  
+Voir `documentation/034-2026-05-17-sonnet-fix-ea-context-category-tree.md`.
+
 ### Dashboard EasyAdmin : cartes graphiques plutôt que redirection directe
 **Décision** : `DashboardController::index()` rend désormais un template avec 8 cartes cliquables (une par entrée du menu) au lieu de rediriger vers la liste des articles. Les compteurs d'entrées sont injectés via les repositories en constructor injection. Le design utilise les classes Bootstrap 5.3 d'EasyAdmin avec des couleurs personnalisées et un dark mode via `[data-color-scheme="dark"]`.  
 Voir `documentation/033-2026-05-17-sonnet-dashboard-admin-favicons-logo.md`.
