@@ -61,18 +61,35 @@
                 </div>
             </div>
 
-            {# --- Colonne droite : avatar --- #}
+            {# --- Colonne droite : galerie photo en défilement automatique --- #}
             <div class="flex justify-center items-center">
                 <div class="relative inline-block">
                     {# Conteneur du cercle #}
-                    <div class="relative w-80 h-80 md:w-96 md:h-96 flex-shrink-0">
+                    <div class="relative w-80 h-80 md:w-96 md:h-96 flex-shrink-0"
+                         data-controller="photo-gallery"
+                         data-photo-gallery-interval-value="3000">
                         {# Anneau dégradé (pleine taille) #}
                         <div class="hero-gradient-ring absolute inset-0 rounded-full"></div>
-                        {# Cercle intérieur avec photo de profil #}
+                        {# Cercle intérieur avec galerie de photos #}
                         <div class="absolute inset-[3px] rounded-full overflow-hidden">
-                            <img src="/images/profile.png"
-                                 alt="Michaël J. Pitz — Développeur PHP/Symfony"
-                                 class="w-full h-full object-cover">
+                            {% set photos = [
+                                '/images/gallery/20260421_200546.jpg',
+                                '/images/gallery/2023-10-08.jpg',
+                                '/images/gallery/20260205_080955.jpg',
+                                '/images/gallery/20251026_141752.jpg',
+                                '/images/gallery/20260129_183210.jpg',
+                                '/images/gallery/20260228_195756.jpg',
+                                '/images/gallery/20260124_095850.jpg',
+                                '/images/gallery/20251108_135106.jpg',
+                                '/images/gallery/20251224_194330.jpg'
+                            ] %}
+                            {% for photo in photos %}
+                                <img src="{{ photo }}"
+                                     alt="Michaël J. Pitz — Développeur PHP/Symfony"
+                                     data-photo-gallery-target="slide"
+                                     class="absolute inset-0 w-full h-full object-cover object-top transition-opacity duration-700"
+                                     style="opacity: 0;">
+                            {% endfor %}
                         </div>
                     </div>
                     {# Badge années d'expérience #}
