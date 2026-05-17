@@ -101,7 +101,8 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Portfolio - Administration');
+            ->setTitle('Portfolio - Administration')
+            ->setFaviconPath('icons/mjp-icon-32x32.png');
     }
 
     public function configureAssets(): Assets
