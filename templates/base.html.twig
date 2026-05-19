@@ -21,6 +21,28 @@
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
+
+        <!-- Matomo -->
+        <script>
+            var _paq = window._paq = window._paq || [];
+            _paq.push(['enableLinkTracking']);
+            (function() {
+                var u="//stats.michaeljpitz.com/";
+                _paq.push(['setTrackerUrl', u+'matomo.php']);
+                _paq.push(['setSiteId', '2']);
+                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+            })();
+
+            document.addEventListener('turbo:load', function() {
+                if (typeof _paq !== 'undefined') {
+                    _paq.push(['setCustomUrl', window.location.pathname + window.location.search]);
+                    _paq.push(['setDocumentTitle', document.title]);
+                    _paq.push(['trackPageView']);
+                }
+            });
+        </script>
+        <!-- End Matomo Code -->
     </head>
     <body class="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen transition-colors duration-300 flex flex-col"
           data-controller="theme">
