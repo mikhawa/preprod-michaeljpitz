@@ -13,7 +13,7 @@ Surnommé mikhawa, je suis un développeur web passionné avec une solide expér
 6. architecture 
 7. cv efficace 
 8. AppFixtures plus complet 
-9. en préproduction,  matomo ne semble suivre que les personnes connectée 
+~~9. en préproduction, Matomo ne semble suivre que les personnes connectées~~ 
 
 ### Version 2
 
