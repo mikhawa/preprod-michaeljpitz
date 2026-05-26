@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Category;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -71,7 +70,6 @@ class CategoryTreeController extends AbstractController
             return new JsonResponse(['error' => 'Token CSRF invalide.'], Response::HTTP_FORBIDDEN);
         }
 
-        /** @var mixed $raw */
         $raw = json_decode($request->getContent(), true);
 
         if (!is_array($raw)) {
@@ -102,7 +100,7 @@ class CategoryTreeController extends AbstractController
             }
 
             // Vérifier que le parent existe (sauf 0 = racine)
-            if ($parentId !== 0 && !isset($all[$parentId])) {
+            if (0 !== $parentId && !isset($all[$parentId])) {
                 return new JsonResponse(
                     ['error' => sprintf('Catégorie parente #%d introuvable.', $parentId)],
                     Response::HTTP_BAD_REQUEST,
@@ -131,7 +129,7 @@ class CategoryTreeController extends AbstractController
         $visited = [$categoryId];
         $current = $parentId;
 
-        while ($current !== 0) {
+        while (0 !== $current) {
             if (in_array($current, $visited, true)) {
                 return true;
             }
