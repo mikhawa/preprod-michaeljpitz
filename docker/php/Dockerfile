@@ -90,4 +90,6 @@ RUN git config --global --add safe.directory /var/www/html
 
 # Créer les répertoires d'upload avec les bonnes permissions
 RUN mkdir -p /var/www/html/public/uploads/articles/content \
+    && mkdir -p /var/www/html/public/uploads/avatars \
+    && mkdir -p /var/www/html/public/uploads/pages \
     && chmod -R 777 /var/www/html/public/uploads
