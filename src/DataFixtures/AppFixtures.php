@@ -445,29 +445,104 @@ $stagiaires = [<br>
         $cv = new Page();
         $cv->setTitle('Curriculum Vitae')
             ->setSlug('cv')
-            ->setContent(
-                '<h2>Compétences</h2>'
-                .'<ul>'
-                .'<li>PHP 8 / Symfony 7</li>'
-                .'<li>Doctrine ORM / MySQL / MariaDB</li>'
-                .'<li>HTML5 / CSS3 / Tailwind CSS</li>'
-                .'<li>JavaScript / Stimulus</li>'
-                .'<li>Docker / Git / CI-CD</li>'
-                .'<li>API REST / Tests unitaires</li>'
-                .'</ul>'
-                .'<h2>Expériences</h2>'
-                .'<h3>Développeur PHP/Symfony</h3>'
-                .'<p>Entreprise XYZ — 2023-2026<br>Développement d\'applications web, API REST, intégration continue.</p>'
-                .'<h3>Développeur Web Junior</h3>'
-                .'<p>Agence ABC — 2021-2023<br>Création de sites WordPress et Symfony, maintenance applicative.</p>'
-                .'<h2>Formations</h2>'
-                .'<h3>Licence Informatique</h3>'
-                .'<p>Université — 2020</p>'
-                .'<h3>BTS SIO option SLAM</h3>'
-                .'<p>Lycée — 2018</p>'
-                .'<h3>Certifications Symfony</h3>'
-                .'<p>SymfonyCasts — 2022</p>'
-            );
+            ->setContent(<<<HTML
+                <h1>Michaël J. Pitz</h1>
+
+                <p><strong>Développeur Web Senior &amp; Formateur Professionnel</strong><br>
+                📍 Région de Bruxelles-Capitale, Belgique | ✉️ michaeljpitz@gmail.com | 📞 +32477380302<br>
+                🔗 <a target="_blank" href="https://www.linkedin.com/in/michaeljpitz/">LinkedIn</a> /
+                <a target="_blank" href="https://github.com/mikhawa">GitHub</a> |
+                🌐 <a href="https://preprod.michaeljpitz.com/">Accueil - Portfolio Développeur PHP/Symfony</a></p>
+
+                <h2>Profil</h2>
+
+                <p>Professionnel de l'informatique avec plus de 20 ans d'expérience dans le développement web et
+                la gestion d'infrastructures. Expert dans l'écosystème PHP (notamment Symfony et Laravel), avec
+                une passion pour le partage de connaissances en tant que formateur. Veille technologique très
+                active axée sur les technologies émergentes (agents IA, WebAssembly, Rust) et forte curiosité
+                intellectuelle pour les sciences pures (physique quantique, chimie) et la géopolitique.</p>
+
+                <h2>Compétences</h2>
+
+                <ul>
+                    <li>PHP 8 / Symfony 7</li>
+                    <li>Doctrine ORM / MySQL / MariaDB</li>
+                    <li>HTML5 / CSS3 / Tailwind CSS</li>
+                    <li>JavaScript / Stimulus</li>
+                    <li>Docker / Git / CI-CD</li>
+                    <li>API REST / Tests unitaires</li>
+                </ul>
+
+                <h2>Expériences Professionnelles</h2>
+
+                <p><strong>Formateur Professionnel en Développement Web</strong><br>
+                <em>Centre de formation CF2M, Bruxelles | 2019 – Présent</em></p>
+
+                <ul>
+                    <li><p>Conception et animation de programmes de formation technique pour les futurs développeurs.</p></li>
+                    <li><p>Création de projets pédagogiques complets, dont un projet de jeu multi-étapes destiné
+                    à l'enseignement de la Programmation Orientée Objet (POO) sous PHP 8.x.</p></li>
+                    <li><p>Accompagnement technique des apprenants sur la structuration de code et les bonnes pratiques.</p></li>
+                </ul>
+
+                <p><strong>Développeur Web Senior &amp; Gestionnaire d'Infrastructure</strong><br>
+                <em>Indépendant | 2003 – Présent</em></p>
+
+                <ul>
+                    <li><p>Conception et développement d'API, de plateformes éducatives et de sites e-commerce complexes.</p></li>
+                    <li><p>Pilotage de la transition et de la migration de projets web vers Symfony 7.4 LTS, incluant
+                    la résolution de problématiques liées à EasyAdmin, AssetMapper et la transformation de fichiers
+                    <code>composer.json</code>.</p></li>
+                    <li><p>Développement sur mesure utilisant du PHP "fait main" et le moteur de template Twig
+                    pour des besoins spécifiques nécessitant une architecture allégée.</p></li>
+                    <li><p>Administration et gestion d'infrastructures serveurs : déploiement sous AlmaLinux 8 et 9,
+                    conteneurisation avec Docker, et administration via Plesk, CyberPanel, Webmin et Termux.</p></li>
+                    <li><p>Gestion des migrations de serveurs, des installations SSL et de la configuration des services SMTP.</p></li>
+                    <li><p>Édition, gestion de l'architecture et optimisation SEO (traductions incluses) d'un blog
+                    technique personnel dédié au développement.</p></li>
+                </ul>
+
+                <h2>Compétences Techniques</h2>
+
+                <p><strong>Développement &amp; Langages</strong></p>
+                <ul>
+                    <li><p><strong>Expertise :</strong> PHP (8.x), POO, Twig</p></li>
+                    <li><p><strong>Frameworks :</strong> Symfony (spécialisation 7.x LTS), Laravel</p></li>
+                    <li><p><strong>Outils &amp; ORM :</strong> Doctrine, Composer, AssetMapper</p></li>
+                    <li><p><strong>Exploration &amp; Divers :</strong> WebAssembly, Rust, développement d'API</p></li>
+                </ul>
+
+                <p><strong>Systèmes &amp; Réseaux</strong></p>
+                <ul>
+                    <li><p><strong>OS Serveurs :</strong> AlmaLinux 8/9, environnements Linux en ligne de commande</p></li>
+                    <li><p><strong>DevOps &amp; Hébergement :</strong> Docker, Plesk, CyberPanel, Webmin, Termux</p></li>
+                    <li><p><strong>Administration :</strong> Migrations, gestion des certificats SSL, configurations SMTP réseau</p></li>
+                </ul>
+
+                <p><strong>Innovation &amp; Veille</strong></p>
+                <ul>
+                    <li><p>Intégration et analyse de modèles LLM (Claude, Gemini, Mistral).</p></li>
+                </ul>
+
+                <h2>Projets Récents</h2>
+
+                <ul>
+                    <li><p><strong>Techblog (techblog.michaeljpitz.com) :</strong> Création et maintenance d'un blog
+                    technique personnel, gestion de la structure du contenu et des problématiques de traduction SEO.</p></li>
+                    <li><p><strong>Projet Pédagogique POO :</strong> Développement d'un cursus basé sur la création
+                    d'un jeu vidéo en PHP pour vulgariser les concepts de la programmation orientée objet.</p></li>
+                </ul>
+
+                <h2>Centres d'Intérêt</h2>
+
+                <ul>
+                    <li><p><strong>Sciences exactes :</strong> Passion prononcée pour la chimie organique, la physique
+                    quantique et la microbiologie (structures moléculaires, fonctions d'onde, identification de
+                    micro-organismes).</p></li>
+                    <li><p><strong>Géopolitique &amp; Technologies :</strong> Analyse des systèmes de défense
+                    technologiques et compréhension des classements de puissance économique mondiale.</p></li>
+                </ul>
+                HTML);
         $manager->persist($cv);
 
         $manager->flush();
