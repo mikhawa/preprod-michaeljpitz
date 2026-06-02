@@ -27,7 +27,12 @@
       "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/2023-10-08.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
       "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/20260205_080955.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
       "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/20251026_141752.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
-      "Bash(docker-compose ps *)"
+      "Bash(docker-compose ps *)",
+      "Read(//var/run/**)",
+      "Bash(docker --version)",
+      "Read(//mnt/wsl/**)",
+      "Bash(DOCKER_HOST=unix:///mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.proxy.sock docker info *)",
+      "Bash(docker context *)"
     ]
   }
 }
