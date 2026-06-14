@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-06-14
+
+### Recadrage optionnel des images dans Suneditor
+**Décision** : À chaque upload d'image dans l'éditeur, un dialog de choix interrompt l'upload natif de Suneditor (`onImageUploadBefore` retourne `undefined`). L'utilisateur choisit entre insertion directe ou recadrage via Cropper.js (ratio : Libre, 16:9, 4:3, 1:1). Le canvas recadré est encodé en JPEG 92 % et uploadé via `_uploadBlob()` vers `/admin/editor/upload`. Cropper.js est chargé en lazy depuis `/public/js/` (déjà présent pour les avatars).  
+Voir `documentation/036-2026-06-14-sonnet-crop-image-suneditor.md`.
+
+---
+
 ## 2026-05-17
 
 ### Page d'accueil : galerie photo avec défilement automatique dans le hero
