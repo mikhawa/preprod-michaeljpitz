@@ -32,7 +32,8 @@
       "Bash(docker --version)",
       "Read(//mnt/wsl/**)",
       "Bash(DOCKER_HOST=unix:///mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.proxy.sock docker info *)",
-      "Bash(docker context *)"
+      "Bash(docker context *)",
+      "Bash(node --input-type=module)"
     ]
   }
 }
