@@ -24,7 +24,6 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         return ['dev'];
     }
 
-
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         // On injecte directement la variable d'environnement
