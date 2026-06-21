@@ -10,13 +10,21 @@ use App\Entity\Comment;
 use App\Entity\Page;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 // Chargement de dépendance automatique
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class AppFixtures extends Fixture
+class AppFixtures extends Fixture implements FixtureGroupInterface
 {
+    /** @return string[] */
+    public static function getGroups(): array
+    {
+        return ['dev'];
+    }
+
+
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
         // On injecte directement la variable d'environnement
