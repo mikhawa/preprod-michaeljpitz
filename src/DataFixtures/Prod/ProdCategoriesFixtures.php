@@ -40,10 +40,10 @@ class ProdCategoriesFixtures extends Fixture implements FixtureGroupInterface
         $manager->flush();
 
         // Sous-catégories (level = id du parent)
-        $doctrine = $this->creerCategorie('Doctrine ORM', 'doctrine-orm', '#f26522', 'Doctrine ORM : entités, repositories et requêtes DQL.', $php->getId());
-        $twig = $this->creerCategorie('Twig', 'twig', '#bacf2e', 'Moteur de templates Twig : filtres, fonctions et héritage.', $symfony->getId());
-        $stimulus = $this->creerCategorie('Stimulus.js', 'stimulus-js', '#e04c16', 'Stimulus.js : contrôleurs légers pour enrichir le HTML.', $javascript->getId());
-        $tailwind = $this->creerCategorie('Tailwind CSS', 'tailwind-css', '#38bdf8', 'Tailwind CSS : classes utilitaires et design system.', $javascript->getId());
+        $doctrine = $this->creerCategorie('Doctrine ORM', 'doctrine-orm', '#f26522', 'Doctrine ORM : entités, repositories et requêtes DQL.', (int) $php->getId());
+        $twig = $this->creerCategorie('Twig', 'twig', '#bacf2e', 'Moteur de templates Twig : filtres, fonctions et héritage.', (int) $symfony->getId());
+        $stimulus = $this->creerCategorie('Stimulus.js', 'stimulus-js', '#e04c16', 'Stimulus.js : contrôleurs légers pour enrichir le HTML.', (int) $javascript->getId());
+        $tailwind = $this->creerCategorie('Tailwind CSS', 'tailwind-css', '#38bdf8', 'Tailwind CSS : classes utilitaires et design system.', (int) $javascript->getId());
 
         $manager->persist($doctrine);
         $manager->persist($twig);
@@ -52,7 +52,7 @@ class ProdCategoriesFixtures extends Fixture implements FixtureGroupInterface
         $manager->flush();
 
         // Sous-sous-catégorie
-        $migrations = $this->creerCategorie('Doctrine Migrations', 'doctrine-migrations', '#c24f1a', 'Gestion des migrations de schéma avec Doctrine Migrations.', $doctrine->getId());
+        $migrations = $this->creerCategorie('Doctrine Migrations', 'doctrine-migrations', '#c24f1a', 'Gestion des migrations de schéma avec Doctrine Migrations.', (int) $doctrine->getId());
 
         $manager->persist($migrations);
         $manager->flush();
