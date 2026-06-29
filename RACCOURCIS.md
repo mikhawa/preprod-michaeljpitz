@@ -36,7 +36,8 @@ alias testv='php bin/phpunit --no-coverage --testdox'
 # --- Qualité ---
 alias phpstan='vendor/bin/phpstan analyse src --level=8'
 alias csfix='./vendor/bin/php-cs-fixer fix'
-alias phpfix='./vendor/bin/php-cs-fixer fix'
+alias php-cs-fixer
+='./vendor/bin/php-cs-fixer fix'
 alias lint='php bin/console lint:twig templates/ && php bin/console lint:yaml config/ && php bin/console lint:container'
 alias asset='php bin/console cache:clear --env=dev && php bin/console importmap:install && php bin/console asset-map:compile --env=dev'
 alias wind='php bin/console tailwind:build'
