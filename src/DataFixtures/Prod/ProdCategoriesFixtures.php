@@ -20,6 +20,7 @@ class ProdCategoriesFixtures extends Fixture implements FixtureGroupInterface
     public const REF_STIMULUS = 'cat-stimulus';
     public const REF_TAILWIND = 'cat-tailwind';
     public const REF_MIGRATIONS = 'cat-migrations';
+    public const REF_SQL = 'cat-sql';
 
     /** @return string[] */
     public static function getGroups(): array
@@ -33,10 +34,12 @@ class ProdCategoriesFixtures extends Fixture implements FixtureGroupInterface
         $php = $this->creerCategorie('PHP', 'php', '#7b4f9e', 'Tout sur le langage PHP : bonnes pratiques, nouveautés et astuces.', 0);
         $symfony = $this->creerCategorie('Symfony', 'symfony', '#1a6de0', 'Framework PHP Symfony : composants, bundles et architecture.', 0);
         $javascript = $this->creerCategorie('JavaScript', 'javascript', '#f0db4f', 'JavaScript moderne : ES6+, outils et écosystème front-end.', 0);
+        $sql = $this->creerCategorie('SQL', 'sql', '#06a706', 'Le SQL (Structured Query Language) est un langage informatique standard permettant de communiquer, d\'organiser et de manipuler les données dans des bases de données relationnelles.', 0);
 
         $manager->persist($php);
         $manager->persist($symfony);
         $manager->persist($javascript);
+        $manager->persist($sql);
         $manager->flush();
 
         // Sous-catégories (level = id du parent)
@@ -66,6 +69,7 @@ class ProdCategoriesFixtures extends Fixture implements FixtureGroupInterface
         $this->addReference(self::REF_STIMULUS, $stimulus);
         $this->addReference(self::REF_TAILWIND, $tailwind);
         $this->addReference(self::REF_MIGRATIONS, $migrations);
+        $this->addReference(self::REF_SQL, $sql);
     }
 
     private function creerCategorie(string $titre, string $slug, string $couleur, string $description, int $level): Category
