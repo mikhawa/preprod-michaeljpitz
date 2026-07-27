@@ -202,5 +202,67 @@ $stagiaires = [<br>
 
         $manager->persist($arrayPhp);
         $manager->flush();
+
+        // Article publié avec contenu réel
+        /** @var Category $php */
+        $php = $this->getReference(ProdCategoriesFixtures::REF_PHP, Category::class);
+        /** @var Category $sql */
+        $sql = $this->getReference(ProdCategoriesFixtures::REF_SQL, Category::class);
+        $arraySql = (new Article())
+        ->setTitle('Bonne pratique pour les mots de passe: password_hash et password_verify')
+        ->setSlug('bonne-pratique-pour-les-mots-de-passe-passwordhash-et-passwordverify')
+        ->setExcerpt('Depuis PHP 5.5 jusqu\'aux versions modernes de PHP, des fonctions de hachage des mots de passe sont disponibles:  "password_hash()" et "password_verify()" .')
+        ->setFeaturedImage('1e1999d3b80e3a841b9a1439ca702e9a7d427571.png')
+        ->setIsPublished(true)
+        ->setPublishedAt(new \DateTimeImmutable('-1 day'))
+        ->setContent('<p>Un mot de passe ne devrait jamais se trouver dans une base de données, ou dans quelconque autre format de stockage de données.&nbsp;</p>
+
+<p>Si&nbsp;la base de données est compromise, l&apos;attaquant obtient immédiatement tous les mots de passe des utilisateurs !</p>
+
+<h3>Ne pas confondre cryptage et hachage&nbsp;</h3>
+
+<p>Une solution naïve consiste à utiliser une fonction de hachage classique :<br>
+<br>
+$password = &apos;monMotDePasse123&apos;;<br>
+<br>
+$hash = md5($password);<br>
+<br>
+ou :<br>
+<br>
+$hash = sha1($password);<br>
+<br>
+Cependant, ces algorithmes sont aujourd&apos;hui considérés comme insuffisants pour protéger des mots de passe.<br>
+<br>
+Ils sont :<br>
+<br>
+- Trop rapides.<br>
+- Vulnérables aux attaques par dictionnaire.<br>
+- Vulnérables aux tables arc-en-ciel (Rainbow Tables).<br>
+- Conçus pour l&apos;intégrité des données et non pour le stockage des mots de passe.<br>
+</p>
+
+<p><br>
+</p>
+
+<p><br>
+</p>
+
+<div class="se-component se-image-container __se__float-left" style="width: 50%">
+  <figure style="width: 100%;">
+    <img src="/uploads/articles/content/0774c0f754eac2a7d0a3fc6083a6f86c.png" alt="Fonctions password_hash, password_verify et password_needs_rehash " data-rotate="" data-proportion="true" data-size="50%," data-align="left" data-file-name="1000112372.png" data-file-size="3970070" data-origin="500px,auto" origin-size="1200,2150" data-percentage="50," style="width: 100%;" data-index="0">
+  </figure>
+</div>
+
+<p><br>
+</p>
+
+<p><br>
+</p>
+
+')
+        ->addCategory($php)
+            ->addCategory($sql);
+        $manager->persist($arrayPhp);
+        $manager->flush();
     }
 }
