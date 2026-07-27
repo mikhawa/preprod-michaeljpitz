@@ -39,6 +39,7 @@ class ProdCategoriesFixtures extends Fixture implements FixtureGroupInterface
         $manager->persist($php);
         $manager->persist($symfony);
         $manager->persist($javascript);
+        $manager->persist($sql);
         $manager->flush();
 
         // Sous-catégories (level = id du parent)
@@ -51,7 +52,6 @@ class ProdCategoriesFixtures extends Fixture implements FixtureGroupInterface
         $manager->persist($twig);
         $manager->persist($stimulus);
         $manager->persist($tailwind);
-        $manager->persist($sql);
         $manager->flush();
 
         // Sous-sous-catégorie
