@@ -203,19 +203,19 @@ $stagiaires = [<br>
         $manager->persist($arrayPhp);
         $manager->flush();
 
-    // Article publié avec contenu réel
-    /** @var Category $php */
-$php = $this->getReference(ProdCategoriesFixtures::REF_PHP, Category::class);
-   /** @var Category $sql */
+        // Article publié avec contenu réel
+        /** @var Category $php */
+        $php = $this->getReference(ProdCategoriesFixtures::REF_PHP, Category::class);
+        /** @var Category $sql */
         $sql = $this->getReference(ProdCategoriesFixtures::REF_SQL, Category::class);
-$arraySql = (new Article())
-->setTitle('Bonne pratique pour les mots de passe: password_hash et password_verify')
-->setSlug('bonne-pratique-pour-les-mots-de-passe-passwordhash-et-passwordverify')
-->setExcerpt('Depuis PHP 5.5 jusqu\'aux versions modernes de PHP, des fonctions de hachage des mots de passe sont disponibles:  "password_hash()" et "password_verify()" .')
-->setFeaturedImage('1e1999d3b80e3a841b9a1439ca702e9a7d427571.png')
-->setIsPublished(true)
-->setPublishedAt(new \DateTimeImmutable('-1 day'))
-->setContent('<p>Un mot de passe ne devrait jamais se trouver dans une base de données, ou dans quelconque autre format de stockage de données.&nbsp;</p>
+        $arraySql = (new Article())
+        ->setTitle('Bonne pratique pour les mots de passe: password_hash et password_verify')
+        ->setSlug('bonne-pratique-pour-les-mots-de-passe-passwordhash-et-passwordverify')
+        ->setExcerpt('Depuis PHP 5.5 jusqu\'aux versions modernes de PHP, des fonctions de hachage des mots de passe sont disponibles:  "password_hash()" et "password_verify()" .')
+        ->setFeaturedImage('1e1999d3b80e3a841b9a1439ca702e9a7d427571.png')
+        ->setIsPublished(true)
+        ->setPublishedAt(new \DateTimeImmutable('-1 day'))
+        ->setContent('<p>Un mot de passe ne devrait jamais se trouver dans une base de données, ou dans quelconque autre format de stockage de données.&nbsp;</p>
 
 <p>Si&nbsp;la base de données est compromise, l&apos;attaquant obtient immédiatement tous les mots de passe des utilisateurs !</p>
 
@@ -260,11 +260,9 @@ Ils sont :<br>
 </p>
 
 ')
-->addCategory($php)
-    ->addCategory($sql);
-$manager->persist($arrayPhp);
-$manager->flush();
-
-}
-
+        ->addCategory($php)
+            ->addCategory($sql);
+        $manager->persist($arrayPhp);
+        $manager->flush();
+    }
 }
