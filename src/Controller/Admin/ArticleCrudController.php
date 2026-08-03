@@ -35,7 +35,7 @@ class ArticleCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Article')
             ->setEntityLabelInPlural('Articles')
-            ->setDefaultSort(['createdAt' => 'DESC']);
+            ->setDefaultSort(['id' => 'DESC']);
     }
 
     public function configureFields(string $pageName): iterable

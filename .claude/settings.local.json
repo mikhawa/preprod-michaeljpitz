@@ -35,5 +35,8 @@
       "Bash(docker context *)",
       "Bash(node --input-type=module)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "phpstorm"
+  ]
 }

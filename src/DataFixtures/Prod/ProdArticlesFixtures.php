@@ -220,17 +220,39 @@ $stagiaires = [<br>
 
 <p>Si&nbsp;la base de données est compromise, l&apos;attaquant obtient immédiatement tous les mots de passe des utilisateurs !</p>
 
+<p>Il faut que le mot de passe soit <strong>haché</strong>!&nbsp;</p>
+
 <h3>Ne pas confondre cryptage et hachage&nbsp;</h3>
 
-<p>Une solution naïve consiste à utiliser une fonction de hachage classique :<br>
-<br>
+<p>Bien que les termes soient souvent confondus dans le langage courant, le hachage et le chiffrement (le terme rigoureux en français pour &quot;cryptage&quot;) répondent à des problématiques de sécurité fondamentalement différentes<br>
+</p>
+
+<h3>Hachage&nbsp;</h3>
+
+<p>Le hachage transforme une donnée de taille variable (une chaîne de caractères, un fichier) en une empreinte numérique de taille fixe (le hash). C&apos;est une fonction mathématique irréversible : il est mathématiquement <strong>impossible de retrouver la donnée d&apos;origine à partir du hash</strong>.</p>
+
+<h3>Cryptage&nbsp;</h3>
+
+<p>Nommé également&nbsp;Le <em>Chiffrement</em> (<em>Encryption</em>).</p>
+
+<p>Le chiffrement sert à garantir la confidentialité. Il transforme une donnée lisible (le texte clair) en un format illisible (le texte chiffré). Contrairement au hachage, cette opération est réversible : on peut retrouver la donnée d&apos;origine, à condition de posséder la bonne clé cryptographique.</p>
+
+<p>Hacher les mots de passe en PHP, un jeu d&apos;enfant, mais des règles à respecter!&nbsp;</p>
+
+<h3>Mauvaises pratiques</h3>
+
+<p>Une solution naïve consiste à utiliser une fonction de hachage classique :</p>
+
+<p><br>
+[php]&lt;?php<br>
 $password = &apos;monMotDePasse123&apos;;<br>
 <br>
 $hash = md5($password);<br>
 <br>
 ou :<br>
 <br>
-$hash = sha1($password);<br>
+$hash = sha1($password);[/php]<br>
+<br>
 <br>
 Cependant, ces algorithmes sont aujourd&apos;hui considérés comme insuffisants pour protéger des mots de passe.<br>
 <br>
@@ -245,13 +267,24 @@ Ils sont :<br>
 <p><br>
 </p>
 
+<p>[php]$password = &apos;monMotDePasse123&apos;;<br>
+<br>
+$hash = md5($password);<br>
+<br>
+ou :<br>
+<br>
+$hash = sha1($password);[/php]</p>
+
+<p><br>
+</p>
+
 <p><br>
 </p>
 
 <div class="se-component se-image-container __se__float-left" style="width: 50%">
   <figure style="width: 100%;">
-    <img src="/uploads/articles/content/0774c0f754eac2a7d0a3fc6083a6f86c.png" alt="Fonctions password_hash, password_verify et password_needs_rehash " data-rotate="" data-proportion="true" data-size="50%," data-align="left" data-file-name="1000112372.png" data-file-size="3970070" data-origin="500px,auto" origin-size="1200,2150" data-percentage="50," style="width: 100%;" data-index="0">
-  </figure>
+     <img src="/uploads/articles/content/0774c0f754eac2a7d0a3fc6083a6f86c.png" alt="Fonctions password_hash, password_verify et password_needs_rehash " data-rotate="" data-proportion="true" data-size="50%," data-align="left" data-file-name="1000112372.png" data-file-size="3970070" data-origin="500px,auto" origin-size="1200,2150" data-percentage="50," style="width: 100%;" data-index="0">
+ </figure>
 </div>
 
 <p><br>
