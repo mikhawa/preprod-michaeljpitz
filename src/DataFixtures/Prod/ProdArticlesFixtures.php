@@ -244,14 +244,18 @@ $stagiaires = [<br>
 <p>Une solution naïve consiste à utiliser une fonction de hachage classique :</p>
 
 <p><br>
-[php]&lt;?php<br>
-$password = &apos;monMotDePasse123&apos;;<br>
+[php]$password = &apos;monMotDePasse123&apos;;<br>
 <br>
-$hash = md5($password);<br>
+$hash1 = md5($password);<br>
 <br>
-ou :<br>
+// ou :<br>
 <br>
-$hash = sha1($password);[/php]<br>
+$hash2 = sha1($password);</p>
+
+<p><br>
+</p>
+
+<p>echo&nbsp;$password.PHP_EOL.$hash1.PHP_EOL.$hash2;[/php]<br>
 <br>
 <br>
 Cependant, ces algorithmes sont aujourd&apos;hui considérés comme insuffisants pour protéger des mots de passe.<br>
@@ -267,13 +271,8 @@ Ils sont :<br>
 <p><br>
 </p>
 
-<p>[php]$password = &apos;monMotDePasse123&apos;;<br>
-<br>
-$hash = md5($password);<br>
-<br>
-ou :<br>
-<br>
-$hash = sha1($password);[/php]</p>
+<p><br>
+</p>
 
 <p><br>
 </p>
@@ -292,6 +291,7 @@ $hash = sha1($password);[/php]</p>
 
 <p><br>
 </p>
+
 
 ')
             ->addCategory($php)
