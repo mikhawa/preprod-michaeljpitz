@@ -244,14 +244,18 @@ $stagiaires = [<br>
 <p>Une solution naïve consiste à utiliser une fonction de hachage classique :</p>
 
 <p><br>
-[php]&lt;?php<br>
-$password = &apos;monMotDePasse123&apos;;<br>
+[php]$password = &apos;monMotDePasse123&apos;;<br>
 <br>
-$hash = md5($password);<br>
+$hash1 = md5($password);<br>
 <br>
-ou :<br>
+// ou :<br>
 <br>
-$hash = sha1($password);[/php]<br>
+$hash2 = sha1($password);</p>
+
+<p><br>
+</p>
+
+<p>echo&nbsp;$password.PHP_EOL.$hash1.PHP_EOL.$hash2;[/php]<br>
 <br>
 <br>
 Cependant, ces algorithmes sont aujourd&apos;hui considérés comme insuffisants pour protéger des mots de passe.<br>
@@ -267,13 +271,8 @@ Ils sont :<br>
 <p><br>
 </p>
 
-<p>[php]$password = &apos;monMotDePasse123&apos;;<br>
-<br>
-$hash = md5($password);<br>
-<br>
-ou :<br>
-<br>
-$hash = sha1($password);[/php]</p>
+<p><br>
+</p>
 
 <p><br>
 </p>
@@ -293,11 +292,61 @@ $hash = sha1($password);[/php]</p>
 <p><br>
 </p>
 
+
 ')
             ->addCategory($php)
             ->addCategory($sql);
 
         $manager->persist($arraySql);
+        $manager->flush();
+
+        // Article publié avec contenu réel (bonnes pratiques de hachage des mots de passe)
+        /** @var Category $php */
+        $php = $this->getReference(ProdCategoriesFixtures::REF_PHP, Category::class);
+        /** @var Category $sql */
+        $sql = $this->getReference(ProdCategoriesFixtures::REF_SQL, Category::class);
+        /** @var Category $javascript */
+        $javascript = $this->getReference(ProdCategoriesFixtures::REF_JAVASCRIPT, Category::class);
+        /** @var Category $stimulus */
+        $stimulus = $this->getReference(ProdCategoriesFixtures::REF_STIMULUS, Category::class);
+        /** @var Category $doctrine */
+        $doctrine = $this->getReference(ProdCategoriesFixtures::REF_DOCTRINE, Category::class);
+        /** @var Category $migration */
+        $migration = $this->getReference(ProdCategoriesFixtures::REF_MIGRATIONS, Category::class);
+        /** @var Category $symfony */
+        $symfony = $this->getReference(ProdCategoriesFixtures::REF_SYMFONY, Category::class);
+        /** @var Category $twig */
+        $twig = $this->getReference(ProdCategoriesFixtures::REF_TWIG, Category::class);
+
+
+        $symfony81 = (new Article())
+            ->setTitle('En route pour Symfony 8.1 - Le livre')
+            ->setSlug('en-route-pour-symfony-8-le-livre')
+            ->setExcerpt('Livre gratuit en Français pour démarrer Symfony 8.1')
+            ->setFeaturedImage('4ca877e1be061d6a98b4296777ea0810d794805d.png')
+            ->setIsPublished(true)
+            ->setPublishedAt(new \DateTimeImmutable('-1 day'))
+            ->setContent('<p><br>
+</p>
+
+<p>Symfony est l&apos;un des projets PHP les plus réputés. Il s&apos;agit à la fois d&apos;un framework full-stack robuste, et d&apos;un ensemble populaire de composants réutilisables.</p>
+
+<p>Depuis la sortie de symfony 2.0 en 2011, le projet est maintenant arrivé à maturité. J&apos;ai l&apos;impression que tout ce que nous avons fait au cours des dernières années a porté ses fruits : nouveaux composants de bas niveau, intégrations de haut niveau avec d&apos;autres logiciels, outils permettant d&apos;améliorer la productivité. L&apos;expérience de développement s&apos;est considérablement améliorée, sans sacrifier la flexibilité. Il n&apos;a jamais été aussi amusant d&apos;utiliser Symfony pour un projet.</p>
+
+<p>Si vous découvrez Symfony, ce livre présente la puissance du framework et comment vous pouvez améliorer votre productivité en développant une application étape par étape.</p>
+
+
+')
+            ->addCategory($php)
+            ->addCategory($javascript)
+            ->addCategory($doctrine)
+            ->addCategory($symfony)
+            ->addCategory($twig)
+            ->addCategory($migration)
+            ->addCategory($stimulus)
+            ->addCategory($sql);
+
+        $manager->persist($symfony81);
         $manager->flush();
     }
 }
