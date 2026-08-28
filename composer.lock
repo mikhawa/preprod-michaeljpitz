@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "445a1c3afeb7f375eaff1f909d047dce",
+    "content-hash": "c9fefe0786b96ff4c5a2874695ad0a62",
     "packages": [
         {
             "name": "composer/semver",
@@ -5207,34 +5207,31 @@
             "time": "2026-08-21T17:40:08+00:00"
         },
         {
-            "name": "symfony/mailjet-mailer",
-            "version": "v7.4.12",
+            "name": "symfony/mailer-send-mailer",
+            "version": "v7.4.9",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/mailjet-mailer.git",
-                "reference": "47148ce3c7999aa0f690680de12fdff3297eefdb"
+                "url": "https://github.com/symfony/mailer-send-mailer.git",
+                "reference": "2ffabc3ce9cbe2d39994d0165c1b5c4938a9f95b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mailjet-mailer/zipball/47148ce3c7999aa0f690680de12fdff3297eefdb",
-                "reference": "47148ce3c7999aa0f690680de12fdff3297eefdb",
+                "url": "https://api.github.com/repos/symfony/mailer-send-mailer/zipball/2ffabc3ce9cbe2d39994d0165c1b5c4938a9f95b",
+                "reference": "2ffabc3ce9cbe2d39994d0165c1b5c4938a9f95b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.2",
-                "symfony/mailer": "^7.3|^8.0"
-            },
-            "conflict": {
-                "symfony/mime": "<6.2"
+                "symfony/mailer": "^7.2|^8.0"
             },
             "require-dev": {
                 "symfony/http-client": "^6.4|^7.0|^8.0",
-                "symfony/webhook": "^6.4|^7.0|^8.0"
+                "symfony/webhook": "^6.3|^7.0|^8.0"
             },
             "type": "symfony-mailer-bridge",
             "autoload": {
                 "psr-4": {
-                    "Symfony\\Component\\Mailer\\Bridge\\Mailjet\\": ""
+                    "Symfony\\Component\\Mailer\\Bridge\\MailerSend\\": ""
                 },
                 "exclude-from-classmap": [
                     "/Tests/"
@@ -5246,18 +5243,22 @@
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "name": "Ramunas Pabreza",
+                    "email": "doobas@gmail.com"
+                },
+                {
+                    "name": "Tautvydas Tijunaitis",
+                    "email": "fosron@gmail.com"
                 },
                 {
                     "name": "Symfony Community",
                     "homepage": "https://symfony.com/contributors"
                 }
             ],
-            "description": "Symfony Mailjet Mailer Bridge",
+            "description": "Symfony MailerSend Mailer Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/mailjet-mailer/tree/v7.4.12"
+                "source": "https://github.com/symfony/mailer-send-mailer/tree/v7.4.9"
             },
             "funding": [
                 {
@@ -5277,7 +5278,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-20T07:20:23+00:00"
+            "time": "2026-04-18T13:18:21+00:00"
         },
         {
             "name": "symfony/messenger",

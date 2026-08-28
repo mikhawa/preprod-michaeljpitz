@@ -82,7 +82,7 @@ php bin/console app:create-admin le_mail le_password le_username
 ### Fonctionnalités implémentées
 
 - [x] Liens externes ouverts dans un nouvel onglet
-- [x] Mailjet pour l'envoi d'emails transactionnels
+- [x] MailerSend pour l'envoi d'emails transactionnels
 - [x] Redirection vers la page demandée après connexion
 - [x] Modification du mot de passe dans EasyAdmin
 - [x] Réinitialisation de mot de passe par email
