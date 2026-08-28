@@ -40,7 +40,7 @@ Modifier `.env.local` avec les valeurs appropriées :
 APP_ENV=dev
 APP_SECRET=<générer-une-clé-unique>
 DATABASE_URL="mysql://portfolio:portfolio@mariadb:3306/portfolio?serverVersion=10.11.0-MariaDB"
-MAILER_DSN=mailjet+api://ACCESS_KEY:SECRET_KEY@default
+MAILER_DSN=mailersend+api://API_KEY@default
 TURNSTILE_SITE_KEY=1x00000000000000000000AA
 TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
 CONTACT_FALLBACK_EMAIL=admin@portfolio.local
@@ -127,7 +127,7 @@ Créer `.env.local` :
 APP_ENV=prod
 APP_SECRET=<clé-secrète-générée>
 DATABASE_URL="mysql://portfolio:<mot-de-passe>@127.0.0.1:3306/portfolio?serverVersion=10.11.0-MariaDB"
-MAILER_DSN=mailjet+api://<ACCESS_KEY>:<SECRET_KEY>@default
+MAILER_DSN=mailersend+api://<API_KEY>@default
 TURNSTILE_SITE_KEY=<votre-clé-turnstile>
 TURNSTILE_SECRET_KEY=<votre-clé-secrète-turnstile>
 CONTACT_FALLBACK_EMAIL=<votre-email-admin>

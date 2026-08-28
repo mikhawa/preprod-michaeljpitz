@@ -30,7 +30,7 @@
         "symfony/http-client": "7.4.*",
         "symfony/intl": "7.4.*",
         "symfony/mailer": "7.4.*",
-        "symfony/mailjet-mailer": "7.4.*",
+        "symfony/mailer-send-mailer": "7.4.*",
         "symfony/mime": "7.4.*",
         "symfony/monolog-bundle": "^3.0|^4.0.2",
         "symfony/notifier": "7.4.*",
