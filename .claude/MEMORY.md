@@ -36,7 +36,7 @@ Site personnel en Symfony 7.4 LTS.
 
 **Emails** :
 - Dev → Mailpit (`smtp://mailpit:1025`), interface sur http://localhost:8025
-- Prod → Mailjet (DSN dans `.env.local`, non commité)
+- Prod → Mailjet (`MAILER_DSN=mailjet+smtp://PUBLIC_KEY:PRIVATE_KEY@default` dans `.env.local`, non commité)
 
 ---
 
