@@ -26,6 +26,12 @@ Voir `documentation/040-2026-09-06-opus-retour-a-mailjet.md`.
 **Raison** : `mj-0001` / 401 est le code d'erreur compte de Mailjet (vérification d'identité/domaine incomplète, ou détection anti-fraude sur compte récent). Aucune correction possible depuis le projet : il faut contacter le support Mailjet ou finaliser la vérification du compte (validation du domaine expéditeur SPF/DKIM notamment).
 **Fichiers** : aucun — incident tracé pour mémoire, voir `documentation/041-2026-09-06-opus-incident-compte-mailjet-bloque.md`.
 
+### Remplacement de Mailjet par Mailgun comme transport de production
+**Décision** : Remplacer le bridge `symfony/mailjet-mailer` par `symfony/mailgun-mailer`. Transport retenu : API (`mailgun+api://KEY:DOMAIN@default?region=eu`), variante SMTP documentée en repli. Mailpit reste l'intercepteur en développement local.
+**Raison** : Le compte Mailjet reste bloqué (`mj-0001`/401) en production après plusieurs tentatives, sans cause identifiable côté projet. Bascule vers un autre fournisseur pour débloquer l'envoi d'emails. Aucun code applicatif impacté : `MailerInterface` masque le transport.
+**Fichiers** : `composer.json`, `composer.lock`, `symfony.lock`, `.env`, `.env.local`, `README.md`, `documentation/deploiement.md`, `.claude/MEMORY.md`.
+Voir `documentation/042-2026-09-06-opus-remplacement-mailjet-par-mailgun.md`.
+
 ---
 
 ## 2026-06-14
