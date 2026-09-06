@@ -21,6 +21,11 @@ Voir `documentation/040-2026-09-06-opus-retour-a-mailjet.md`.
 **Décision** : Exécuter `composer` via `docker compose exec php composer …` et non depuis WSL.
 **Raison** : `vendor/` appartient à `root` (écrit par le conteneur). Un `composer remove` lancé depuis WSL échoue sur `Could not delete …/LICENSE` en laissant `composer.json` et `composer.lock` désynchronisés de `vendor/`.
 
+### Compte Mailjet bloqué (`mj-0001`, HTTP 401) à l'activation du DSN API
+**Décision** : Ne rien changer côté code/config — l'erreur `"Your account has been temporarily blocked. Please contact our support team to get assistance."` vient du compte Mailjet lui-même, pas du DSN ni du bridge. `MAILER_DSN=mailjet+api://…` est correctement configuré et résolu en `MailjetApiTransport` ; le blocage se produit à l'appel de l'API Mailjet.
+**Raison** : `mj-0001` / 401 est le code d'erreur compte de Mailjet (vérification d'identité/domaine incomplète, ou détection anti-fraude sur compte récent). Aucune correction possible depuis le projet : il faut contacter le support Mailjet ou finaliser la vérification du compte (validation du domaine expéditeur SPF/DKIM notamment).
+**Fichiers** : aucun — incident tracé pour mémoire, voir `documentation/041-2026-09-06-opus-incident-compte-mailjet-bloque.md`.
+
 ---
 
 ## 2026-06-14
