@@ -3,7 +3,7 @@
 **Date** : 2026-09-06
 **Modèle** : Claude Opus
 **Branche** : `fix/13-email-mailjet`
-**Statut** : en attente d'action côté compte Mailjet (hors projet)
+**Statut** : en attente d'action côté compte Mailjet (hors projet) — **confirmé persistant en production**
 
 ## Contexte
 
@@ -41,6 +41,16 @@ configuration ni un bug du bridge Symfony.
 - Détection anti-fraude automatique sur compte nouvellement créé ou avec peu
   d'historique d'envoi.
 - Problème de facturation (moyen de paiement, plan expiré).
+
+## Confirmation en production
+
+Même erreur reproduite en environnement de production, avec un nouvel
+`ErrorIdentifier` (`42f60a9e-2872-433f-b39c-c6fb70afee62`) mais le même couple
+`ErrorCode`/`StatusCode` (`mj-0001` / 401) et le même message. Cela confirme
+qu'il s'agit bien d'un blocage **au niveau du compte Mailjet**, reproductible
+sur tout environnement et tout DSN (API comme SMTP) tant que le compte n'est
+pas débloqué — ce n'est pas spécifique à la config dev/preprod testée
+initialement.
 
 ## Action requise (hors dépôt)
 
