@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Page;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
@@ -45,6 +46,9 @@ class PageCrudController extends AbstractCrudController
             ->setBasePath('/uploads/pages')
             ->setUploadDir('public/uploads/pages')
             ->setUploadedFileNamePattern('[randomhash].[extension]')
+            ->setRequired(false);
+        yield AssociationField::new('categories', 'Catégories')
+            ->hideOnIndex()
             ->setRequired(false);
         yield DateTimeField::new('createdAt', 'Créé le')
             ->hideOnForm();

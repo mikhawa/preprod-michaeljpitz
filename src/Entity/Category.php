@@ -51,9 +51,14 @@ class Category
     #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'categories')]
     private Collection $articles;
 
+    /** @var Collection<int, Page> */
+    #[ORM\ManyToMany(targetEntity: Page::class, mappedBy: 'categories')]
+    private Collection $pages;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->pages = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -146,6 +151,31 @@ class Category
     {
         if ($this->articles->removeElement($article)) {
             $article->removeCategory($this);
+        }
+
+        return $this;
+    }
+
+    /** @return Collection<int, Page> */
+    public function getPages(): Collection
+    {
+        return $this->pages;
+    }
+
+    public function addPage(Page $page): static
+    {
+        if (!$this->pages->contains($page)) {
+            $this->pages->add($page);
+            $page->addCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removePage(Page $page): static
+    {
+        if ($this->pages->removeElement($page)) {
+            $page->removeCategory($this);
         }
 
         return $this;

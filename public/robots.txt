@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /connexion
 
-Sitemap: https://portfolio.local/sitemap.xml
+Sitemap: https://preprod-michaeljpitz.com/sitemap.xml

@@ -69,7 +69,6 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
 <!-- Matomo -->
 <script>
   var _paq = window._paq = window._paq || [];
-  _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   (function() {
     var u="{$matomoUrl}";
@@ -78,11 +77,16 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
     var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
     g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
   })();
+  document.addEventListener('turbo:load', function() {
+    _paq.push(['setCustomUrl', window.location.pathname + window.location.search]);
+    _paq.push(['setDocumentTitle', document.title]);
+    _paq.push(['trackPageView']);
+  });
 </script>
 <!-- End Matomo Code -->
 MATOMO;
 
-        $content = str_replace('</head>', $trackingScript."\n</head>", $content);
+        $content = ltrim(str_replace('</head>', $trackingScript."\n</head>", $content));
         $response->setContent($content);
     }
 }

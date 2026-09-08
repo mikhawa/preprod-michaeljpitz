@@ -3,13 +3,16 @@
 
 :root {
     /* Mode clair */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8fafc;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --accent: #3b82f6;
-    --accent-hover: #2563eb;
-    --border: #e2e8f0;
+    --bg-primary: #f1f5f9;    /* slate-100 — fond page teinté */
+    --bg-secondary: #ffffff;   /* blanc pur — cartes élevées */
+    --text-primary: #0f172a;   /* slate-900 — plus profond */
+    --text-secondary: #475569; /* slate-600 */
+    --accent: #2563eb;         /* blue-600 — plus vif */
+    --accent-hover: #1d4ed8;   /* blue-700 */
+    --border: #cbd5e1;         /* slate-300 — bordures visibles */
+    /* Ombres — actives uniquement en mode clair */
+    --shadow-card: 0 4px 8px rgba(15, 23, 42, 0.14), 0 12px 32px rgba(15, 23, 42, 0.12);
+    --shadow-navbar: 0 2px 6px rgba(15, 23, 42, 0.12), 0 6px 20px rgba(15, 23, 42, 0.09);
 }
 
 
@@ -22,9 +25,100 @@
     --accent: #60a5fa;
     --accent-hover: #3b82f6;
     --border: #334155;
+    --shadow-card: none;
+    --shadow-navbar: none;
 }
 
-/* Styles pour le contenu riche (SunEditor / prose) */
+/* ===== Logo navbar — switch light/dark ===== */
+.mjp-logo-light { display: none; }
+.mjp-logo-dark  { display: inline; }
+[data-theme="light"] .mjp-logo-light { display: inline; }
+[data-theme="light"] .mjp-logo-dark  { display: none; }
+
+/* ===== Blobs décoratifs — mode clair uniquement ===== */
+html:not([data-theme="dark"]) body {
+    background-image:
+        radial-gradient(ellipse at 78% 0%, rgba(59, 130, 246, 0.09) 0%, transparent 45%),
+        radial-gradient(ellipse at 8%  90%, rgba(139, 92, 246, 0.06) 0%, transparent 40%);
+}
+
+/* ===== Ombres + déplacement au survol — mode clair uniquement ===== */
+html:not([data-theme="dark"]) .rounded-lg[class*="bg-[var(--bg-secondary)]"],
+html:not([data-theme="dark"]) .rounded-xl[class*="bg-[var(--bg-secondary)]"] {
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+html:not([data-theme="dark"]) .rounded-lg[class*="bg-[var(--bg-secondary)]"]:hover,
+html:not([data-theme="dark"]) .rounded-xl[class*="bg-[var(--bg-secondary)]"]:hover {
+    box-shadow: none;
+    transform: translateY(-5px);
+}
+
+html:not([data-theme="dark"]) header {
+    box-shadow: var(--shadow-navbar);
+}
+
+/* ===== Filtre catégories — panneau enfants animé ===== */
+.cf-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    pointer-events: none;
+    transition: grid-template-rows 0.2s ease, opacity 0.15s ease;
+}
+.cf-panel > .cf-panel-inner {
+    overflow: hidden;
+}
+.cf-panel.cf-open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ===== Hero ===== */
+.hero-gradient-ring {
+    background: conic-gradient(from 180deg at 50% 50%, #60a5fa 0deg, #a78bfa 180deg, #60a5fa 360deg);
+}
+
+.hero-section {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glow droit */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -5%;
+    width: 55%;
+    height: 160%;
+    background: radial-gradient(ellipse, rgba(37, 99, 235, 0.12) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+[data-theme="dark"] .hero-section::after {
+    background: radial-gradient(ellipse, rgba(96, 165, 250, 0.13) 0%, transparent 65%);
+}
+
+/* Glow gauche */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0%;
+    left: -8%;
+    width: 38%;
+    height: 100%;
+    background: radial-gradient(ellipse, rgba(139, 92, 246, 0.07) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+[data-theme="dark"] .hero-section::before {
+    background: radial-gradient(ellipse, rgba(167, 139, 250, 0.08) 0%, transparent 60%);
+}
+
+/* ===== Styles pour le contenu riche (SunEditor / prose) ===== */
 /* Les !important sur les enfants (*) sont nécessaires car SunEditor injecte
    des spans avec font-size inline (ex: <h1><span style="font-size:18px">) */
 .prose h1 { font-size: 2rem; font-weight: 700; margin: 1.5rem 0 1rem; line-height: 1.2; }
@@ -53,3 +147,8 @@
 .prose th, .prose td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
 .prose th { font-weight: 600; background-color: var(--bg-secondary); }
 .prose hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+/* Force la couleur du texte en dark mode (SunEditor injecte des color inline) */
+[data-theme="dark"] .prose *:not(a):not(code) {
+    color: inherit !important;
+}

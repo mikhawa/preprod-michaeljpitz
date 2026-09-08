@@ -57,6 +57,9 @@
 "Notes": "Notes"
 "Note": "Note"
 
+# Admin - Article
+"Menu des catégories": "Menu des catégories"
+
 # Formulaire de commentaire
 "Écrivez votre commentaire...": "Écrivez votre commentaire..."
 
@@ -77,3 +80,7 @@
 
 # Formulaire d'inscription
 "Confirmer le mot de passe": "Confirmer le mot de passe"
+
+# Formulaire 2FA
+"Code de vérification": "Code de vérification"
+"000000": "000000"

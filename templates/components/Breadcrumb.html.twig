@@ -1,0 +1,23 @@
+<nav aria-label="Fil d'Ariane" class="mb-8">
+    <ol class="flex flex-wrap items-center gap-1 text-sm text-[var(--text-secondary)]">
+        {% for item in items %}
+            {% if not loop.first %}
+                <li aria-hidden="true" class="select-none opacity-50">/</li>
+            {% endif %}
+            {% if loop.last %}
+                <li class="text-[var(--text-primary)] font-medium truncate max-w-[200px] sm:max-w-xs"
+                    aria-current="page"
+                    {% if item.label|length > 30 %}title="{{ item.label }}"{% endif %}>
+                    {{ item.label }}
+                </li>
+            {% else %}
+                <li>
+                    <a href="{{ item.url }}"
+                       class="hover:text-[var(--accent)] transition-colors">
+                        {{ item.label }}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>

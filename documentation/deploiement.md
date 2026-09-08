@@ -39,8 +39,8 @@ Modifier `.env.local` avec les valeurs appropriées :
 ```env
 APP_ENV=dev
 APP_SECRET=<générer-une-clé-unique>
-DATABASE_URL="mysql://preprod:preprod@mariadb:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4"
-MAILER_DSN=mailjet+api://ACCESS_KEY:SECRET_KEY@default
+DATABASE_URL="mysql://portfolio:portfolio@mariadb:3306/portfolio?serverVersion=10.11.0-MariaDB"
+MAILER_DSN=mailgun+api://KEY:DOMAIN@default?region=eu
 TURNSTILE_SITE_KEY=1x00000000000000000000AA
 TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
 ADMIN_EMAIL=admin@michaeljpitz.com
@@ -143,9 +143,9 @@ Puis renseigner les vraies valeurs dans `.env.prod.local` :
 
 ```env
 APP_ENV=prod
-APP_SECRET=<clé-secrète-générée>   # php -r "echo bin2hex(random_bytes(16)), PHP_EOL;"
-DATABASE_URL="mysql://preprod:<mot-de-passe>@127.0.0.1:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4"
-MAILER_DSN=mailjet+api://<ACCESS_KEY>:<SECRET_KEY>@default
+APP_SECRET=<clé-secrète-générée>
+DATABASE_URL="mysql://portfolio:<mot-de-passe>@127.0.0.1:3306/portfolio?serverVersion=10.11.0-MariaDB"
+MAILER_DSN=mailgun+api://<KEY>:<DOMAIN>@default?region=eu
 TURNSTILE_SITE_KEY=<votre-clé-turnstile>
 TURNSTILE_SECRET_KEY=<votre-clé-secrète-turnstile>
 # Adresses email (valeurs par défaut déjà dans .env — à surcharger si besoin)

@@ -34,8 +34,6 @@ class RegistrationControllerTest extends WebTestCase
         $form = $crawler->filter('form[name="registration"]')->form([
             'registration[email]' => 'nouveau@test.com',
             'registration[userName]' => 'nouveauuser',
-            'registration[plainPassword][first]' => 'password123',
-            'registration[plainPassword][second]' => 'password123',
         ]);
         $this->client->submit($form);
 
@@ -60,23 +58,19 @@ class RegistrationControllerTest extends WebTestCase
         $form = $crawler->filter('form[name="registration"]')->form([
             'registration[email]' => 'pas-un-email',
             'registration[userName]' => 'nouveauuser',
-            'registration[plainPassword][first]' => 'password123',
-            'registration[plainPassword][second]' => 'password123',
         ]);
         $this->client->submit($form);
 
         self::assertResponseIsUnprocessable();
     }
 
-    public function testRegistrationWithShortPassword(): void
+    public function testRegistrationWithTooShortUserName(): void
     {
         $crawler = $this->client->request('GET', '/inscription');
 
         $form = $crawler->filter('form[name="registration"]')->form([
             'registration[email]' => 'nouveau@test.com',
-            'registration[userName]' => 'nouveauuser',
-            'registration[plainPassword][first]' => 'court',
-            'registration[plainPassword][second]' => 'court',
+            'registration[userName]' => 'ab',
         ]);
         $this->client->submit($form);
 

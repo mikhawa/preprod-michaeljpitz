@@ -28,7 +28,7 @@ Site personnel présentant mon CV de développeur PHP/Symfony et un système de 
 | Annotations Doctrine | Attributs PHP 8 |
 | FOSUserBundle | Symfony Security natif |
 | Webpack Encore seul | AssetMapper + Symfony UX |
-| FOSCKEditor | Trix ou TinyMCE via CDN |
+| FOSCKEditor | Suneditor |
 | Code sans types stricts | `declare(strict_types=1)` |
 | XML pour config services/routes | Configuration PHP ou Attributs |
 | mysql_* ou requêtes SQL brutes | Doctrine ORM avec paramètres |
@@ -66,8 +66,7 @@ Site personnel présentant mon CV de développeur PHP/Symfony et un système de 
 
 | Option | Avantages | Documentation |
 |--------|-----------|---------------|
-| **Trix** (recommandé) | Léger, intégré EasyAdmin, gratuit | https://trix-editor.org/ |
-| **TinyMCE** | Complet, gratuit (core) | https://www.tiny.cloud/docs/ |
+| **suneditor** | Léger, facile à intégrer via importmap | |
 
 ---
 

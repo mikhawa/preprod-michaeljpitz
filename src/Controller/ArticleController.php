@@ -14,11 +14,13 @@ use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\CommentRepository;
 use App\Repository\RatingRepository;
+use App\Service\TurnstileValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -30,7 +32,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ArticleController extends AbstractController
 {
     public function __construct(
-        private readonly string $notificationsFrom,
+        private readonly TurnstileValidator $turnstileValidator,
+        #[Autowire('%env(TURNSTILE_SITE_KEY)%')]
+        private readonly string $turnstileSiteKey,
+        #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
+        private readonly string $emailFrom,
+        #[Autowire('%env(ADMIN_EMAIL)%')]
         private readonly string $adminEmail,
     ) {
     }
@@ -50,11 +57,11 @@ class ArticleController extends AbstractController
             9,
         );
 
-        $categories = $categoryRepository->findBy([], ['title' => 'ASC']);
+        $categoryTree = $categoryRepository->findCategoryTree();
 
         return $this->render('article/index.html.twig', [
             'pagination' => $pagination,
-            'categories' => $categories,
+            'categoryTree' => $categoryTree,
             'currentCategory' => null,
         ]);
     }
@@ -75,11 +82,11 @@ class ArticleController extends AbstractController
             9,
         );
 
-        $categories = $categoryRepository->findBy([], ['title' => 'ASC']);
+        $categoryTree = $categoryRepository->findCategoryTree();
 
         return $this->render('article/index.html.twig', [
             'pagination' => $pagination,
-            'categories' => $categories,
+            'categoryTree' => $categoryTree,
             'currentCategory' => $category,
         ]);
     }
@@ -88,6 +95,7 @@ class ArticleController extends AbstractController
     public function show(
         #[MapEntity(mapping: ['slug' => 'slug'])] Article $article,
         ArticleRepository $articleRepository,
+        CategoryRepository $categoryRepository,
         CommentRepository $commentRepository,
         RatingRepository $ratingRepository,
         Request $request,
@@ -96,6 +104,26 @@ class ArticleController extends AbstractController
     ): Response {
         if (!$article->isPublished()) {
             throw $this->createNotFoundException('Article introuvable.');
+        }
+
+        // Construit la chaîne hiérarchique de catégories pour le fil d'Ariane
+        // On prend la catégorie la plus profonde (level > 0) en priorité
+        $breadcrumbCategories = [];
+        $categories = $article->getCategories()->toArray();
+        usort($categories, static fn (Category $a, Category $b) => ($b->getLevel() ?? 0) <=> ($a->getLevel() ?? 0));
+        $startCategory = $categories[0] ?? null;
+
+        if (null !== $startCategory) {
+            $chain = [];
+            $visited = [];
+            $current = $startCategory;
+            while (null !== $current && !in_array($current->getId(), $visited, true)) {
+                $visited[] = $current->getId();
+                array_unshift($chain, $current);
+                $parentId = $current->getLevel();
+                $current = (null !== $parentId && $parentId > 0) ? $categoryRepository->find($parentId) : null;
+            }
+            $breadcrumbCategories = $chain;
         }
 
         $similarArticles = $articleRepository->findSimilarArticles($article);
@@ -115,6 +143,20 @@ class ArticleController extends AbstractController
             $commentForm->handleRequest($request);
 
             if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+                $turnstileEnabled = !empty($this->turnstileSiteKey)
+                    && 'YOUR_TURNSTILE_SITE_KEY' !== $this->turnstileSiteKey
+                    && !str_starts_with($this->turnstileSiteKey, '1x00000000000000000000');
+
+                if ($turnstileEnabled) {
+                    $turnstileToken = $request->request->getString('cf-turnstile-response');
+
+                    if (!$this->turnstileValidator->validate($turnstileToken, $request->getClientIp())) {
+                        $this->addFlash('error', 'La vérification anti-robot a échoué. Veuillez réessayer.');
+
+                        return $this->redirectToRoute('app_article_show', ['slug' => $article->getSlug()]);
+                    }
+                }
+
                 $comment->setUser($user);
                 $comment->setArticle($article);
 
@@ -133,7 +175,7 @@ class ArticleController extends AbstractController
                 );
 
                 $adminNotification = (new TemplatedEmail())
-                    ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
+                    ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
                     ->to($this->adminEmail)
                     ->subject('Nouveau commentaire - '.$article->getTitle())
                     ->htmlTemplate('email/new_comment_notification.html.twig')
@@ -162,12 +204,14 @@ class ArticleController extends AbstractController
 
         return $this->render('article/show.html.twig', [
             'article' => $article,
+            'breadcrumbCategories' => $breadcrumbCategories,
             'similarArticles' => $similarArticles,
             'comments' => $comments,
             'commentForm' => $commentForm,
             'averageRating' => $averageRating,
             'ratingCount' => $ratingCount,
             'userRating' => $userRating,
+            'turnstileSiteKey' => $this->turnstileSiteKey,
         ]);
     }
 

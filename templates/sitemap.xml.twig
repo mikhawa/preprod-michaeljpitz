@@ -10,6 +10,37 @@
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
+    {% if pageCv %}
+    <url>
+        <loc>{{ url('app_cv') }}</loc>
+        {% if pageCv.updatedAt %}
+        <lastmod>{{ pageCv.updatedAt|date('Y-m-d') }}</lastmod>
+        {% elseif pageCv.createdAt %}
+        <lastmod>{{ pageCv.createdAt|date('Y-m-d') }}</lastmod>
+        {% endif %}
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    {% endif %}
+    {% if pageRgpd %}
+    <url>
+        <loc>{{ url('app_rgpd') }}</loc>
+        {% if pageRgpd.updatedAt %}
+        <lastmod>{{ pageRgpd.updatedAt|date('Y-m-d') }}</lastmod>
+        {% elseif pageRgpd.createdAt %}
+        <lastmod>{{ pageRgpd.createdAt|date('Y-m-d') }}</lastmod>
+        {% endif %}
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    {% endif %}
+    {% for category in categories %}
+    <url>
+        <loc>{{ url('app_category_show', {slug: category.slug}) }}</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    {% endfor %}
     {% for article in articles %}
     <url>
         <loc>{{ url('app_article_show', {slug: article.slug}) }}</loc>

@@ -1,0 +1,23 @@
+{% for node in nodes %}
+    <div data-accordion-item>
+        <button class="flex items-center justify-between w-full"
+                {% if node.children is not empty %}data-action="click->navbar#toggleAccordion"{% endif %}>
+            <a href="{{ path('app_category_show', {slug: node.category.slug}) }}"
+               class="py-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+               onclick="event.stopPropagation()">
+                {{ node.category.title }}
+            </a>
+            {% if node.children is not empty %}
+                <svg class="w-3.5 h-3.5 shrink-0 transition-transform text-[var(--text-secondary)]"
+                     data-navbar-target="accordionIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            {% endif %}
+        </button>
+        {% if node.children is not empty %}
+            <div class="hidden pl-4 mt-1 space-y-1" data-navbar-target="accordionPanel">
+                {% include 'components/_category_mobile_menu.html.twig' with {nodes: node.children} only %}
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}

@@ -18,12 +18,16 @@
 
 {% block body %}
     <article class="max-w-3xl mx-auto py-8">
-        {# Navigation retour #}
-        <div class="mb-8">
-            <a href="{{ path('app_article_index') }}" class="text-[var(--accent)] hover:text-[var(--accent-hover)]">
-                &larr; Retour aux articles
-            </a>
-        </div>
+        {# Fil d'Ariane #}
+        {% set breadcrumbItems = [
+            {label: 'Accueil', url: path('app_home')},
+            {label: 'Articles', url: path('app_article_index')}
+        ] %}
+        {% for category in breadcrumbCategories %}
+            {% set breadcrumbItems = breadcrumbItems|merge([{label: category.title, url: path('app_category_show', {slug: category.slug})}]) %}
+        {% endfor %}
+        {% set breadcrumbItems = breadcrumbItems|merge([{label: article.title}]) %}
+        <twig:Breadcrumb :items="breadcrumbItems" />
 
         {# En-tête #}
         <header class="mb-8">
@@ -69,7 +73,7 @@
                     [&_code]:bg-[var(--bg-secondary)] [&_code]:px-1 [&_code]:rounded
                     [&_pre]:bg-[var(--bg-secondary)] [&_pre]:border [&_pre]:border-[var(--border)]"
              data-controller="external-link lightbox">
-            {{ article.content|raw }}
+            {{ article.content|php_runner|raw }}
         </div>
     </article>
 
@@ -135,7 +139,7 @@
                         {{ comment.createdAt|date('d/m/Y à H:i') }}
                     </time>
                 </div>
-                <p class="text-[var(--text-primary)]">{{ comment.content|nl2br }}</p>
+                <p class="text-[var(--text-primary)]">{{ comment.content|sanitize_comment|nl2br }}</p>
             </div>
         {% else %}
             <p class="text-[var(--text-secondary)]">Aucun commentaire pour le moment.</p>
@@ -145,11 +149,18 @@
         {% if commentForm %}
             <div class="mt-8">
                 <h3 class="text-xl font-semibold mb-4">Laisser un commentaire</h3>
-                {{ form_start(commentForm, {attr: {class: 'space-y-4'}}) }}
+                {{ form_start(commentForm, {attr: {class: 'space-y-4', 'data-turbo': 'false'}}) }}
                     <div>
                         {{ form_widget(commentForm.content, {attr: {class: 'w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]', rows: 4, placeholder: 'Écrivez votre commentaire...'}}) }}
                         {{ form_errors(commentForm.content) }}
                     </div>
+
+                    {% if turnstileSiteKey is defined and turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' %}
+                    <div class="flex justify-center">
+                        <div class="cf-turnstile" data-sitekey="{{ turnstileSiteKey }}" data-theme="auto"></div>
+                    </div>
+                    {% endif %}
+
                     <button type="submit"
                             class="bg-[var(--accent)] text-white px-4 py-2 rounded-lg hover:bg-[var(--accent-hover)] transition-colors font-medium">
                         Publier
@@ -174,5 +185,12 @@
             {% endfor %}
         </div>
     </section>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if turnstileSiteKey is defined and app.user and turnstileSiteKey and turnstileSiteKey != 'YOUR_TURNSTILE_SITE_KEY' %}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     {% endif %}
 {% endblock %}

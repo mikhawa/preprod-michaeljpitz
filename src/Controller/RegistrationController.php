@@ -7,9 +7,11 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegistrationType;
 use App\Repository\UserRepository;
+use App\Service\TurnstileValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -21,7 +23,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class RegistrationController extends AbstractController
 {
     public function __construct(
-        private readonly string $notificationsFrom,
+        private readonly TurnstileValidator $turnstileValidator,
+        #[Autowire('%env(TURNSTILE_SITE_KEY)%')]
+        private readonly string $turnstileSiteKey,
+        #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
+        private readonly string $emailFrom,
+        #[Autowire('%env(ADMIN_EMAIL)%')]
         private readonly string $adminEmail,
     ) {
     }
@@ -42,11 +49,30 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $turnstileEnabled = !empty($this->turnstileSiteKey)
+                && 'YOUR_TURNSTILE_SITE_KEY' !== $this->turnstileSiteKey
+                && !str_starts_with($this->turnstileSiteKey, '1x00000000000000000000');
+
+            if ($turnstileEnabled) {
+                $turnstileToken = $request->request->getString('cf-turnstile-response');
+
+                if (!$this->turnstileValidator->validate($turnstileToken, $request->getClientIp())) {
+                    $this->addFlash('error', 'La vérification anti-robot a échoué. Veuillez réessayer.');
+
+                    return $this->render('security/register.html.twig', [
+                        'registrationForm' => $form,
+                        'turnstileSiteKey' => $this->turnstileSiteKey,
+                    ], new Response(status: Response::HTTP_UNPROCESSABLE_ENTITY));
+                }
+            }
+
+            // Génération d'un mot de passe temporaire lisible (16 caractères)
+            $temporaryPassword = substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(16))), 0, 12)
+                .random_int(10, 99)
+                .(string) chr(random_int(65, 90));
+
             $user->setPassword(
-                $passwordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData(),
-                ),
+                $passwordHasher->hashPassword($user, $temporaryPassword),
             );
             $user->setActivationToken(bin2hex(random_bytes(32)));
 
@@ -59,20 +85,24 @@ class RegistrationController extends AbstractController
                 UrlGeneratorInterface::ABSOLUTE_URL,
             );
 
+            $siteUrl = $this->generateUrl('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
             $email = (new TemplatedEmail())
-                ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
+                ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
                 ->to((string) $user->getEmail())
-                ->subject('Activez votre compte')
+                ->subject('Activez votre compte — vos identifiants de connexion')
                 ->htmlTemplate('email/activation.html.twig')
                 ->context([
                     'user' => $user,
                     'activation_url' => $activationUrl,
+                    'temporary_password' => $temporaryPassword,
+                    'site_url' => $siteUrl,
                 ]);
 
             $mailer->send($email);
 
             $adminNotification = (new TemplatedEmail())
-                ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
+                ->from(new Address($this->emailFrom, 'MichaelJPitz.com'))
                 ->to($this->adminEmail)
                 ->subject('Nouvelle inscription - '.$user->getUserName())
                 ->htmlTemplate('email/new_user_notification.html.twig')
@@ -91,6 +121,7 @@ class RegistrationController extends AbstractController
 
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form,
+            'turnstileSiteKey' => $this->turnstileSiteKey,
         ]);
     }
 
@@ -99,7 +130,6 @@ class RegistrationController extends AbstractController
         string $token,
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
-        MailerInterface $mailer,
     ): Response {
         $user = $userRepository->findOneBy(['activationToken' => $token]);
 
@@ -126,19 +156,6 @@ class RegistrationController extends AbstractController
         $user->setStatus(1);
         $user->setActivationToken(null);
         $entityManager->flush();
-
-        $adminNotification = (new TemplatedEmail())
-            ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
-            ->to($this->adminEmail)
-            ->subject('Compte activé - '.$user->getUserName())
-            ->htmlTemplate('email/user_activated_notification.html.twig')
-            ->context([
-                'userName' => $user->getUserName(),
-                'userEmail' => $user->getEmail(),
-                'activationDate' => new \DateTimeImmutable(),
-            ]);
-
-        $mailer->send($adminNotification);
 
         $this->addFlash('success', 'Votre compte a été activé avec succès. Vous pouvez maintenant vous connecter.');
 

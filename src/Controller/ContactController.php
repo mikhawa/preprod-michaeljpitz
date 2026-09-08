@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Form\ContactType;
-use App\Repository\UserRepository;
+use App\Repository\PageRepository;
 use App\Service\TurnstileValidator;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,18 +20,20 @@ class ContactController extends AbstractController
 {
     public function __construct(
         private readonly MailerInterface $mailer,
-        private readonly UserRepository $userRepository,
         private readonly TurnstileValidator $turnstileValidator,
         #[Autowire('%env(TURNSTILE_SITE_KEY)%')]
         private readonly string $turnstileSiteKey,
+        #[Autowire('%env(EMAIL_NOTIFICATIONS_FROM)%')]
+        private readonly string $emailFrom,
+        #[Autowire('%env(ADMIN_EMAIL)%')]
         private readonly string $adminEmail,
-        private readonly string $notificationsFrom,
     ) {
     }
 
     #[Route('/contact', name: 'app_contact', methods: ['GET', 'POST'])]
-    public function index(Request $request): Response
+    public function index(Request $request, PageRepository $pageRepository): Response
     {
+        $page = $pageRepository->findOneBySlug('contact');
         $form = $this->createForm(ContactType::class);
         $form->handleRequest($request);
 
@@ -51,16 +53,16 @@ class ContactController extends AbstractController
                     return $this->render('contact/index.html.twig', [
                         'contactForm' => $form,
                         'turnstileSiteKey' => $this->turnstileSiteKey,
+                        'page' => $page,
                     ], new Response(status: Response::HTTP_UNPROCESSABLE_ENTITY));
                 }
             }
 
             $data = $form->getData();
-            $recipient = $this->getAdminEmail() ?? $this->adminEmail;
 
             $email = (new TemplatedEmail())
-                ->from(new Address($this->notificationsFrom, 'CV Mikhawa - Contact'))
-                ->to($recipient)
+                ->from(new Address($this->emailFrom, 'MichaelJPitz.com - Contact'))
+                ->to($this->adminEmail)
                 ->replyTo(new Address($data['email'], $data['name']))
                 ->subject('Nouveau message de contact - '.$data['name'])
                 ->htmlTemplate('email/contact_notification.html.twig')
@@ -80,22 +82,7 @@ class ContactController extends AbstractController
         return $this->render('contact/index.html.twig', [
             'contactForm' => $form,
             'turnstileSiteKey' => $this->turnstileSiteKey,
+            'page' => $page,
         ]);
-    }
-
-    private function getAdminEmail(): ?string
-    {
-        $admins = $this->userRepository->createQueryBuilder('u')
-            ->where('u.roles LIKE :role')
-            ->setParameter('role', '%ROLE_ADMIN%')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getResult();
-
-        if (empty($admins)) {
-            return null;
-        }
-
-        return $admins[0]->getEmail();
     }
 }

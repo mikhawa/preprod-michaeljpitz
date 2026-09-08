@@ -18,6 +18,20 @@
 
 {% block body %}
     <section class="py-8">
+        {# Fil d'Ariane #}
+        {% if currentCategory %}
+            <twig:Breadcrumb :items="[
+                {label: 'Accueil', url: path('app_home')},
+                {label: 'Articles', url: path('app_article_index')},
+                {label: currentCategory.title}
+            ]" />
+        {% else %}
+            <twig:Breadcrumb :items="[
+                {label: 'Accueil', url: path('app_home')},
+                {label: 'Articles'}
+            ]" />
+        {% endif %}
+
         <h1 class="text-3xl font-bold mb-8">
             {% if currentCategory %}
                 Articles : {{ currentCategory.title }}
@@ -26,22 +40,17 @@
             {% endif %}
         </h1>
 
-        {# Filtres catégories #}
-        {% if categories is not empty %}
-        <div class="flex flex-wrap gap-2 mb-8">
-            <a href="{{ path('app_article_index') }}"
-               class="inline-block text-sm px-3 py-1 rounded-full border transition-colors
-                      {% if currentCategory is null %}bg-[var(--accent)] text-white border-[var(--accent)]{% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}">
-                Toutes
-            </a>
-            {% for cat in categories %}
-                <a href="{{ path('app_category_show', {slug: cat.slug}) }}"
-                   class="inline-block text-sm px-3 py-1 rounded-full border transition-colors
-                          {% if currentCategory and currentCategory.id == cat.id %}bg-[var(--accent)] text-white border-[var(--accent)]{% else %}bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)]{% endif %}">
-                    {{ cat.title }}
-                </a>
-            {% endfor %}
-        </div>
+        {# ── Filtres catégories hiérarchiques multi-niveaux ── #}
+        {% if categoryTree is not empty %}
+        <nav aria-label="Filtrer par catégorie" class="mb-8"
+             data-controller="category-filter"
+             data-action="mouseleave->category-filter#scheduleHide mouseenter->category-filter#cancelHide">
+            {% include 'components/_category_filter_level.html.twig' with {
+                nodes: categoryTree,
+                currentCategory: currentCategory,
+                isRoot: true
+            } only %}
+        </nav>
         {% endif %}
 
         {# Grille d'articles #}
@@ -56,7 +65,7 @@
             {% if pagination.pageCount > 1 %}
             <nav class="flex justify-center mt-12" aria-label="Pagination">
                 <div class="flex items-center gap-1">
-                    {% if pagination.hasPreviousPage %}
+                    {% if pagination.currentPageNumber > 1 %}
                         <a href="{{ currentCategory ? path('app_category_show', {slug: currentCategory.slug, page: pagination.currentPageNumber - 1}) : path('app_article_index', {page: pagination.currentPageNumber - 1}) }}"
                            class="px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] transition-colors">
                             &laquo; Précédent
@@ -76,7 +85,7 @@
                         {% endif %}
                     {% endfor %}
 
-                    {% if pagination.hasNextPage %}
+                    {% if pagination.currentPageNumber < pagination.pageCount %}
                         <a href="{{ currentCategory ? path('app_category_show', {slug: currentCategory.slug, page: pagination.currentPageNumber + 1}) : path('app_article_index', {page: pagination.currentPageNumber + 1}) }}"
                            class="px-3 py-2 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)] transition-colors">
                             Suivant &raquo;

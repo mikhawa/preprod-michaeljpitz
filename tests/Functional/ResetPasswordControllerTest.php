@@ -63,12 +63,13 @@ class ResetPasswordControllerTest extends WebTestCase
 
     public function testResetPasswordWithValidToken(): void
     {
+        // Le token stocké en BDD est le hash SHA-256 du token clair envoyé dans l'URL
         $this->createUser(
             email: 'reset@test.com',
             password: 'password123',
             userName: 'resetuser',
             status: 1,
-            resetPasswordToken: 'valid-reset-token',
+            resetPasswordToken: hash('sha256', 'valid-reset-token'),
             resetPasswordRequestedAt: new \DateTimeImmutable('-30 minutes'),
         );
 
@@ -103,12 +104,13 @@ class ResetPasswordControllerTest extends WebTestCase
 
     public function testResetPasswordWithExpiredToken(): void
     {
+        // Le token stocké en BDD est le hash SHA-256 du token clair envoyé dans l'URL
         $this->createUser(
             email: 'expired@test.com',
             password: 'password123',
             userName: 'expiredreset',
             status: 1,
-            resetPasswordToken: 'expired-reset-token',
+            resetPasswordToken: hash('sha256', 'expired-reset-token'),
             resetPasswordRequestedAt: new \DateTimeImmutable('-2 hours'),
         );
 

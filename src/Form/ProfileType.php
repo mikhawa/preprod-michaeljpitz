@@ -67,6 +67,7 @@ class ProfileType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'validation_groups' => ['Profile'],
             'csrf_protection' => true,
             'csrf_field_name' => '_token',
             'csrf_token_id' => 'profile_form',

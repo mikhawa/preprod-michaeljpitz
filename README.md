@@ -4,167 +4,85 @@ Surnommé mikhawa, je suis un développeur web passionné avec une solide expér
  
 ## Site de Michael J. Pitz
 
+# TO DO :
+~~1. page accueil de l'administration~~ 
+2. envoi du mail smtp
+3. alignement espace articles
+4. contenu
+5. perfectionner le design front
+6. architecture 
+7. cv efficace 
+8. AppFixtures plus complet 
+~~9. en préproduction, Matomo ne semble suivre que les personnes connectées~~ 
+
 ### Version 2
 
 Copié de la section "Version 2" du README.md de mon projet GitHub, voici une présentation détaillée de la seconde version de mon site personnel, développée avec Symfony 7.4, Tailwind CSS et Docker. Le projet est hébergé sur GitHub :
 
 https://github.com/mikhawa/preprod-michaeljpitz
 
+### URL de la version de développement :
+| Service               | Port | URL                                  |
+|-----------------------|------|--------------------------------------|
+ | Site web              | 8080 | http://localhost:8080                |
+ | phpMyAdmin            | 8081 | http://localhost:8081/               |
+ | SMTP Mailpit          | 1025 | smtp://mailpit:1025 (interne Docker) |
+| Interface web Mailpit | 8025 | http://localhost:8025                |
+
+### Ne pas en preprod oublier les : 
+
+    composer update
+    # et
+    php bin/console tailwind:build
+    # et création d'un admin pour les tests :
+    php bin/console app:create-admin michael.j.pitz@gmail.com 123NousIronsAuxBois321 Michael.J.Pitz 
+
+#### Permissions
+
+chown -R micha5214:micha5214 /home/michaeljpitz.com/preprod.michaeljpitz.com/public/uploads/
+
 
 ### URL de la version preprod :
 
 https://preprod.michaeljpitz.com/
 
+### Cloudflare
+
+Votre domaine est désormais protégé par Cloudflare.
+
+
 ### Version 1
 
 Il s'agit de la deuxième version du site, qui se trouve sur github à l'URL suivante : https://github.com/mikhawa/cv-mikhawa et qui se trouve en ligne à l'URL suivante : https://alpha1.michaeljpitz.com/
 
+### Version 2
+
+Installation de WASM pour que les utilisateurs puissent intéragir sur le php en local, il utilise le package php-wasm de Sean Morris, qui compile PHP en WebAssembly pour une exécution côté client dans le navigateur.
+
+ En mode visuel pour chaque article, taper :
+```[php]echo "PHP " . PHP_VERSION;[/php]```
+
+Dna le whisywyg, pas besoin de vue code, le marqueur est préservé tel quel (c'est du texte brut, pas du HTML). Le filtre Twig `php_runner` le convertit en widget côté serveur.
+
 #### Admin
 
-Email : michaeljpitz@gmail.com
-
-Password : erapacha1988ZZZ
-
-#### User de test
-
-Email : michael.pitz@cf2m.be
-
-Nom d'utilisateur : Mikhawa
-
-Password : bébéTest1234!
-
-Mail :
-
-https://nicolaspitz.be:8090/snappymail/
-
-Email : contact@alpha1.michaeljpitz.com
-
-Password : 1UgOWwYRSaieQT4kn1zd
-
-### Raccourcis
-
-- [raccourcis](RACCOURCIS.md)
-
-### Pour le développement distant changer ces fichiers en retirant le .back
-/.env.local.back
-/.env.local.php.back
-
-## Installation et démarrage
-
-### Lancer les conteneurs Docker
-```bash
-docker compose up -d --build
-```
-
-### URL d'accès au site
-
-- http://localhost:8080 (Site web)
-- http://localhost:8081/ phpMyAdmin (MariaDB)
-
-### Accéder au conteneur PHP
-```bash 
-docker compose exec php sh
-```
-
-### Installer les dépendances Composer
-```bash
-composer install
-```
-### Créer la base de données et exécuter les migrations
-```bash
-php bin/console doctrine:database:create
-php bin/console doctrine:migrations:migrate
-```
-### tailwind
+Pour créer un admin : 
 
 ```bash
-php bin/console tailwind:build
-```
-### php-cs-fixer (optionnel)
-```bash
-composer require --dev friendsofphp/php-cs-fixer
-```
-Pour formater le code selon les standards PSR-12 :
-```bash
-./vendor/bin/php-cs-fixer fix
+php bin/console app:create-admin le_mail le_password le_username
 ```
 
-### Débogage traductions
+### Utilisateurs de test
 
-```bash
-php bin/console debug:translation fr
-```
-
-### Comptes utilisateurs locaux
-
-Admin initial : 
-
-Email :
-
-    admin@portfolio.local 
-
-UserName :
-
-    admin
-
-Password :
-
-    admin123!  
-
----
-
-User de test :
-
-Email :
-
-
-
-UserName :
-
-    mikhawa
-
-Password :
-
-    Test1234!
-
----
-
-User de test :
-
-Email :
-
-    michael.j.pitz@gmail.com
-
-UserName :
-
-    MikePitz
-
-Password :
-
-    Test12345678910!
-
----
-
-User de test :
-
-Email :
-
-    michael.j.pitz@gmail.com
-
-UserName :
-
-    ElisaPitz
-
-Password :
-
-    mp3mp3mp3
-
-Merci de changer le mot de passe après la première connexion.
+| Email                     | Mot de passe | Username |
+|---------------------------|--------------|----------|
+| m.ichaeljpitz@gmail.com   | 123Mickey    | Mickey   |
+| m.ichael.j.pitz@gmail.com | mp3mp3mp3mp3 | Mikhawa3 |
 
 ### Fonctionnalités implémentées
 
 - [x] Liens externes ouverts dans un nouvel onglet
-- [x] Mailjet pour l'envoi d'emails transactionnels
+- [x] Mailgun pour l'envoi d'emails transactionnels
 - [x] Redirection vers la page demandée après connexion
 - [x] Modification du mot de passe dans EasyAdmin
 - [x] Réinitialisation de mot de passe par email
@@ -196,23 +114,36 @@ Clés disponibles gratuitement sur https://dash.cloudflare.com/turnstile
 
 ### Version de développement
 
-| Date début        | Date courante |
-|-------------------|---------------|
-| 2026-01-31        | 2026-02-11    |
-| Version 1.0.0     | Version 1.7.1 |
-| 2026-02-11        | 2026-02-11    |
-| Version 2.0.0     | Version 2.0.0 |
-| 2026-02-11        | 2026-02-12    |
- | Version Alpha.1-b | Version Alpha.1-b |
+| Date début            | Date courante     |
+|-----------------------|-------------------|
+| 2026-01-31            | 2026-02-11        |
+| Version 1.0.0         | Version 1.7.1     |
+| 2026-02-11            | 2026-02-11        |
+| Version 2.0.0         | Version 2.0.0     |
+| 2026-02-11            | 2026-02-12        |
+| Version Alpha.1-b     | Version Alpha.1-b |
+| Version Preprod.1.0.0 | 2026-03-22        |
+| Version Preprod 1.1.0 | 2026-05-16.       |
 
-URL version alpha.1-b :
+
+#### URL version alpha.1-b :
 
 https://alpha1.michaeljpitz.com/
 
-### Installation de suneditor
+#### URL version en développement :
+
+https://dev.michaeljpitz.com/
+
+#### URL version preprod.1.1.0 :
+
+https://preprod.michaeljpitz.com/
+
+### Installation de Suneditor
+
 
 php bin/console importmap:require suneditor
 
 ### Documentation Claude
 
 https://github.com/mikhawa/claude-code-cheat-sheet
+

@@ -1,0 +1,82 @@
+{#
+  Partial récursif pour le filtre catégories multi-niveaux.
+  Variables : nodes (arbre), currentCategory, isRoot (true pour le niveau 0).
+#}
+
+<div class="cf-level">
+
+    {# Ligne de pills pour ce niveau #}
+    <div class="{{ isRoot is defined and isRoot
+        ? 'flex flex-wrap gap-2 items-center'
+        : 'flex flex-wrap gap-2 pt-3 pb-1 pl-3 mt-2 border-l-2 border-[var(--accent)] ml-1 md:border-l-0 md:ml-0 md:pl-0 md:pt-2' }}">
+
+        {# Lien "Tous" uniquement au niveau racine #}
+        {% if isRoot is defined and isRoot %}
+            <a href="{{ path('app_article_index') }}"
+               class="inline-flex items-center text-sm px-3 py-1 rounded-full border transition-colors
+                      {% if currentCategory is null %}
+                          bg-[var(--accent)] text-white border-[var(--accent)]
+                      {% else %}
+                          bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]
+                      {% endif %}">
+                Tous
+            </a>
+        {% endif %}
+
+        {% for node in nodes %}
+            <div class="inline-flex items-center"
+                 {% if node.children is not empty %}
+                     data-group-id="grp-{{ node.category.id }}"
+                     data-action="mouseenter->category-filter#show"
+                 {% endif %}>
+
+                <a href="{{ path('app_category_show', {slug: node.category.slug}) }}"
+                   class="inline-flex items-center gap-1 text-sm px-3 py-1 rounded-full border transition-colors
+                          {% if currentCategory and currentCategory.id == node.category.id %}
+                              bg-[var(--accent)] text-white border-[var(--accent)]
+                          {% else %}
+                              bg-[var(--bg-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]
+                          {% endif %}"
+                   {% if currentCategory and currentCategory.id == node.category.id %}data-active{% endif %}>
+                    {{ node.category.title }}
+                    {% if node.children is not empty %}
+                        <svg class="w-3 h-3 opacity-50 hidden md:inline-block flex-shrink-0"
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    {% endif %}
+                </a>
+
+                {# Bouton chevron mobile uniquement #}
+                {% if node.children is not empty %}
+                    <button class="md:hidden ml-0.5 p-1 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+                            data-action="click->category-filter#toggle"
+                            data-group-id="grp-{{ node.category.id }}"
+                            aria-label="Voir les sous-catégories de {{ node.category.title }}">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    {# Panneau enfants animé pour chaque nœud qui a des enfants #}
+    {% for node in nodes %}
+        {% if node.children is not empty %}
+            <div class="cf-panel"
+                 data-category-filter-target="panel"
+                 data-group-id="grp-{{ node.category.id }}">
+                <div class="cf-panel-inner">
+                    {% include 'components/_category_filter_level.html.twig' with {
+                        nodes: node.children,
+                        currentCategory: currentCategory,
+                        isRoot: false
+                    } only %}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+</div>

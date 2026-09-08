@@ -48,8 +48,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         maxMessage: 'Le nom d\'utilisateur ne peut pas dépasser {{ limit }} caractères.'
     )]
     #[Assert\Regex(
-        pattern: '/^[a-zA-Z0-9_]+$/',
-        message: 'Le nom d\'utilisateur ne peut contenir que des lettres, des chiffres et des underscores.'
+        pattern: '/^[\pL\pN_. ]+$/u',
+        message: 'Le nom d\'utilisateur ne peut contenir que des lettres, des chiffres, des points, des underscores et des espaces.'
     )]
     private ?string $userName = null;
 
@@ -57,6 +57,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $activationToken = null;
 
     #[ORM\Column(type: 'smallint', options: ['default' => 0, 'unsigned' => true])]
+    #[Assert\Choice(choices: [0, 1, 2], message: 'Le statut doit être 0 (inactif), 1 (actif) ou 2 (banni).')]
     private int $status = 0;
 
     #[ORM\Column(length: 64, nullable: true)]
@@ -83,20 +84,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 500, nullable: true)]
     #[Assert\Length(
         max: 500,
-        maxMessage: 'La présentation ne peut pas dépasser {{ limit }} caractères.'
+        maxMessage: 'La présentation ne peut pas dépasser {{ limit }} caractères.',
+        groups: ['Profile']
     )]
     private ?string $biography = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Url(message: 'L\'URL "{{ value }}" n\'est pas valide.', requireTld: true)]
+    #[Assert\Url(message: 'L\'URL "{{ value }}" n\'est pas valide.', requireTld: true, groups: ['Profile'])]
     private ?string $externalLink1 = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Url(message: 'L\'URL "{{ value }}" n\'est pas valide.', requireTld: true)]
+    #[Assert\Url(message: 'L\'URL "{{ value }}" n\'est pas valide.', requireTld: true, groups: ['Profile'])]
     private ?string $externalLink2 = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Url(message: 'L\'URL "{{ value }}" n\'est pas valide.', requireTld: true)]
+    #[Assert\Url(message: 'L\'URL "{{ value }}" n\'est pas valide.', requireTld: true, groups: ['Profile'])]
     private ?string $externalLink3 = null;
 
     #[ORM\Column(nullable: true)]

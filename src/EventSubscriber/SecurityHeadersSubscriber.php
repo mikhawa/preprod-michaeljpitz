@@ -46,7 +46,7 @@ class SecurityHeadersSubscriber implements EventSubscriberInterface
 
         $headers->set(
             'Content-Security-Policy',
-            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://stats.michaeljpitz.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; frame-src https: https://challenges.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://stats.michaeljpitz.com https://challenges.cloudflare.com;"
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://stats.michaeljpitz.com https://challenges.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; frame-src https: https://challenges.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://stats.michaeljpitz.com https://challenges.cloudflare.com https://cdn.jsdelivr.net; worker-src blob: 'self';"
         );
     }
 }

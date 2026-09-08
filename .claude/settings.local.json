@@ -1,5 +1,42 @@
 {
-  "disabledMcpjsonServers": [
+  "permissions": {
+    "allow": [
+      "Bash(docker compose:*)",
+      "Bash(php:*)",
+      "Bash(git add:*)",
+      "Bash(chmod:*)",
+      "Bash(find:*)",
+      "Bash(docker exec:*)",
+      "Bash(composer show:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(vendor/bin/phpstan analyse:*)",
+      "Bash(git commit:*)",
+      "Bash(curl -s http://localhost:8080)",
+      "Bash(npx playwright *)",
+      "Bash(curl -s http://localhost:8080/)",
+      "Bash(mkdir -p /home/mikhawa/preprod-michaeljpitz/assets/images)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/1773493021909.png /home/mikhawa/preprod-michaeljpitz/assets/images/profile.png)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/assets/images/profile.png)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/images/profile.png)",
+      "Bash(xargs cat)",
+      "Bash(sort -k6,7)",
+      "Bash(./vendor/bin/php-cs-fixer fix *)",
+      "Bash(grep *)",
+      "Bash(mkdir -p /home/mikhawa/preprod-michaeljpitz/public/images/gallery)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/20260421_200546.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/2023-10-08.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/20260205_080955.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
+      "Bash(cp /home/mikhawa/preprod-michaeljpitz/datas/20251026_141752.jpg /home/mikhawa/preprod-michaeljpitz/public/images/gallery/)",
+      "Bash(docker-compose ps *)",
+      "Read(//var/run/**)",
+      "Bash(docker --version)",
+      "Read(//mnt/wsl/**)",
+      "Bash(DOCKER_HOST=unix:///mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.proxy.sock docker info *)",
+      "Bash(docker context *)",
+      "Bash(node --input-type=module)"
+    ]
+  },
+  "enabledMcpjsonServers": [
     "phpstorm"
   ]
 }
