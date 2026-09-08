@@ -20,6 +20,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ResetPasswordController extends AbstractController
 {
+    public function __construct(
+        private readonly string $notificationsFrom,
+    ) {
+    }
+
     #[Route('/mot-de-passe-oublie', name: 'app_forgot_password')]
     public function forgotPassword(
         Request $request,
@@ -53,7 +58,7 @@ class ResetPasswordController extends AbstractController
                 );
 
                 $emailMessage = (new TemplatedEmail())
-                    ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa'))
+                    ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
                     ->to((string) $user->getEmail())
                     ->subject('Réinitialisation de votre mot de passe')
                     ->htmlTemplate('email/reset_password.html.twig')

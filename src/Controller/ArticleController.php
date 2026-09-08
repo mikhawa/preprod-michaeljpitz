@@ -29,6 +29,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ArticleController extends AbstractController
 {
+    public function __construct(
+        private readonly string $notificationsFrom,
+        private readonly string $adminEmail,
+    ) {
+    }
+
     #[Route('/articles', name: 'app_article_index')]
     public function index(
         Request $request,
@@ -127,8 +133,8 @@ class ArticleController extends AbstractController
                 );
 
                 $adminNotification = (new TemplatedEmail())
-                    ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa'))
-                    ->to('contact@alpha1.michaeljpitz.com')
+                    ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
+                    ->to($this->adminEmail)
                     ->subject('Nouveau commentaire - '.$article->getTitle())
                     ->htmlTemplate('email/new_comment_notification.html.twig')
                     ->context([

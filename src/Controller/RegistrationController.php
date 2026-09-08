@@ -20,6 +20,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationController extends AbstractController
 {
+    public function __construct(
+        private readonly string $notificationsFrom,
+        private readonly string $adminEmail,
+    ) {
+    }
+
     #[Route('/inscription', name: 'app_register')]
     public function register(
         Request $request,
@@ -54,7 +60,7 @@ class RegistrationController extends AbstractController
             );
 
             $email = (new TemplatedEmail())
-                ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa'))
+                ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
                 ->to((string) $user->getEmail())
                 ->subject('Activez votre compte')
                 ->htmlTemplate('email/activation.html.twig')
@@ -66,8 +72,8 @@ class RegistrationController extends AbstractController
             $mailer->send($email);
 
             $adminNotification = (new TemplatedEmail())
-                ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa'))
-                ->to('contact@alpha1.michaeljpitz.com')
+                ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
+                ->to($this->adminEmail)
                 ->subject('Nouvelle inscription - '.$user->getUserName())
                 ->htmlTemplate('email/new_user_notification.html.twig')
                 ->context([
@@ -122,8 +128,8 @@ class RegistrationController extends AbstractController
         $entityManager->flush();
 
         $adminNotification = (new TemplatedEmail())
-            ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa'))
-            ->to('contact@alpha1.michaeljpitz.com')
+            ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
+            ->to($this->adminEmail)
             ->subject('Compte activé - '.$user->getUserName())
             ->htmlTemplate('email/user_activated_notification.html.twig')
             ->context([

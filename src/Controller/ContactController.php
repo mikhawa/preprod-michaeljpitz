@@ -24,8 +24,8 @@ class ContactController extends AbstractController
         private readonly TurnstileValidator $turnstileValidator,
         #[Autowire('%env(TURNSTILE_SITE_KEY)%')]
         private readonly string $turnstileSiteKey,
-        #[Autowire('%env(CONTACT_FALLBACK_EMAIL)%')]
-        private readonly string $fallbackEmail,
+        private readonly string $adminEmail,
+        private readonly string $notificationsFrom,
     ) {
     }
 
@@ -56,11 +56,11 @@ class ContactController extends AbstractController
             }
 
             $data = $form->getData();
-            $adminEmail = $this->getAdminEmail() ?? $this->fallbackEmail;
+            $recipient = $this->getAdminEmail() ?? $this->adminEmail;
 
             $email = (new TemplatedEmail())
-                ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa - Contact'))
-                ->to('contact@alpha1.michaeljpitz.com')
+                ->from(new Address($this->notificationsFrom, 'CV Mikhawa - Contact'))
+                ->to($recipient)
                 ->replyTo(new Address($data['email'], $data['name']))
                 ->subject('Nouveau message de contact - '.$data['name'])
                 ->htmlTemplate('email/contact_notification.html.twig')

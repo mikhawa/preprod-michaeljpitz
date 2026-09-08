@@ -19,6 +19,7 @@ class CommentApprovedSubscriber
     public function __construct(
         private readonly MailerInterface $mailer,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly string $notificationsFrom,
     ) {
     }
 
@@ -58,7 +59,7 @@ class CommentApprovedSubscriber
         );
 
         $email = (new TemplatedEmail())
-            ->from(new Address('contact@alpha1.michaeljpitz.com', 'CV Mikhawa'))
+            ->from(new Address($this->notificationsFrom, 'CV Mikhawa'))
             ->to((string) $user->getEmail())
             ->subject('Votre commentaire a été approuvé')
             ->htmlTemplate('email/comment_approved.html.twig')

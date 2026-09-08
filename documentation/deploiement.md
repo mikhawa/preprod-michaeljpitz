@@ -1,6 +1,6 @@
 # Guide de déploiement
 
-> Dernière mise à jour : 16 février 2026
+> Dernière mise à jour : 7 septembre 2026
 
 ## Prérequis
 
@@ -39,12 +39,19 @@ Modifier `.env.local` avec les valeurs appropriées :
 ```env
 APP_ENV=dev
 APP_SECRET=<générer-une-clé-unique>
-DATABASE_URL="mysql://portfolio:portfolio@mariadb:3306/portfolio?serverVersion=10.11.0-MariaDB"
+DATABASE_URL="mysql://preprod:preprod@mariadb:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4"
 MAILER_DSN=mailjet+api://ACCESS_KEY:SECRET_KEY@default
 TURNSTILE_SITE_KEY=1x00000000000000000000AA
 TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
-CONTACT_FALLBACK_EMAIL=admin@portfolio.local
+ADMIN_EMAIL=admin@michaeljpitz.com
+EMAIL_NOTIFICATIONS_FROM=admin@michaeljpitz.com
 ```
+
+> **Envoi d'emails en développement** : le DSN Mailjet ci-dessus n'envoie
+> réellement que si de vraies clés API sont fournies dans `.env.local`. Sans
+> clés valides, les envois échouent silencieusement — c'est le comportement
+> attendu en local. Pour tester le rendu des emails sans compte Mailjet,
+> utiliser un attrapeur local (`MAILER_DSN=smtp://localhost:1025` avec Mailpit).
 
 ### 3. Lancer les conteneurs Docker
 
@@ -106,9 +113,9 @@ sudo mysql -u root -p
 ```
 
 ```sql
-CREATE DATABASE portfolio CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'portfolio'@'localhost' IDENTIFIED BY '<mot-de-passe-fort>';
-GRANT ALL PRIVILEGES ON portfolio.* TO 'portfolio'@'localhost';
+CREATE DATABASE preprod CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'preprod'@'localhost' IDENTIFIED BY '<mot-de-passe-fort>';
+GRANT ALL PRIVILEGES ON preprod.* TO 'preprod'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
@@ -121,17 +128,62 @@ sudo chown -R www-data:www-data cv-mikhawa
 cd cv-mikhawa
 ```
 
-Créer `.env.local` :
+Les valeurs **non secrètes** de production sont déjà versionnées dans `.env.prod`
+(chargé automatiquement quand `APP_ENV=prod`) : `APP_DEBUG`, `DEFAULT_URI`,
+`MESSENGER_TRANSPORT_DSN`, et le gabarit `MAILER_DSN` Mailjet.
+
+Les **secrets** vont dans `.env.prod.local` (jamais versionné). Partir du gabarit
+fourni :
+
+```bash
+cp .env.prod.local.dist .env.prod.local
+```
+
+Puis renseigner les vraies valeurs dans `.env.prod.local` :
 
 ```env
 APP_ENV=prod
-APP_SECRET=<clé-secrète-générée>
-DATABASE_URL="mysql://portfolio:<mot-de-passe>@127.0.0.1:3306/portfolio?serverVersion=10.11.0-MariaDB"
+APP_SECRET=<clé-secrète-générée>   # php -r "echo bin2hex(random_bytes(16)), PHP_EOL;"
+DATABASE_URL="mysql://preprod:<mot-de-passe>@127.0.0.1:3306/preprod?serverVersion=10.11.0-MariaDB&charset=utf8mb4"
 MAILER_DSN=mailjet+api://<ACCESS_KEY>:<SECRET_KEY>@default
 TURNSTILE_SITE_KEY=<votre-clé-turnstile>
 TURNSTILE_SECRET_KEY=<votre-clé-secrète-turnstile>
-CONTACT_FALLBACK_EMAIL=<votre-email-admin>
+# Adresses email (valeurs par défaut déjà dans .env — à surcharger si besoin)
+ADMIN_EMAIL=admin@michaeljpitz.com
+EMAIL_NOTIFICATIONS_FROM=admin@michaeljpitz.com
 ```
+
+> `ADMIN_EMAIL` : destinataire des notifications d'administration (le formulaire
+> de contact envoie en priorité à l'email d'un compte `ROLE_ADMIN` en base, et
+> retombe sur `ADMIN_EMAIL` sinon).
+> `EMAIL_NOTIFICATIONS_FROM` : expéditeur de tous les emails — doit être un
+> expéditeur vérifié (SPF/DKIM) dans Mailjet.
+
+Optionnel (recommandé en production) : compiler les variables pour éviter de
+parser les fichiers `.env` à chaque requête :
+
+```bash
+composer dump-env prod
+```
+
+### Envoi des emails : Mailjet
+
+En production, l'application envoie tous ses emails (contact, activation de
+compte, réinitialisation de mot de passe, notifications admin) via **Mailjet**,
+avec le bridge officiel `symfony/mailjet-mailer` déjà installé.
+
+1. Récupérer les clés API sur <https://app.mailjet.com/account/apikeys>
+   (ACCESS_KEY = clé publique, SECRET_KEY = clé secrète).
+2. Dans Mailjet, vérifier le **domaine expéditeur** (SPF + DKIM) et déclarer
+   l'adresse d'expédition comme expéditeur autorisé.
+3. Renseigner `MAILER_DSN` dans `.env.prod.local` :
+   - API transactionnelle (recommandé, HTTPS 443) :
+     `mailjet+api://ACCESS_KEY:SECRET_KEY@default`
+   - Alternative SMTP si l'API sortante est bloquée :
+     `mailjet+smtp://ACCESS_KEY:SECRET_KEY@default`
+4. Vérifier : `php bin/console debug:config framework mailer --env=prod`
+5. Envoyer un email de test (formulaire de contact) et contrôler la réception
+   dans <https://app.mailjet.com/stats>.
 
 ### 4. Installer les dépendances (production)
 
@@ -232,6 +284,7 @@ php bin/console doctrine:schema:validate
 cd /var/www/cv-mikhawa
 git pull origin main
 composer install --no-dev --optimize-autoloader
+composer dump-env prod   # si .env.prod / .env.prod.local ont changé
 php bin/console doctrine:migrations:migrate --no-interaction
 php bin/console tailwind:build --minify
 php bin/console asset-map:compile
