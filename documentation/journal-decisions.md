@@ -4,6 +4,35 @@
 
 ---
 
+## 2026-09-09
+
+### Passage de Mailjet à la messagerie Hostinger (SMTP)
+**Décision** : Abandon de Mailjet. Les emails transactionnels sont envoyés via le serveur SMTP de la boîte mail Hostinger du domaine (`smtp.hostinger.com`, port 465 SSL ou 587 STARTTLS). Le bridge `symfony/mailjet-mailer` est désinstallé : le composant `symfony/mailer` seul suffit pour un transport `smtp://` standard. Mailpit reste l'intercepteur en développement local (inchangé).
+**Raison** : L'utilisateur héberge déjà sa messagerie chez Hostinger et ne veut plus de fournisseur transactionnel tiers. Aucune bibliothèque supplémentaire n'est requise (le SDK `hostinger/mail-api-php-sdk` sert à l'API de gestion des boîtes, pas à l'envoi). Aucun code applicatif touché : `MailerInterface` masque le transport.
+**Réception** : hors application — lecture via le webmail Hostinger ou en IMAP (`imap.hostinger.com`, port 993). Le formulaire de contact se contente d'envoyer vers `ADMIN_EMAIL`.
+**Prérequis déploiement** : `EMAIL_NOTIFICATIONS_FROM` doit être une adresse du domaine Hostinger ; activer SPF + DKIM dans le panneau Hostinger ; renseigner `MAILER_DSN` dans le `.env.local` du serveur (jamais dans `.env` versionné).
+**Fichiers** : `composer.json`, `composer.lock`, `symfony.lock`, `.env`, `.env.local` (non versionné), `README.md`, `documentation/deploiement.md`, `.claude/MEMORY.md`.
+Voir `documentation/041-2026-09-09-sonnet-passage-mailjet-a-hostinger.md`.
+
+## 2026-09-06
+
+### Retour à Mailjet comme transport d'emails de production
+**Décision** : Remplacer le bridge `symfony/mailer-send-mailer` par `symfony/mailjet-mailer` (v7.4.12). Transport retenu : SMTP (`mailjet+smtp://PUBLIC_KEY:PRIVATE_KEY@default`), variante API documentée en repli si le port 587 sortant est bloqué. Mailpit reste l'intercepteur en développement local.
+**Raison** : Retour au fournisseur utilisé avant le 2026-08-28. Aucun code applicatif impacté : `MailerInterface` masque le transport. À noter : le HEAD de la branche (`403c102`) déclarait déjà `symfony/mailjet-mailer`, mais `vendor/` et `.env` étaient restés sur MailerSend — le bridge n'avait jamais été installé.
+**Fichiers** : `composer.json`, `composer.lock`, `symfony.lock`, `.env`, `README.md`, `documentation/deploiement.md`, `.claude/MEMORY.md`.
+Voir `documentation/040-2026-09-06-opus-retour-a-mailjet.md`.
+
+### Aucun DSN de production dans `.env` — uniquement dans `.env.local`
+**Décision** : Le bloc `symfony/mailer-send-mailer` de `.env`, qui contenait un vrai jeton API en clair, est supprimé. `.env` (versionné) ne porte plus que des exemples commentés ; les vraies clés vont dans `.env.local`, couvert par `.gitignore`.
+**Raison** : Le jeton `mlsn.a038c483…` a été poussé dans l'historique git (commit `d85a8ef`, PR #84) et doit être révoqué. Effet de bord corrigé au passage : ce bloc, placé après le bloc `symfony/mailer`, écrasait `MAILER_DSN=smtp://mailpit:1025` — les emails de développement partaient réellement via MailerSend au lieu d'être interceptés par Mailpit.
+**Fichiers** : `.env`, `.env.local` (non versionné).
+
+### Commandes composer à lancer dans le conteneur PHP
+**Décision** : Exécuter `composer` via `docker compose exec php composer …` et non depuis WSL.
+**Raison** : `vendor/` appartient à `root` (écrit par le conteneur). Un `composer remove` lancé depuis WSL échoue sur `Could not delete …/LICENSE` en laissant `composer.json` et `composer.lock` désynchronisés de `vendor/`.
+
+---
+
 ## 2026-06-14
 
 ### Recadrage optionnel des images dans Suneditor

@@ -16,7 +16,7 @@ Contexte persistant du projet, versionné dans Git pour être utilisable sur plu
 
 Site personnel en Symfony 7.4 LTS.
 
-**Stack** : PHP 8.3 / Symfony 7.4 / Doctrine ORM 3.x / Twig 3.x / MariaDB 10.11 / AssetMapper / Tailwind CSS 3.x / Stimulus.js + Turbo / EasyAdmin 4.x / VichUploaderBundle / cropperjs / suneditor / Mailpit (dev) / Mailjet (prod)
+**Stack** : PHP 8.3 / Symfony 7.4 / Doctrine ORM 3.x / Twig 3.x / MariaDB 10.11 / AssetMapper / Tailwind CSS 3.x / Stimulus.js + Turbo / EasyAdmin 4.x / VichUploaderBundle / cropperjs / suneditor / Mailpit (dev) / SMTP Hostinger (prod)
 
 **Docker Compose** — 5 services :
 | Service | Port |
@@ -36,7 +36,8 @@ Site personnel en Symfony 7.4 LTS.
 
 **Emails** :
 - Dev → Mailpit (`smtp://mailpit:1025`), interface sur http://localhost:8025
-- Prod → Mailjet (DSN dans `.env.local`, non commité)
+- Prod → SMTP messagerie Hostinger (`MAILER_DSN=smtp://LOGIN%40domaine:MDP@smtp.hostinger.com:465` dans `.env.local`, non commité). Bridge `symfony/mailjet-mailer` retiré le 2026-09-09.
+- Réception : hors app (webmail Hostinger ou IMAP `imap.hostinger.com:993`)
 
 ---
 
