@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-09-09
+
+### Passage de Mailjet à la messagerie Hostinger (SMTP)
+**Décision** : Abandon de Mailjet. Les emails transactionnels sont envoyés via le serveur SMTP de la boîte mail Hostinger du domaine (`smtp.hostinger.com`, port 465 SSL ou 587 STARTTLS). Le bridge `symfony/mailjet-mailer` est désinstallé : le composant `symfony/mailer` seul suffit pour un transport `smtp://` standard. Mailpit reste l'intercepteur en développement local (inchangé).
+**Raison** : L'utilisateur héberge déjà sa messagerie chez Hostinger et ne veut plus de fournisseur transactionnel tiers. Aucune bibliothèque supplémentaire n'est requise (le SDK `hostinger/mail-api-php-sdk` sert à l'API de gestion des boîtes, pas à l'envoi). Aucun code applicatif touché : `MailerInterface` masque le transport.
+**Réception** : hors application — lecture via le webmail Hostinger ou en IMAP (`imap.hostinger.com`, port 993). Le formulaire de contact se contente d'envoyer vers `ADMIN_EMAIL`.
+**Prérequis déploiement** : `EMAIL_NOTIFICATIONS_FROM` doit être une adresse du domaine Hostinger ; activer SPF + DKIM dans le panneau Hostinger ; renseigner `MAILER_DSN` dans le `.env.local` du serveur (jamais dans `.env` versionné).
+**Fichiers** : `composer.json`, `composer.lock`, `symfony.lock`, `.env`, `.env.local` (non versionné), `README.md`, `documentation/deploiement.md`, `.claude/MEMORY.md`.
+Voir `documentation/041-2026-09-09-sonnet-passage-mailjet-a-hostinger.md`.
+
 ## 2026-09-06
 
 ### Retour à Mailjet comme transport d'emails de production

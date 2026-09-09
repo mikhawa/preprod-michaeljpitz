@@ -40,7 +40,7 @@ Modifier `.env.local` avec les valeurs appropriées :
 APP_ENV=dev
 APP_SECRET=<générer-une-clé-unique>
 DATABASE_URL="mysql://portfolio:portfolio@mariadb:3306/portfolio?serverVersion=10.11.0-MariaDB"
-MAILER_DSN=mailjet+smtp://PUBLIC_KEY:PRIVATE_KEY@default
+# En dev, ne PAS surcharger MAILER_DSN : Mailpit (défini dans .env) intercepte les emails
 TURNSTILE_SITE_KEY=1x00000000000000000000AA
 TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
 CONTACT_FALLBACK_EMAIL=admin@portfolio.local
@@ -127,11 +127,19 @@ Créer `.env.local` :
 APP_ENV=prod
 APP_SECRET=<clé-secrète-générée>
 DATABASE_URL="mysql://portfolio:<mot-de-passe>@127.0.0.1:3306/portfolio?serverVersion=10.11.0-MariaDB"
-MAILER_DSN=mailjet+smtp://<PUBLIC_KEY>:<PRIVATE_KEY>@default
+# SMTP de la boîte mail Hostinger ; « @ » du login encode en %40 ; port 465 (SSL) ou 587 (STARTTLS)
+MAILER_DSN=smtp://<login%40domaine>:<mot-de-passe>@smtp.hostinger.com:465
 TURNSTILE_SITE_KEY=<votre-clé-turnstile>
 TURNSTILE_SECRET_KEY=<votre-clé-secrète-turnstile>
 CONTACT_FALLBACK_EMAIL=<votre-email-admin>
 ```
+
+> **Emails (Hostinger)** — pour que les envois ne soient pas rejetés/spam :
+> - `EMAIL_NOTIFICATIONS_FROM` (dans `.env`) doit être une adresse **du domaine Hostinger**.
+> - Activer **SPF** et **DKIM** pour le domaine dans le panneau Hostinger (Emails → Configuration DNS).
+> - Le mot de passe du DSN est celui de la **boîte mail** Hostinger (le créer/réinitialiser dans hPanel).
+> - Tester après déploiement : `php bin/console mailer:test destinataire@exemple.com`.
+> - Réception : hors application (webmail Hostinger ou IMAP `imap.hostinger.com:993`).
 
 ### 4. Installer les dépendances (production)
 
