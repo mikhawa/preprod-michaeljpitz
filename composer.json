@@ -14,7 +14,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.7.1",
         "doctrine/orm": "^3.7.0",
         "easycorp/easyadmin-bundle": "^4.29.16",
-        "knplabs/knp-paginator-bundle": "^6.10",
+        "knplabs/knp-paginator-bundle": "^6.11",
         "phpdocumentor/reflection-docblock": "^5.6.7",
         "phpstan/phpdoc-parser": "^2.3.5",
         "symfony/asset": "7.4.*",
