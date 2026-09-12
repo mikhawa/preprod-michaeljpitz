@@ -66,6 +66,12 @@ Dna le whisywyg, pas besoin de vue code, le marqueur est préservé tel quel (c'
 
 #### Admin
 
+Ou en cas de chargement de fixtures (App uniquement) : 
+
+```bash
+php bin/console d:f:l --no-interactionphp bin/console doctrine:fixtures:load --group=dev --no-interaction --env=dev
+```
+
 Pour créer un admin : 
 
 ```bash
