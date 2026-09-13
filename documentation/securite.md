@@ -1,6 +1,6 @@
 # Audit de sécurité
 
-> Dernière mise à jour : 11 février 2026
+> Dernière mise à jour : 13 septembre 2026 (voir `042-2026-09-13_18-43-sonnet-audit-securite-global.md` pour le détail complet de l'audit)
 
 ## Résumé
 
@@ -199,17 +199,37 @@ Toutes les entités utilisent les contraintes de validation Symfony (`Assert`) :
 | Commentaires approuvés uniquement | Filtre `isApproved = true` | CommentRepository.php |
 | Liens externes sécurisés | `target="_blank" rel="noopener noreferrer"` | public_profile/show.html.twig |
 
+## 13bis. Authentification à deux facteurs (2FA)
+
+Mise en place depuis l'audit du 22 mars 2026 (`018`), constatée lors de l'audit du 13 septembre 2026 (`042`) :
+
+| Mesure | Implémentation | Fichier |
+|--------|---------------|---------|
+| 2FA par email, réservée aux ROLE_ADMIN | Code OTP 6 chiffres après connexion | `TwoFactorLoginSubscriber.php` |
+| Code jamais stocké en clair | `hash('sha256', $code)` en session | `TwoFactorLoginSubscriber.php` |
+| Comparaison en temps constant | `hash_equals()` | `TwoFactorController.php` |
+| Expiration | 10 minutes | `TwoFactorController.php` |
+| Anti-bruteforce | 5 tentatives max, puis invalidation de session | `TwoFactorController.php` |
+| Blocage de toute route tant que non vérifié | `TwoFactorGateSubscriber` (KernelEvents::REQUEST) | `TwoFactorGateSubscriber.php` |
+| Exemption "se souvenir de moi" | Pas de 2FA sur reconnexion RememberMe | `TwoFactorLoginSubscriber.php` |
+
 ## 13. Points d'amélioration (non implémentés)
 
-Ces mesures sont recommandées pour la mise en production :
+Ces mesures sont recommandées :
 
 | Mesure | Priorité | Description |
 |--------|----------|-------------|
-| Rate limiting sur /login | Haute | Limiter les tentatives de connexion (Symfony RateLimiter) |
-| Rate limiting sur /register | Haute | Limiter les inscriptions |
-| HSTS en production | Haute | `Strict-Transport-Security` avec max-age élevé |
-| X-Frame-Options: DENY | Moyenne | Passer de SAMEORIGIN à DENY si pas d'usage iframe interne |
-| CSP sans unsafe-inline | Moyenne | Utiliser des nonces pour scripts/styles |
-| Audit PHPStan level 8 | Moyenne | Analyse statique complète |
+| `--append` sur `doctrine:fixtures:load` en CI (dev/preprod) | Haute — dès qu'il y aura des données réelles | Actuellement, chaque déploiement purge la BDD (`deploy-dev.yml`, `deploy-preprod.yml`). Accepté pour le moment (décision du 13/09/2026, voir `042-...-audit-securite-global.md` §3.1), à corriger avant mise en prod avec de vrais utilisateurs |
+| `PASS_ADMIN` sur les `.env.local` des serveurs dev/preprod | Haute | Le secret a été retiré de `.env` (versionné) le 13/09/2026 ; les serveurs doivent avoir leur propre `.env.local` à jour avant le prochain déploiement, sinon `doctrine:fixtures:load --group=prod` échouera |
+| Rotation du mot de passe admin réel + éventuelle réécriture de l'historique Git | Haute | La valeur committée dans `.env` reste lisible dans l'historique Git |
+| CSP sans unsafe-inline/unsafe-eval | Moyenne | Utiliser des nonces pour scripts/styles (compatibilité Turbo + Suneditor à valider) |
+| Voter Symfony pour l'autorisation par ressource | Moyenne | Aucun Voter dans `src/Security/` malgré la règle CLAUDE.md ; à ajouter avant toute nouvelle fonctionnalité utilisateur (édition/suppression de ses propres commentaires, etc.) |
+| Migration de l'upload avatar vers VichUploaderBundle | Moyenne | `ProfileController` gère l'upload en base64/`file_put_contents` maison au lieu du bundle standard du projet |
+| X-Frame-Options: DENY | Basse | Passer de SAMEORIGIN à DENY si pas d'usage iframe interne |
+| Retrait de X-XSS-Protection | Basse | Header obsolète, ignoré par les navigateurs modernes |
 | Tests de sécurité automatisés | Basse | Tests fonctionnels vérifiant les protections |
 | Logs sans données personnelles | Basse | Vérifier les logs Symfony/Doctrine |
+
+### Historique des audits
+- 22/02/2026 (implicite, première rédaction) → 22/03/2026 : audit `018`, 6 points corrigés sur 10, 2FA proposée
+- 13/09/2026 : audit `042` (vérification globale + suivi), 7 points sur 10 de l'audit `018` désormais corrigés, 2FA implémentée entre-temps, `PASS_ADMIN` sorti du fichier versionné

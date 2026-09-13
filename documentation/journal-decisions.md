@@ -14,6 +14,23 @@
 **Fichiers** : `composer.json`, `composer.lock`, `symfony.lock`, `.env`, `.env.local` (non versionné), `README.md`, `documentation/deploiement.md`, `.claude/MEMORY.md`.
 Voir `documentation/041-2026-09-09-sonnet-passage-mailjet-a-hostinger.md`.
 
+---
+
+## 2026-09-13
+
+### Retrait de PASS_ADMIN du fichier .env versionné
+**Décision** : `PASS_ADMIN` était en clair dans `.env` (suivi par Git depuis le premier commit du dépôt). Retiré de `.env` et déplacé dans `.env.local` (non versionné, prioritaire).
+**Raison** : audit sécurité du 13/09/2026 — un mot de passe admin en clair ne doit jamais être dans un fichier versionné. Vérifié par dry-run que `doctrine:fixtures:load --group=prod` résout toujours la variable depuis `.env.local`.
+**Reste à faire** : ajouter `PASS_ADMIN` au `.env.local` des serveurs dev/preprod avant le prochain déploiement (sinon `doctrine:fixtures:load --group=prod` échouera) ; changer la valeur réelle du mot de passe admin ; envisager une réécriture de l'historique Git (action destructive, à décider séparément).
+**Fichiers** : `.env`, `.env.local` (non versionné).
+Voir `documentation/042-2026-09-13_18-43-sonnet-audit-securite-global.md`.
+
+### Purge de la BDD à chaque déploiement — acceptée pour le moment
+**Décision** : `doctrine:fixtures:load` sans `--append` dans `deploy-dev.yml`/`deploy-preprod.yml` purge toute la base à chaque déploiement. Décision de l'utilisateur : pas encore un problème à ce stade du projet, pas de correction pour le moment.
+**Raison** : pas de données réelles à préserver actuellement sur dev/preprod. À revoir avant une mise en production avec de vrais utilisateurs.
+**Fichiers** : `.github/workflows/deploy-dev.yml`, `.github/workflows/deploy-preprod.yml`.
+Voir `documentation/042-2026-09-13_18-43-sonnet-audit-securite-global.md`.
+
 ## 2026-09-06
 
 ### Retour à Mailjet comme transport d'emails de production
