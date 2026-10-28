@@ -318,7 +318,6 @@ Ils sont :<br>
         /** @var Category $twig */
         $twig = $this->getReference(ProdCategoriesFixtures::REF_TWIG, Category::class);
 
-
         $symfony81 = (new Article())
             ->setTitle('En route pour Symfony 8.1 - Le livre')
             ->setSlug('en-route-pour-symfony-8-le-livre')

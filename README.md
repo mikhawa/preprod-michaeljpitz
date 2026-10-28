@@ -66,6 +66,12 @@ Dna le whisywyg, pas besoin de vue code, le marqueur est préservé tel quel (c'
 
 #### Admin
 
+Ou en cas de chargement de fixtures (App uniquement) : 
+
+```bash
+php bin/console d:f:l --no-interactionphp bin/console doctrine:fixtures:load --group=dev --no-interaction --env=dev
+```
+
 Pour créer un admin : 
 
 ```bash
@@ -116,6 +122,7 @@ Clés disponibles gratuitement sur https://dash.cloudflare.com/turnstile
 
 | Date début            | Date courante     |
 |-----------------------|-------------------|
+| 2026-09-12            | 2026-09-12        |
 | 2026-01-31            | 2026-02-11        |
 | Version 1.0.0         | Version 1.7.1     |
 | 2026-02-11            | 2026-02-11        |
