@@ -59,11 +59,10 @@ class PhpRunnerExtension extends AbstractExtension
      */
     private function buildWidget(string $rawCode): string
     {
-        // Décoder les entités HTML introduites par Suneditor (&amp; &lt; &quot; etc.)
-        $code = html_entity_decode($rawCode, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
 
         // Fusionner les paires </p><p> (multi-paragraphes Suneditor) en un seul saut de ligne
-        $code = (string) preg_replace('#</p>\s*<p[^>]*>#i', "\n", $code);
+        $code = (string) preg_replace('#</p>\s*<p[^>]*>#i', "\n", $rawCode);
         // Supprimer les balises <p> et </p> résiduelles (début/fin de blocs)
         $code = (string) preg_replace('#<p[^>]*>#i', '', $code);
         $code = (string) preg_replace('#</p>#i', '', $code);
@@ -73,6 +72,9 @@ class PhpRunnerExtension extends AbstractExtension
 
         // Supprimer toute balise HTML résiduelle (spans d'indentation Suneditor, etc.)
         $code = strip_tags($code);
+
+        // Décoder les entités HTML introduites par Suneditor (&amp; &lt; &quot; etc.)
+        $code = html_entity_decode($code, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
         // Convertir les espaces insécables (NBSP produits par Suneditor) en espaces normaux
         $code = str_replace("\u{00A0}", ' ', $code);
